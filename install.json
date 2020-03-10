@@ -29,22 +29,30 @@
         "type": "boolean",
         "default": true
       },
-      "message": {
+      "pages": {
         "order": 2,
+        "title": "Pages",
+        "description": "Which pages should show this banner?",
+        "type": "object",
+        "format": "page"
+      },
+      "message": {
+        "order": 3,
         "title": "Banner Message",
         "type": "string",
+        "format": "richtext",
         "default": "We're currently experiencing some connectivity issues.",
         "placeholder": "We're currently experiencing some connectivity issues."
       },
       "backgroundColor": {
-        "order": 3,
+        "order": 4,
         "title": "Background Color",
         "format": "color",
         "type": "string",
         "default": "#ffa500"
       },
       "messageColor": {
-        "order": 4,
+        "order": 5,
         "title": "Message Color",
         "format": "color",
         "type": "string",

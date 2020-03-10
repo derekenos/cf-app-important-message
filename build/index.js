@@ -111,7 +111,7 @@ function init() {
   // updateElement runs every time the options are updated.
   // Most of your code will end up inside this function.
   function updateElement() {
-    if (!options.enabled) {
+    if (!options.enabled || !INSTALL.matchPage(options.pages)) {
       if (element) {
         element.remove();
       }
