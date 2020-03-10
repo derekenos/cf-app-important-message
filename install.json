@@ -48,7 +48,7 @@
         "title": "Message Color",
         "format": "color",
         "type": "string",
-        "default": "#fff"
+        "default": "#ffffff"
       }
     }
   }
