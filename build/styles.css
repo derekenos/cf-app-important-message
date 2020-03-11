@@ -1,5 +1,5 @@
 /* Set the app attribute to your app's dash-delimited alias. */
-cloudflare-app[app="your-app-name"] {
+cloudflare-app[app="banner"] {
   background-color: #ffa500;
   color: #fff;
   font-size: 18px;
@@ -17,22 +17,22 @@ cloudflare-app[app="your-app-name"] {
   cursor: pointer;
 }
 
-cloudflare-app[app="your-app-name"] > p {
+cloudflare-app[app="banner"] > p {
     margin: 0;
     padding: 0;
     display: inline-block;
 }
 
-cloudflare-app[app="your-app-name"] > p a {
+cloudflare-app[app="banner"] > p a {
     text-decoration: underline;
     color: inherit;
 }
 
-cloudflare-app[app="your-app-name"].visible {
+cloudflare-app[app="banner"].visible {
     top: 0;
 }
 
-cloudflare-app[app="your-app-name"] button {
+cloudflare-app[app="banner"] button {
     background-color: transparent;
     border: none;
     float: right;
