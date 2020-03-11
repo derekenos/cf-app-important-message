@@ -24,7 +24,7 @@ function init() {
     element.style.color = options.messageColor
 
     // Set the app attribute to your app's dash-delimited alias.
-    element.setAttribute("app", "your-app-name")
+    element.setAttribute("app", "banner")
     element.innerHTML = `${options.message}<button>X</button>`
 
     // Remove the element from view on click.
