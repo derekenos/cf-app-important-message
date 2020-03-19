@@ -174,7 +174,7 @@
           "#fefefe,#818182": "Light",
           "#d6d8d9,#1b1e21": "Dark"
         },
-        "default": "#cce5ff,#004085"
+        "default": "#e2e3e5,#383d41"
       },
 
       "customBackgroundColor": {
@@ -185,7 +185,7 @@
         "title": "Background Color",
         "format": "color",
         "type": "string",
-        "default": "#cce5ff"
+        "default": "#e2e3e5"
       },
 
       "customTextColor": {
@@ -196,7 +196,7 @@
         "title": "Text Color",
         "format": "color",
         "type": "string",
-        "default": "#333333"
+        "default": "#383d41"
       },
 
       "borderRadius": {

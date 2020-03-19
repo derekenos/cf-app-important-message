@@ -106,25 +106,72 @@ var _styles2 = _interopRequireDefault(_styles);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var PREDEFINED_MESSAGES = {
-  "minorServiceInterruption": "\nWe're experiencing a minor service interruption - some features may not work.\n",
+  "minorServiceInterruption": "\n&#9888; We're experiencing a minor service interruption - some features may not work.\n",
 
-  "majorServiceInterruption": "\nWe're experiencing a major service outage - many features may not work.\n",
+  "majorServiceInterruption": "\n&#9888; We're experiencing a major service outage - many features may not work.\n",
 
-  "scheduledMaintenance": "\nWe're currently undergoing scheduled maintenance - some features may not work.\n"
+  "scheduledMaintenance": "\n&#9888; We're currently undergoing scheduled maintenance - some features may not work.\n"
 };
 
 function MakeIntoBanner(appElement, message, options) {
   /* Mutate the App element into a banner.
    */
   appElement.classList.add('banner');
-  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n    </div>\n  ";
+  if (options.alwaysDisplay) {
+    appElement.classList.add('non-dismissible');
+  } else {
+    appElement.classList.add('dismissible');
+  }
+  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.alwaysDisplay ? '' : '<span class="close">x</span>') + "\n    </div>\n  ";
+  // If dismissible, add click and keypress handlers.
+  if (!options.alwaysDisplay) {
+    var clickHandler = function clickHandler(e) {
+      // Close the modal on any click.
+      appElement.removeEventListener('click', clickHandler);
+      appElement.remove();
+    };
+    appElement.addEventListener('click', clickHandler);
+
+    var keyHandler = function keyHandler(e) {
+      // Close the modal if either Escape or Enter was pressed.
+      if (e.key === "Escape") {
+        appElement.remove();
+        window.removeEventListener('keydown', keyHandler);
+      }
+    };
+    window.addEventListener('keydown', keyHandler);
+  }
 }
 
 function MakeIntoModal(appElement, message, options) {
   /* Mutate the App element into a modal.
    */
   appElement.classList.add('modal');
-  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n    </div>\n  ";
+  if (options.alwaysDisplay) {
+    appElement.classList.add('non-dismissible');
+  } else {
+    appElement.classList.add('dismissible');
+  }
+  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.alwaysDisplay ? '' : '<button>OK</button>') + "\n    </div>\n  ";
+
+  // If dismissible, add click and keypress handlers.
+  if (!options.alwaysDisplay) {
+    var clickHandler = function clickHandler(e) {
+      // Close the modal on any click.
+      appElement.remove();
+      window.removeEventListener('click', clickHandler);
+    };
+    window.addEventListener('click', clickHandler);
+
+    var keyHandler = function keyHandler(e) {
+      // Close the modal if either Escape or Enter was pressed.
+      if (e.key === "Escape" || e.key === "Enter") {
+        appElement.remove();
+        window.removeEventListener('keydown', keyHandler);
+      }
+    };
+    window.addEventListener('keydown', keyHandler);
+  }
 }
 
 function init() {

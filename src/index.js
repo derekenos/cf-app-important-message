@@ -5,17 +5,17 @@ import css from "./styles.css"
 const PREDEFINED_MESSAGES = {
   "minorServiceInterruption":
   `
-We're experiencing a minor service interruption - some features may not work.
+&#9888; We're experiencing a minor service interruption - some features may not work.
 `,
 
   "majorServiceInterruption":
   `
-We're experiencing a major service outage - many features may not work.
+&#9888; We're experiencing a major service outage - many features may not work.
 `,
 
   "scheduledMaintenance":
   `
-We're currently undergoing scheduled maintenance - some features may not work.
+&#9888; We're currently undergoing scheduled maintenance - some features may not work.
 `,
 }
 
@@ -24,11 +24,36 @@ function MakeIntoBanner (appElement, message, options) {
   /* Mutate the App element into a banner.
    */
   appElement.classList.add('banner')
+  if (options.alwaysDisplay) {
+    appElement.classList.add('non-dismissible')
+  } else {
+    appElement.classList.add('dismissible')
+  }
   appElement.innerHTML = `
     <div class="message">
       ${message}
+      ${options.alwaysDisplay ? '' : '<span class="close">x</span>'}
     </div>
   `
+  // If dismissible, add click and keypress handlers.
+  if (!options.alwaysDisplay) {
+    const clickHandler = e => {
+      // Close the modal on any click.
+      appElement.removeEventListener('click', clickHandler)
+      appElement.remove()
+    }
+    appElement.addEventListener('click', clickHandler)
+
+    const keyHandler = e => {
+      // Close the modal if either Escape or Enter was pressed.
+      if (e.key === "Escape") {
+        appElement.remove()
+        window.removeEventListener('keydown', keyHandler)
+      }
+    }
+    window.addEventListener('keydown', keyHandler)
+  }
+
 }
 
 
@@ -36,11 +61,36 @@ function MakeIntoModal (appElement, message, options) {
   /* Mutate the App element into a modal.
    */
   appElement.classList.add('modal')
+  if (options.alwaysDisplay) {
+    appElement.classList.add('non-dismissible')
+  } else {
+    appElement.classList.add('dismissible')
+  }
   appElement.innerHTML = `
     <div class="message">
       ${message}
+      ${options.alwaysDisplay ? '' : '<button>OK</button>'}
     </div>
   `
+
+  // If dismissible, add click and keypress handlers.
+  if (!options.alwaysDisplay) {
+    const clickHandler = e => {
+      // Close the modal on any click.
+      appElement.remove()
+      window.removeEventListener('click', clickHandler)
+    }
+    window.addEventListener('click', clickHandler)
+
+    const keyHandler = e => {
+      // Close the modal if either Escape or Enter was pressed.
+      if (e.key === "Escape" || e.key === "Enter") {
+        appElement.remove()
+        window.removeEventListener('keydown', keyHandler)
+      }
+    }
+    window.addEventListener('keydown', keyHandler)
+  }
 }
 
 
