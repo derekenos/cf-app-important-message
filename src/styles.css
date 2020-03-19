@@ -4,12 +4,12 @@
 *********************************************************************************/
 cloudflare-app[app="important-message"] {
     z-index: 2147483647;
+    font-size: 3vh;
 }
 
 cloudflare-app[app="important-message"] .message {
     background-color: #ffa500;
     color: #fff;
-    font-size: 1rem;
     position: relative;
 }
 
@@ -25,25 +25,25 @@ cloudflare-app[app="important-message"].banner.dismissible {
     left: 0;
     top: 0;
     right: 0;
-    box-shadow: 0 0 4px 1px #444;
+    box-shadow: 0 0 1vh .2vh #444;
     transition: top .5s;
     z-index: 2147483647;
     cursor: pointer;
 }
 
 cloudflare-app[app="important-message"].banner .message {
-    padding: 1em;
+    padding: 5vh;
     text-align: left;
 }
 
 cloudflare-app[app="important-message"].banner.dismissible .message .close {
     position: absolute;
-    right: .5em;
-    top: .75em;
+    right: 2vh;
+    top: 4vh;
     font-family: arial;
-    font-size: 1.5rem;
-    line-height: 1rem;
-    padding: 0 .5rem;
+    font-size: 4vh;
+    line-height: 4vh;
+    padding: 0 1vh;
     font-weight: bold;
 }
 
@@ -65,18 +65,19 @@ cloudflare-app[app="important-message"].modal {
 }
 
 cloudflare-app[app="important-message"].modal .message {
-    padding: 2em;
+    padding: 5vh;
     text-align: left;
     min-width: 50vw;
     margin: auto auto;
-    border: solid #000 2px;
+    border: solid #000 .5vh;
 }
 
 cloudflare-app[app="important-message"].modal.dismissible button {
     float: right;
-    margin-top: 2em;
-    padding: .5em 1em;
+    margin-top: 5vh;
+    padding: 1.2vh 2vh;
     cursor: pointer;
+    font-size: 2vh;
 }
 
 

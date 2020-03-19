@@ -226,7 +226,9 @@ function init() {
       messageEl.style.backgroundColor = options.customBackgroundColor;
       messageEl.style.color = options.customTextColor;
     }
-    messageEl.style.borderRadius = "\n      " + (options.displayMode === "banner" ? 0 : options.borderRadius) + "px\n      " + (options.displayMode === "banner" ? 0 : options.borderRadius) + "px\n      " + options.borderRadius + "px\n      " + options.borderRadius + "px\n    ";
+    if (options.displayMode === "modal") {
+      messageEl.style.borderRadius = options.borderRadius + "px";
+    }
   }
 
   // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
