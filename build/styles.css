@@ -10,7 +10,6 @@ cloudflare-app[app="important-message"] .message {
     background-color: #ffa500;
     color: #fff;
     font-size: 18px;
-    font-weight: bold;
 }
 
 /*********************************************************************************
@@ -42,7 +41,7 @@ cloudflare-app[app="important-message"].modal {
     right: 0;
     bottom: 0;
     display: flex;
-    background-color: rgba(0, 0, 0, .8);
+    background-color: rgba(0, 0, 0, .6);
 }
 
 cloudflare-app[app="important-message"].modal .message {
@@ -51,6 +50,7 @@ cloudflare-app[app="important-message"].modal .message {
     width: 50vw;
     height: 50vh;
     margin: auto auto;
+    border: solid #000 2px;
 }
 
 

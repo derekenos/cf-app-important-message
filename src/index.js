@@ -77,9 +77,16 @@ function init() {
       MakeIntoModal(element, message, options)
     }
 
+    // Apply the configurable styles.
     const messageEl = element.querySelector('.message')
-    messageEl.style.backgroundColor = options.backgroundColor
-    messageEl.style.color = options.messageColor
+    if (options.colorScheme === "predefined") {
+      const [bgColor, color] = options.predefinedColorScheme.split(',')
+      messageEl.style.backgroundColor = bgColor
+      messageEl.style.color = color
+    } else {
+      messageEl.style.backgroundColor = options.customBackgroundColor
+      messageEl.style.color = options.customTextColor
+    }
     messageEl.style.borderRadius = `
       ${options.displayMode === "banner" ? 0 : options.borderRadius}px
       ${options.displayMode === "banner" ? 0 : options.borderRadius}px

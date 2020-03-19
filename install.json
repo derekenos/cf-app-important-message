@@ -130,23 +130,75 @@
         "default": false
       },
 
-      "backgroundColor": {
+      "colorScheme": {
+        "order": 7,
+        "title": "Color Scheme",
+        "type": "string",
+        "format": "radios",
+        "enum": [
+          "predefined",
+          "custom"
+        ],
+        "enumNames": {
+          "predefined": "Predefined",
+          "custom": "Custom"
+        },
+        "default": "predefined"
+      },
+
+      "predefinedColorScheme": {
+        "showIf": {
+          "colorScheme": "predefined"
+        },
+        "order": 8,
+        "title": "Select Predefined Color Scheme",
+        "type": "string",
+        "format": "radios",
+        "enum": [
+          "#cce5ff,#004085",
+          "#e2e3e5,#383d41",
+          "#d4edda,#155724",
+          "#f8d7da,#721c24",
+          "#fff3cd,#856404",
+          "#d1ecf1,#0c5460",
+          "#d6d8d9,#1b1e21"
+        ],
+        "enumNames": {
+          "#cce5ff,#004085": "Primary",
+          "#e2e3e5,#383d41": "Secondary",
+          "#d4edda,#155724": "Success",
+          "#f8d7da,#721c24": "Danger",
+          "#fff3cd,#856404": "Warning",
+          "#d1ecf1,#0c5460": "Info",
+          "#d6d8d9,#1b1e21": "Dark"
+        },
+        "default": "#cce5ff,#004085"
+      },
+
+      "customBackgroundColor": {
+        "showIf": {
+          "colorScheme": "custom"
+        },
         "order": 9,
         "title": "Background Color",
         "format": "color",
         "type": "string",
-        "default": "#ffa500"
+        "default": "#cce5ff"
       },
 
-      "messageColor": {
+      "customTextColor": {
+        "showIf": {
+          "colorScheme": "custom"
+        },
         "order": 10,
-        "title": "Message Color",
+        "title": "Text Color",
         "format": "color",
         "type": "string",
-        "default": "#ffffff"
+        "default": "#333333"
       },
 
       "borderRadius": {
+        "order": 11,
         "title": "Corner Roundness",
         "type": "number",
         "format": "slider",
