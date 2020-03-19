@@ -152,7 +152,7 @@ function MakeIntoModal(appElement, message, options) {
   } else {
     appElement.classList.add('dismissible');
   }
-  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.alwaysDisplay ? '' : '<button>OK</button>') + "\n    </div>\n  ";
+  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.alwaysDisplay ? '' : '<p><button>OK</button></p>') + "\n    </div>\n  ";
 
   // If dismissible, add click and keypress handlers.
   if (!options.alwaysDisplay) {
@@ -197,7 +197,13 @@ function init() {
     element.setAttribute("app", "important-message");
 
     // Get the message content.
-    var message = options.messageType === "predefined" ? PREDEFINED_MESSAGES[options.predefinedMessage] : options.customMessage;
+    var message = void 0;
+    if (options.messageType === "predefined") {
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = "<p>" + PREDEFINED_MESSAGES[options.predefinedMessage] + "</p>";
+    } else {
+      message = options.customMessage;
+    }
 
     // Insert the HTML.
     if (options.displayMode === "banner") {

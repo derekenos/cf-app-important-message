@@ -10,6 +10,7 @@ cloudflare-app[app="important-message"] .message {
     background-color: #ffa500;
     color: #fff;
     font-size: 1rem;
+    position: relative;
 }
 
 /*********************************************************************************
@@ -27,20 +28,22 @@ cloudflare-app[app="important-message"].banner.dismissible {
     box-shadow: 0 0 4px 1px #444;
     transition: top .5s;
     z-index: 2147483647;
+    cursor: pointer;
 }
 
 cloudflare-app[app="important-message"].banner .message {
-    padding: 14px;
+    padding: 1em;
     text-align: left;
 }
 
 cloudflare-app[app="important-message"].banner.dismissible .message .close {
-    float: right;
+    position: absolute;
+    right: .5em;
+    top: .75em;
     font-family: arial;
     font-size: 1.5rem;
     line-height: 1rem;
     padding: 0 .5rem;
-    cursor: pointer;
     font-weight: bold;
 }
 
@@ -64,7 +67,7 @@ cloudflare-app[app="important-message"].modal {
 cloudflare-app[app="important-message"].modal .message {
     padding: 2em;
     text-align: left;
-    width: 50vw;
+    min-width: 50vw;
     margin: auto auto;
     border: solid #000 2px;
 }
@@ -80,15 +83,14 @@ cloudflare-app[app="important-message"].modal.dismissible button {
 /*********************************************************************************
  * Rich-text Message Tweaks
 *********************************************************************************/
-cloudflare-app[app="important-message"] > p {
+cloudflare-app[app="important-message"] p {
     margin: 0;
     padding: 0;
-    display: inline-block;
     color: inherit;
     font-size: inherit;
 }
 
-cloudflare-app[app="important-message"] > p a {
+cloudflare-app[app="important-message"] a {
     text-decoration: underline;
     color: inherit;
     font-size: inherit;

@@ -69,7 +69,7 @@ function MakeIntoModal (appElement, message, options) {
   appElement.innerHTML = `
     <div class="message">
       ${message}
-      ${options.alwaysDisplay ? '' : '<button>OK</button>'}
+      ${options.alwaysDisplay ? '' : '<p><button>OK</button></p>'}
     </div>
   `
 
@@ -117,8 +117,13 @@ function init() {
     element.setAttribute("app", "important-message")
 
     // Get the message content.
-    const message = options.messageType === "predefined" ?
-          PREDEFINED_MESSAGES[options.predefinedMessage] : options.customMessage
+    let message
+    if (options.messageType === "predefined") {
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = `<p>${PREDEFINED_MESSAGES[options.predefinedMessage]}</p>`
+    } else {
+      message = options.customMessage
+    }
 
     // Insert the HTML.
     if (options.displayMode === "banner") {
