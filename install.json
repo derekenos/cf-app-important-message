@@ -12,7 +12,9 @@
       }
     ]
   },
+
   "dns": [],
+
   "preview": {
     "handlers": [
       {
@@ -21,42 +23,137 @@
       }
     ]
   },
+
   "options": {
     "properties": {
       "enabled": {
         "order": 1,
-        "title": "Banner Enabled",
+        "title": "Message Enabled",
         "type": "boolean",
         "default": true
       },
+
       "pages": {
         "order": 2,
         "title": "Pages",
-        "description": "Which pages should show this banner?",
+        "description": "On which pages do you want to show this message?",
         "type": "object",
         "format": "page"
       },
-      "message": {
+
+      "messageType": {
         "order": 3,
-        "title": "Banner Message",
+        "title": "Message Type",
+        "type": "string",
+        "format": "radios",
+        "enum": [
+          "predefined",
+          "custom"
+        ],
+        "enumNames": {
+          "predefined": "Predefined",
+          "custom": "Custom"
+        },
+        "default": "predefined"
+      },
+
+      "predefinedMessage": {
+        "showIf": {
+          "messageType": "predefined"
+        },
+        "order": 4,
+        "title": "Select Predefined Message Type",
+        "type": "string",
+        "format": "radios",
+        "enum": [
+          "minorServiceInterruption",
+          "majorServiceInterruption",
+          "scheduledMaintenance"
+        ],
+        "enumNames": {
+          "minorServiceInterruption": "Minor service interruption",
+          "majorServiceInterruption": "Major service interruption",
+          "scheduledMaintenance": "Scheduled maintenance"
+        },
+        "default": "minorServiceInterruption"
+      },
+
+      "customMessage": {
+        "showIf": {
+          "messageType": "custom"
+        },
+        "order": 4,
+        "title": "Write a Custom Message",
         "type": "string",
         "format": "richtext",
-        "default": "We're currently experiencing some connectivity issues.",
-        "placeholder": "We're currently experiencing some connectivity issues."
+        "default": "Your Custom Message",
+        "placeholder": "Write your custom message here."
       },
+
+      "displayMode": {
+        "order": 5,
+        "title": "Display Mode",
+        "type": "string",
+        "format": "radios",
+        "enum": [
+          "banner",
+          "modal"
+        ],
+        "enumNames": {
+          "banner": "Display as a banner at the top of the screen",
+          "modal": "Display as a modal that overlays the entire screen"
+        },
+        "default": "banner"
+      },
+
+      "displayMode": {
+        "order": 5,
+        "title": "Display Mode",
+        "type": "string",
+        "format": "radios",
+        "enum": [
+          "banner",
+          "modal"
+        ],
+        "enumNames": {
+          "banner": "Display as a banner at the top of the screen",
+          "modal": "Display as a modal that overlays the entire screen"
+        },
+        "default": "banner"
+      },
+
+      "alwaysDisplay": {
+        "order": 6,
+        "title": "Always Display",
+        "description": "Do not allow users to dismiss this message.",
+        "type": "boolean",
+        "default": false
+      },
+
       "backgroundColor": {
-        "order": 4,
+        "order": 9,
         "title": "Background Color",
         "format": "color",
         "type": "string",
         "default": "#ffa500"
       },
+
       "messageColor": {
-        "order": 5,
+        "order": 10,
         "title": "Message Color",
         "format": "color",
         "type": "string",
         "default": "#ffffff"
+      },
+
+      "borderRadius": {
+        "title": "Corner Roundness",
+        "type": "number",
+        "format": "slider",
+        "default": 0,
+        "minimum": 0,
+        "maximum": 32,
+        "step": 1
       }
     }
   }

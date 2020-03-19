@@ -1,43 +1,72 @@
-/* Set the app attribute to your app's dash-delimited alias. */
-cloudflare-app[app="banner"] {
-  background-color: #ffa500;
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  padding: 14px;
-  position: fixed;
-  left: 0;
-  top: -64px;
-  right: 0;
-  box-shadow: 0 0 4px 1px #444;
-  transition: top .2s;
-  z-index: 2147483647;
-  border-radius: 0 0 8px 8px;
-  cursor: pointer;
+
+/*********************************************************************************
+ * Global
+*********************************************************************************/
+cloudflare-app[app="important-message"] {
+    z-index: 2147483647;
 }
 
-cloudflare-app[app="banner"] > p {
+cloudflare-app[app="important-message"] .message {
+    background-color: #ffa500;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/*********************************************************************************
+ * Banner
+*********************************************************************************/
+cloudflare-app[app="important-message"].banner {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    box-shadow: 0 0 4px 1px #444;
+    transition: top .5s;
+    z-index: 2147483647;
+    cursor: pointer;
+}
+
+cloudflare-app[app="important-message"].banner .message {
+    padding: 14px;
+    text-align: center;
+}
+
+/*********************************************************************************
+ * Modal
+*********************************************************************************/
+cloudflare-app[app="important-message"].modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    background-color: rgba(0, 0, 0, .8);
+}
+
+cloudflare-app[app="important-message"].modal .message {
+    padding: 2em;
+    text-align: center;
+    width: 50vw;
+    height: 50vh;
+    margin: auto auto;
+}
+
+
+/*********************************************************************************
+ * Rich-text Message Tweaks
+*********************************************************************************/
+cloudflare-app[app="important-message"] > p {
     margin: 0;
     padding: 0;
     display: inline-block;
+    color: inherit;
+    font-size: inherit;
 }
 
-cloudflare-app[app="banner"] > p a {
+cloudflare-app[app="important-message"] > p a {
     text-decoration: underline;
     color: inherit;
-}
-
-cloudflare-app[app="banner"].visible {
-    top: 0;
-}
-
-cloudflare-app[app="banner"] button {
-    background-color: transparent;
-    border: none;
-    float: right;
-    padding: 0;
-    margin: 0;
-    font-weight: bold !important;
-    color: inherit;
+    font-size: inherit;
 }

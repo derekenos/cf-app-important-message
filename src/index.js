@@ -1,6 +1,49 @@
 // this import statement tells webpack to include styles.css in the build
 import css from "./styles.css"
 
+
+const PREDEFINED_MESSAGES = {
+  "minorServiceInterruption":
+  `
+We're experiencing a minor service interruption - some features may not work.
+`,
+
+  "majorServiceInterruption":
+  `
+We're experiencing a major service outage - many features may not work.
+`,
+
+  "scheduledMaintenance":
+  `
+We're currently undergoing scheduled maintenance - some features may not work.
+`,
+}
+
+
+function MakeIntoBanner (appElement, message, options) {
+  /* Mutate the App element into a banner.
+   */
+  appElement.classList.add('banner')
+  appElement.innerHTML = `
+    <div class="message">
+      ${message}
+    </div>
+  `
+}
+
+
+function MakeIntoModal (appElement, message, options) {
+  /* Mutate the App element into a modal.
+   */
+  appElement.classList.add('modal')
+  appElement.innerHTML = `
+    <div class="message">
+      ${message}
+    </div>
+  `
+}
+
+
 function init() {
   if (!window.addEventListener) return // Check for IE9+
 
@@ -20,20 +63,29 @@ function init() {
     const location = {selector: "body", method: "prepend"}
     element = INSTALL.createElement(location, element)
 
-    element.style.backgroundColor = options.backgroundColor
-    element.style.color = options.messageColor
-
     // Set the app attribute to your app's dash-delimited alias.
-    element.setAttribute("app", "banner")
-    element.innerHTML = `${options.message}<button>X</button>`
+    element.setAttribute("app", "important-message")
 
-    // Remove the element from view on click.
-    element.addEventListener('click', () => {
-      element.classList.remove('visible')
-    })
+    // Get the message content.
+    const message = options.messageType === "predefined" ?
+          PREDEFINED_MESSAGES[options.predefinedMessage] : options.customMessage
 
-    // Add the visible vlass to transition the element into view.
-    element.classList.add('visible')
+    // Insert the HTML.
+    if (options.displayMode === "banner") {
+      MakeIntoBanner(element, message, options)
+    } else {
+      MakeIntoModal(element, message, options)
+    }
+
+    const messageEl = element.querySelector('.message')
+    messageEl.style.backgroundColor = options.backgroundColor
+    messageEl.style.color = options.messageColor
+    messageEl.style.borderRadius = `
+      ${options.displayMode === "banner" ? 0 : options.borderRadius}px
+      ${options.displayMode === "banner" ? 0 : options.borderRadius}px
+      ${options.borderRadius}px
+      ${options.borderRadius}px
+    `
   }
 
   // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
