@@ -224,7 +224,12 @@ function updateElement(options) {
     return;
   }
 
-  var location = { selector: "body", method: "prepend" };
+  var location = void 0;
+  if (options.displayMode === "banner" && options.notDismissible) {
+    ;location = options.location;
+  } else {
+    location = { selector: "body", method: "prepend" };
+  }
   appElement = INSTALL.createElement(location, appElement);
 
   // Set the app attribute to your app's dash-delimited alias.
