@@ -39,7 +39,7 @@ function MakeIntoBanner (appElement, message, options) {
   /* Mutate the App element into a banner.
    */
   appElement.classList.add('banner')
-  if (options.alwaysDisplay) {
+  if (options.notDismissible) {
     appElement.classList.add('non-dismissible')
   } else {
     appElement.classList.add('dismissible')
@@ -47,11 +47,11 @@ function MakeIntoBanner (appElement, message, options) {
   appElement.innerHTML = `
     <div class="message">
       ${message}
-      ${options.alwaysDisplay ? '' : '<span class="close">x</span>'}
+      ${options.notDismissible ? '' : '<span class="close">x</span>'}
     </div>
   `
   // If dismissible, add click and keypress handlers.
-  if (!options.alwaysDisplay) {
+  if (!options.notDismissible) {
     const clickHandler = e => {
       // Close the modal on any click.
       appElement.removeEventListener('click', clickHandler)
@@ -75,7 +75,7 @@ function MakeIntoModal (appElement, message, options) {
   /* Mutate the App element into a modal.
    */
   appElement.classList.add('modal')
-  if (options.alwaysDisplay) {
+  if (options.notDismissible) {
     appElement.classList.add('non-dismissible')
   } else {
     appElement.classList.add('dismissible')
@@ -83,12 +83,12 @@ function MakeIntoModal (appElement, message, options) {
   appElement.innerHTML = `
     <div class="message">
       ${message}
-      ${options.alwaysDisplay ? '' : '<p><button>OK</button></p>'}
+      ${options.notDismissible ? '' : '<p><button>OK</button></p>'}
     </div>
   `
 
   // If dismissible, add click and keypress handlers.
-  if (!options.alwaysDisplay) {
+  if (!options.notDismissible) {
     const clickHandler = e => {
       // Close the modal on any click.
       appElement.remove()
@@ -152,12 +152,14 @@ function init() {
 
     // Apply the configurable styles.
     const messageEl = element.querySelector('.message')
+
     if (options.colorScheme === "predefined") {
       const [bgColor, color, buttonBgColor, buttonColor] =
             options.predefinedColorScheme.split(',')
       messageEl.style.backgroundColor = bgColor
       messageEl.style.color = color
-      if (options.displayMode === "modal") {
+      // Apply style to dismissible modal button.
+      if (options.displayMode === "modal" && !options.notDismissible) {
         const buttonEl = messageEl.querySelector('button')
         buttonEl.style.backgroundColor = buttonBgColor
         buttonEl.style.color = buttonColor
@@ -166,6 +168,7 @@ function init() {
       messageEl.style.backgroundColor = options.customBackgroundColor
       messageEl.style.color = options.customTextColor
     }
+
     if (options.displayMode === "modal") {
       messageEl.style.borderRadius = `${options.borderRadius}px`
     }

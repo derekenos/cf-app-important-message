@@ -16,10 +16,6 @@ cloudflare-app[app="important-message"] .message {
 /*********************************************************************************
  * Banner
 *********************************************************************************/
-cloudflare-app[app="important-message"].banner.non-dismissible {
-
-}
-
 cloudflare-app[app="important-message"].banner.dismissible {
     position: fixed;
     left: 0;
@@ -68,6 +64,7 @@ cloudflare-app[app="important-message"].modal .message {
     text-align: left;
     margin: auto auto;
     border: solid #000 2px;
+    max-width: 60vw;
 }
 
 cloudflare-app[app="important-message"].modal.dismissible button {

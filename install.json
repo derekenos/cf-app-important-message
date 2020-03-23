@@ -122,9 +122,9 @@
         "default": "banner"
       },
 
-      "alwaysDisplay": {
+      "notDismissible": {
         "order": 6,
-        "title": "Always Display",
+        "title": "Not Dismissible",
         "description": "Do not allow users to dismiss this message.",
         "type": "boolean",
         "default": false

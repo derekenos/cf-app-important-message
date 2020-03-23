@@ -127,14 +127,14 @@ function MakeIntoBanner(appElement, message, options) {
   /* Mutate the App element into a banner.
    */
   appElement.classList.add('banner');
-  if (options.alwaysDisplay) {
+  if (options.notDismissible) {
     appElement.classList.add('non-dismissible');
   } else {
     appElement.classList.add('dismissible');
   }
-  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.alwaysDisplay ? '' : '<span class="close">x</span>') + "\n    </div>\n  ";
+  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.notDismissible ? '' : '<span class="close">x</span>') + "\n    </div>\n  ";
   // If dismissible, add click and keypress handlers.
-  if (!options.alwaysDisplay) {
+  if (!options.notDismissible) {
     var clickHandler = function clickHandler(e) {
       // Close the modal on any click.
       appElement.removeEventListener('click', clickHandler);
@@ -157,15 +157,15 @@ function MakeIntoModal(appElement, message, options) {
   /* Mutate the App element into a modal.
    */
   appElement.classList.add('modal');
-  if (options.alwaysDisplay) {
+  if (options.notDismissible) {
     appElement.classList.add('non-dismissible');
   } else {
     appElement.classList.add('dismissible');
   }
-  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.alwaysDisplay ? '' : '<p><button>OK</button></p>') + "\n    </div>\n  ";
+  appElement.innerHTML = "\n    <div class=\"message\">\n      " + message + "\n      " + (options.notDismissible ? '' : '<p><button>OK</button></p>') + "\n    </div>\n  ";
 
   // If dismissible, add click and keypress handlers.
-  if (!options.alwaysDisplay) {
+  if (!options.notDismissible) {
     var clickHandler = function clickHandler(e) {
       // Close the modal on any click.
       appElement.remove();
@@ -228,6 +228,7 @@ function init() {
 
     // Apply the configurable styles.
     var messageEl = element.querySelector('.message');
+
     if (options.colorScheme === "predefined") {
       var _options$predefinedCo = options.predefinedColorScheme.split(','),
           _options$predefinedCo2 = _slicedToArray(_options$predefinedCo, 4),
@@ -238,7 +239,8 @@ function init() {
 
       messageEl.style.backgroundColor = bgColor;
       messageEl.style.color = color;
-      if (options.displayMode === "modal") {
+      // Apply style to dismissible modal button.
+      if (options.displayMode === "modal" && !options.notDismissible) {
         var buttonEl = messageEl.querySelector('button');
         buttonEl.style.backgroundColor = buttonBgColor;
         buttonEl.style.color = buttonColor;
@@ -247,6 +249,7 @@ function init() {
       messageEl.style.backgroundColor = options.customBackgroundColor;
       messageEl.style.color = options.customTextColor;
     }
+
     if (options.displayMode === "modal") {
       messageEl.style.borderRadius = options.borderRadius + "px";
     }
