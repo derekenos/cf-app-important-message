@@ -1,4 +1,4 @@
-// this import statement tells webpack to include styles.css in the build
+
 import css from "./styles.css"
 
 
@@ -68,7 +68,6 @@ function MakeIntoBanner (appElement, message, options) {
     }
     window.addEventListener('keydown', keyHandler)
   }
-
 }
 
 
@@ -154,9 +153,15 @@ function init() {
     // Apply the configurable styles.
     const messageEl = element.querySelector('.message')
     if (options.colorScheme === "predefined") {
-      const [bgColor, color] = options.predefinedColorScheme.split(',')
+      const [bgColor, color, buttonBgColor, buttonColor] =
+            options.predefinedColorScheme.split(',')
       messageEl.style.backgroundColor = bgColor
       messageEl.style.color = color
+      if (options.displayMode === "modal") {
+        const buttonEl = messageEl.querySelector('button')
+        buttonEl.style.backgroundColor = buttonBgColor
+        buttonEl.style.color = buttonColor
+      }
     } else {
       messageEl.style.backgroundColor = options.customBackgroundColor
       messageEl.style.color = options.customTextColor

@@ -96,8 +96,7 @@
 "use strict";
 
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); // this import statement tells webpack to include styles.css in the build
-
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _styles = __webpack_require__(/*! ./styles.css */ "./src/styles.css");
 
@@ -231,12 +230,19 @@ function init() {
     var messageEl = element.querySelector('.message');
     if (options.colorScheme === "predefined") {
       var _options$predefinedCo = options.predefinedColorScheme.split(','),
-          _options$predefinedCo2 = _slicedToArray(_options$predefinedCo, 2),
+          _options$predefinedCo2 = _slicedToArray(_options$predefinedCo, 4),
           bgColor = _options$predefinedCo2[0],
-          color = _options$predefinedCo2[1];
+          color = _options$predefinedCo2[1],
+          buttonBgColor = _options$predefinedCo2[2],
+          buttonColor = _options$predefinedCo2[3];
 
       messageEl.style.backgroundColor = bgColor;
       messageEl.style.color = color;
+      if (options.displayMode === "modal") {
+        var buttonEl = messageEl.querySelector('button');
+        buttonEl.style.backgroundColor = buttonBgColor;
+        buttonEl.style.color = buttonColor;
+      }
     } else {
       messageEl.style.backgroundColor = options.customBackgroundColor;
       messageEl.style.color = options.customTextColor;
