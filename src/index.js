@@ -20,6 +20,21 @@ const PREDEFINED_MESSAGES = {
 }
 
 
+function getMaxZIndex () {
+  // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
+  let max = 0
+  const elements = document.getElementsByTagName('*')
+  Array.prototype.slice.call(elements).forEach(function (element) {
+    let zIndex = parseInt(
+      document.defaultView.getComputedStyle(element).zIndex,
+      10
+    )
+    max = zIndex ? Math.max(max, zIndex) : max
+  })
+  return max
+}
+
+
 function MakeIntoBanner (appElement, message, options) {
   /* Mutate the App element into a banner.
    */
@@ -131,6 +146,10 @@ function init() {
     } else {
       MakeIntoModal(element, message, options)
     }
+
+    // Set the z-index to max + 1
+    const maxZIndex = getMaxZIndex()
+    element.style.zIndex = maxZIndex + 1
 
     // Apply the configurable styles.
     const messageEl = element.querySelector('.message')

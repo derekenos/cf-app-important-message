@@ -113,6 +113,17 @@ var PREDEFINED_MESSAGES = {
   "scheduledMaintenance": "\n&#9888; We're currently undergoing scheduled maintenance - some features may not work.\n"
 };
 
+function getMaxZIndex() {
+  // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
+  var max = 0;
+  var elements = document.getElementsByTagName('*');
+  Array.prototype.slice.call(elements).forEach(function (element) {
+    var zIndex = parseInt(document.defaultView.getComputedStyle(element).zIndex, 10);
+    max = zIndex ? Math.max(max, zIndex) : max;
+  });
+  return max;
+}
+
 function MakeIntoBanner(appElement, message, options) {
   /* Mutate the App element into a banner.
    */
@@ -211,6 +222,10 @@ function init() {
     } else {
       MakeIntoModal(element, message, options);
     }
+
+    // Set the z-index to max + 1
+    var maxZIndex = getMaxZIndex();
+    element.style.zIndex = maxZIndex + 1;
 
     // Apply the configurable styles.
     var messageEl = element.querySelector('.message');
