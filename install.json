@@ -100,7 +100,7 @@
           "modal"
         ],
         "enumNames": {
-          "banner": "Display as a banner at the top of the screen",
+          "banner": "Display as a horizontal banner",
           "modal": "Display as a modal that overlays the entire screen"
         },
         "default": "banner"
@@ -199,8 +199,19 @@
         "default": "#383d41"
       },
 
-      "padding": {
+      "fontSize": {
         "order": 12,
+        "title": "Text Size",
+        "type": "number",
+        "format": "slider",
+        "default": 1,
+        "minimum": 1,
+        "maximum": 4,
+        "step": 0.1
+      },
+
+      "padding": {
+        "order": 13,
         "title": "Whitespace Padding",
         "type": "number",
         "format": "slider",
@@ -211,7 +222,7 @@
       },
 
       "borderRadius": {
-        "order": 13,
+        "order": 14,
         "title": "Corner Roundness",
         "type": "number",
         "format": "slider",

@@ -243,6 +243,8 @@ function updateElement(options) {
   } else {
     message = options.customMessage;
   }
+  // Wrap in a <message-inner> element for padding control.
+  message = "<message-inner>" + message + "</message-inner>";
 
   // Insert the HTML.
   if (options.displayMode === "banner") {
@@ -280,8 +282,12 @@ function updateElement(options) {
     messageEl.style.color = options.customTextColor;
   }
 
+  // fontSize
+  messageEl.style.fontSize = options.fontSize + "rem";
+
   // padding
-  messageEl.style.padding = options.padding + "vh";
+  var messageInnerEl = messageEl.querySelector("message-inner");
+  messageInnerEl.style.padding = options.padding + "rem";
 
   // borderRadius
   if (options.displayMode === "modal") {
