@@ -175,21 +175,29 @@ function MakeIntoBanner(el, message, options) {
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
-    var clickHandler = function clickHandler(e) {
-      // Close the modal on any click.
-      el.removeEventListener("click", clickHandler);
-      el.remove();
-    };
-    el.addEventListener("click", clickHandler);
+    var closerEl = el.querySelector("closer");
 
-    var keyHandler = function keyHandler(e) {
-      // Close the modal if either Escape or Enter was pressed.
+    // Bold the X on mouse enter.
+    el.addEventListener("mouseenter", function (e) {
+      closerEl.style.fontWeight = "bold";
+    });
+
+    // Unbold the X on mouse leave.
+    el.addEventListener("mouseleave", function (e) {
+      closerEl.style.fontWeight = "normal";
+    });
+
+    // Remove the element on click.
+    el.addEventListener("click", function (e) {
+      return el.remove();
+    });
+
+    // Remove the element on Escape.
+    window.addEventListener("keydown", function (e) {
       if (e.key === "Escape") {
         el.remove();
-        window.removeEventListener("keydown", keyHandler);
       }
-    };
-    window.addEventListener("keydown", keyHandler);
+    });
   }
 }
 function MakeIntoModal(el, message, options) {
@@ -204,23 +212,19 @@ function MakeIntoModal(el, message, options) {
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
-    var clickHandler = function clickHandler(e) {
-      // Close the modal on overlay or button click.
+    // Close the modal on overlay or button click.
+    window.addEventListener("click", function (e) {
       if (e.target.tagName === "CLOUDFLARE-APP" || e.target.tagName === "CLOSER") {
         el.remove();
-        window.removeEventListener("click", clickHandler);
       }
-    };
-    window.addEventListener("click", clickHandler);
+    });
 
-    var keyHandler = function keyHandler(e) {
-      // Close the modal if either Escape or Enter was pressed.
+    // Close the modal if either Escape or Enter was pressed.
+    window.addEventListener("keydown", function (e) {
       if (e.key === "Escape" || e.key === "Enter") {
         el.remove();
-        window.removeEventListener("keydown", keyHandler);
       }
-    };
-    window.addEventListener("keydown", keyHandler);
+    });
   }
 }
 

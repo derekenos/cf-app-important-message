@@ -43,10 +43,6 @@ cloudflare-app[app="important-message"].banner.dismissible message closer {
     font-family: arial;
 }
 
-cloudflare-app[app="important-message"].banner.dismissible message close:hover {
-    font-weight: bold;
-}
-
 /*********************************************************************************
  * Modal
 *********************************************************************************/
