@@ -219,6 +219,11 @@ function updateElement(options) {
   } else {
     messageEl.style.backgroundColor = options.customBackgroundColor
     messageEl.style.color = options.customTextColor
+    if (options.displayMode === "modal" && !options.notDismissible) {
+      const buttonEl = messageEl.querySelector("closer")
+      buttonEl.style.backgroundColor = options.customButtonBackgroundColor
+      buttonEl.style.color = options.customButtonTextColor
+    }
   }
 
   // fontSize

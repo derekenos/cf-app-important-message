@@ -299,6 +299,11 @@ function updateElement(options) {
   } else {
     messageEl.style.backgroundColor = options.customBackgroundColor;
     messageEl.style.color = options.customTextColor;
+    if (options.displayMode === "modal" && !options.notDismissible) {
+      var _buttonEl = messageEl.querySelector("closer");
+      _buttonEl.style.backgroundColor = options.customButtonBackgroundColor;
+      _buttonEl.style.color = options.customButtonTextColor;
+    }
   }
 
   // fontSize

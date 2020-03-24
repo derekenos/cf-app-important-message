@@ -199,8 +199,34 @@
         "default": "#383d41"
       },
 
-      "fontSize": {
+      "customButtonBackgroundColor": {
+        "showIf": {
+          "colorScheme": "custom",
+          "displayMode": "modal",
+          "notDismissible": false
+        },
         "order": 12,
+        "title": "Button Background Color",
+        "format": "color",
+        "type": "string",
+        "default": "#6c757d"
+      },
+
+      "customButtonTextColor": {
+        "showIf": {
+          "colorScheme": "custom",
+          "displayMode": "modal",
+          "notDismissible": false
+        },
+        "order": 13,
+        "title": "Button Text Color",
+        "format": "color",
+        "type": "string",
+        "default": "#ffffff"
+      },
+
+      "fontSize": {
+        "order": 14,
         "title": "Text Size",
         "type": "number",
         "format": "slider",
@@ -211,7 +237,7 @@
       },
 
       "padding": {
-        "order": 13,
+        "order": 15,
         "title": "Whitespace Padding",
         "type": "number",
         "format": "slider",
@@ -222,7 +248,10 @@
       },
 
       "borderRadius": {
-        "order": 14,
+        "showIf": {
+          "displayMode": "modal"
+        },
+        "order": 16,
         "title": "Corner Roundness",
         "type": "number",
         "format": "slider",
