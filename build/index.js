@@ -205,9 +205,11 @@ function MakeIntoModal(el, message, options) {
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
     var clickHandler = function clickHandler(e) {
-      // Close the modal on any click.
-      el.remove();
-      window.removeEventListener("click", clickHandler);
+      // Close the modal on overlay or button click.
+      if (e.target.tagName === "CLOUDFLARE-APP" || e.target.tagName === "CLOSER") {
+        el.remove();
+        window.removeEventListener("click", clickHandler);
+      }
     };
     window.addEventListener("click", clickHandler);
 
