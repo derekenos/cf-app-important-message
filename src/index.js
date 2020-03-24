@@ -64,10 +64,10 @@ function MakeIntoBanner(el, message, options) {
   }
   el.appendChild(
     Element(
-      `<div class="message">
+      `<message>
+           ${options.notDismissible ? "" : "<closer>x</closer>"}
            ${message}
-           ${options.notDismissible ? "" : '<span class="close">x</span>'}
-         </div>`,
+         </message>`,
     ),
   )
 
@@ -100,10 +100,10 @@ function MakeIntoModal(el, message, options) {
   }
   el.appendChild(
     Element(
-      `<div class="message">
+      `<message>
            ${message}
-           ${options.notDismissible ? "" : "<p><button>OK</button></p>"}
-         </div>`,
+           ${options.notDismissible ? "" : "<br><closer>OK</closer>"}
+         </message>`,
     ),
   )
 
@@ -171,8 +171,9 @@ function updateElement(options) {
   appElement.style.zIndex = maxZIndex + 1
 
   // Apply the configurable styles.
-  const messageEl = appElement.querySelector(".message")
+  const messageEl = appElement.querySelector("message")
 
+  // colorScheme
   if (options.colorScheme === "predefined") {
     const [
       bgColor,
@@ -184,7 +185,7 @@ function updateElement(options) {
     messageEl.style.color = color
     // Apply style to dismissible modal button.
     if (options.displayMode === "modal" && !options.notDismissible) {
-      const buttonEl = messageEl.querySelector("button")
+      const buttonEl = messageEl.querySelector("closer")
       buttonEl.style.backgroundColor = buttonBgColor
       buttonEl.style.color = buttonColor
     }
@@ -193,6 +194,10 @@ function updateElement(options) {
     messageEl.style.color = options.customTextColor
   }
 
+  // padding
+  messageEl.style.padding = `${options.padding}vh`
+
+  // borderRadius
   if (options.displayMode === "modal") {
     messageEl.style.borderRadius = `${options.borderRadius}px`
   }

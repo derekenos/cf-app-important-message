@@ -161,7 +161,7 @@ function MakeIntoBanner(el, message, options) {
   } else {
     el.classList.add("dismissible");
   }
-  el.appendChild(Element("<div class=\"message\">\n           " + message + "\n           " + (options.notDismissible ? "" : '<span class="close">x</span>') + "\n         </div>"));
+  el.appendChild(Element("<message>\n           " + (options.notDismissible ? "" : "<closer>x</closer>") + "\n           " + message + "\n         </message>"));
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
@@ -190,7 +190,7 @@ function MakeIntoModal(el, message, options) {
   } else {
     el.classList.add("dismissible");
   }
-  el.appendChild(Element("<div class=\"message\">\n           " + message + "\n           " + (options.notDismissible ? "" : "<p><button>OK</button></p>") + "\n         </div>"));
+  el.appendChild(Element("<message>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><closer>OK</closer>") + "\n         </message>"));
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
@@ -256,8 +256,9 @@ function updateElement(options) {
   appElement.style.zIndex = maxZIndex + 1;
 
   // Apply the configurable styles.
-  var messageEl = appElement.querySelector(".message");
+  var messageEl = appElement.querySelector("message");
 
+  // colorScheme
   if (options.colorScheme === "predefined") {
     var _options$predefinedCo = options.predefinedColorScheme.split(","),
         _options$predefinedCo2 = _slicedToArray(_options$predefinedCo, 4),
@@ -270,7 +271,7 @@ function updateElement(options) {
     messageEl.style.color = color;
     // Apply style to dismissible modal button.
     if (options.displayMode === "modal" && !options.notDismissible) {
-      var buttonEl = messageEl.querySelector("button");
+      var buttonEl = messageEl.querySelector("closer");
       buttonEl.style.backgroundColor = buttonBgColor;
       buttonEl.style.color = buttonColor;
     }
@@ -279,6 +280,10 @@ function updateElement(options) {
     messageEl.style.color = options.customTextColor;
   }
 
+  // padding
+  messageEl.style.padding = options.padding + "vh";
+
+  // borderRadius
   if (options.displayMode === "modal") {
     messageEl.style.borderRadius = options.borderRadius + "px";
   }

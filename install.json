@@ -199,8 +199,19 @@
         "default": "#383d41"
       },
 
-      "borderRadius": {
+      "padding": {
         "order": 12,
+        "title": "Whitespace Padding",
+        "type": "number",
+        "format": "slider",
+        "default": 5,
+        "minimum": 0,
+        "maximum": 10,
+        "step": 0.1
+      },
+
+      "borderRadius": {
+        "order": 13,
         "title": "Corner Roundness",
         "type": "number",
         "format": "slider",
