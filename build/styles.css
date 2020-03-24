@@ -1,7 +1,7 @@
 
-/*********************************************************************************
- * Global
-*********************************************************************************/
+
+/* Global */
+
 cloudflare-app[app="important-message"] {
     font-size: 16px;
 }
@@ -21,9 +21,8 @@ cloudflare-app[app="important-message"] message message-inner {
 }
 
 
-/*********************************************************************************
- * Banner
-*********************************************************************************/
+/* Banner */
+
 cloudflare-app[app="important-message"].banner.dismissible {
     position: fixed;
     left: 0;
@@ -43,9 +42,9 @@ cloudflare-app[app="important-message"].banner.dismissible message closer {
     font-family: arial;
 }
 
-/*********************************************************************************
- * Modal
-*********************************************************************************/
+
+/* Modal */
+
 cloudflare-app[app="important-message"].modal {
     position: fixed;
     left: 0;
@@ -72,18 +71,24 @@ cloudflare-app[app="important-message"].modal.dismissible closer {
 }
 
 
-/*********************************************************************************
- * Rich-text Message Tweaks
-*********************************************************************************/
+/* Style resets for Rich Text */
+
 cloudflare-app[app="important-message"] p {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    font-size: 1em;
+    line-height: 1.2em;
     margin: 0;
     padding: 0;
-    color: inherit;
-    font-size: inherit;
 }
 
 cloudflare-app[app="important-message"] a {
-    text-decoration: underline;
+    background-color: transparent;
+    border: none;
     color: inherit;
-    font-size: inherit;
+    font-size: 1em;
+    line-height: 1.2em;
+    margin: 0;
+    padding: 0;
 }
