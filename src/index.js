@@ -50,6 +50,21 @@ function getMaxZIndex() {
   return max
 }
 
+function getPixelScaleFactor() {
+  // Return the factor with which to scale our absolute pixel values for
+  // consistent display across varying resolution displays.
+  const el = document.querySelector("meta[name=viewport]")
+  if (
+    el !== null &&
+    el.content &&
+    el.content.includes("width=device-width") &&
+    el.content.includes("initial-scale=1")
+  ) {
+    return 1
+  }
+  return window.devicePixelRatio
+}
+
 //
 //  appElement Mutation Functions
 //
@@ -150,6 +165,9 @@ function updateElement(options) {
   // Set the app attribute to your app's dash-delimited alias.
   appElement.setAttribute("app", "important-message")
 
+  // Set the font-size based on the display pixel density.
+  appElement.style.fontSize = `${16 * getPixelScaleFactor()}px`
+
   // Get the message content.
   let message
   if (options.messageType === "predefined") {
@@ -197,11 +215,11 @@ function updateElement(options) {
   }
 
   // fontSize
-  messageEl.style.fontSize = `${options.fontSize}rem`
+  messageEl.style.fontSize = `${options.fontSize}em`
 
   // padding
   const messageInnerEl = messageEl.querySelector("message-inner")
-  messageInnerEl.style.padding = `${options.padding}rem`
+  messageInnerEl.style.padding = `${options.padding}em`
 
   // borderRadius
   if (options.displayMode === "modal") {
