@@ -134,6 +134,17 @@
         "default": false
       },
 
+      "buttonText": {
+        "showIf": {
+          "displayMode": "modal",
+          "notDismissible": false
+        },
+        "order": 7,
+        "title": "Button Text",
+        "type": "string",
+        "default": "OK"
+      },
+
       "location": {
         "showIf": {
           "displayMode": "banner",

@@ -211,7 +211,7 @@ function configureAppElementAsModal(message) {
   } else {
     appElement.classList.add("dismissible");
   }
-  appElement.appendChild(Element("<message>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><closer>OK</closer>") + "\n         </message>"));
+  appElement.appendChild(Element("<message>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><closer>" + options.buttonText + "</closer>") + "\n         </message>"));
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {

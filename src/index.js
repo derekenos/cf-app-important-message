@@ -126,7 +126,11 @@ function configureAppElementAsModal(message) {
     Element(
       `<message>
            ${message}
-           ${options.notDismissible ? "" : "<br><closer>OK</closer>"}
+           ${
+             options.notDismissible
+               ? ""
+               : `<br><closer>${options.buttonText}</closer>`
+           }
          </message>`,
     ),
   )
