@@ -27,14 +27,32 @@
   "options": {
     "properties": {
       "enabled": {
-        "order": 1,
+        "order": 0,
         "title": "Message Enabled",
         "type": "boolean",
         "default": true
       },
 
+      "usePhysicalSwitch": {
+        "order": 5,
+        "title": "Physical Switch",
+        "description": "Use a physical, network-connected switch to turn this feature ON and OFF.",
+        "type": "boolean",
+        "default": false
+      },
+
+      "physicalSwitchId": {
+        "showIf": {
+          "usePhysicalSwitch": true
+        },
+        "order": 6,
+        "title": "Physical Switch ID",
+        "type": "string",
+        "placeholder": "Enter your switch's unique ID"
+      },
+
       "pages": {
-        "order": 2,
+        "order": 10,
         "title": "Pages",
         "description": "On which pages do you want to show this message?",
         "type": "object",
@@ -42,7 +60,7 @@
       },
 
       "messageType": {
-        "order": 3,
+        "order": 15,
         "title": "Message Type",
         "type": "string",
         "format": "radios",
@@ -61,7 +79,7 @@
         "showIf": {
           "messageType": "predefined"
         },
-        "order": 4,
+        "order": 20,
         "title": "Select Predefined Message Type",
         "type": "string",
         "format": "radios",
@@ -82,7 +100,7 @@
         "showIf": {
           "messageType": "custom"
         },
-        "order": 4,
+        "order": 25,
         "title": "Write a Custom Message",
         "type": "string",
         "format": "richtext",
@@ -91,7 +109,7 @@
       },
 
       "displayMode": {
-        "order": 5,
+        "order": 30,
         "title": "Display Mode",
         "type": "string",
         "format": "radios",
@@ -107,7 +125,7 @@
       },
 
       "notDismissible": {
-        "order": 6,
+        "order": 35,
         "title": "Not Dismissible",
         "description": "Do not allow users to dismiss this message.",
         "type": "boolean",
@@ -119,7 +137,7 @@
           "displayMode": "banner",
           "notDismissible": true
         },
-        "order": 7,
+        "order": 40,
         "title": "Location",
         "description": "Where should the permanent banner appear on your site?",
         "type": "object",
@@ -131,7 +149,7 @@
       },
 
       "colorScheme": {
-        "order": 8,
+        "order": 45,
         "title": "Color Scheme",
         "type": "string",
         "format": "radios",
@@ -150,7 +168,7 @@
         "showIf": {
           "colorScheme": "predefined"
         },
-        "order": 9,
+        "order": 50,
         "title": "Select Predefined Color Scheme",
         "type": "string",
         "format": "radios",
@@ -181,7 +199,7 @@
         "showIf": {
           "colorScheme": "custom"
         },
-        "order": 10,
+        "order": 55,
         "title": "Background Color",
         "format": "color",
         "type": "string",
@@ -192,7 +210,7 @@
         "showIf": {
           "colorScheme": "custom"
         },
-        "order": 11,
+        "order": 60,
         "title": "Text Color",
         "format": "color",
         "type": "string",
@@ -205,7 +223,7 @@
           "displayMode": "modal",
           "notDismissible": false
         },
-        "order": 12,
+        "order": 65,
         "title": "Button Background Color",
         "format": "color",
         "type": "string",
@@ -218,7 +236,7 @@
           "displayMode": "modal",
           "notDismissible": false
         },
-        "order": 13,
+        "order": 70,
         "title": "Button Text Color",
         "format": "color",
         "type": "string",
@@ -226,7 +244,7 @@
       },
 
       "fontSize": {
-        "order": 14,
+        "order": 75,
         "title": "Text Size",
         "type": "number",
         "format": "slider",
@@ -237,7 +255,7 @@
       },
 
       "padding": {
-        "order": 15,
+        "order": 80,
         "title": "Whitespace Padding",
         "type": "number",
         "format": "slider",
@@ -251,7 +269,7 @@
         "showIf": {
           "displayMode": "modal"
         },
-        "order": 16,
+        "order": 85,
         "title": "Corner Roundness",
         "type": "number",
         "format": "slider",

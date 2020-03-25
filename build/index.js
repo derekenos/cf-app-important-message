@@ -117,7 +117,8 @@ var PREDEFINED_MESSAGES = {
   // Variables
   //
 
-};var appElement = void 0;
+};var options = INSTALL_OPTIONS;
+var appElement = void 0;
 
 //
 //  Utility Functions
@@ -163,7 +164,7 @@ function getPixelScaleFactor() {
 //  appElement Mutation Functions
 //
 
-function MakeIntoBanner(el, message, options) {
+function MakeIntoBanner(el, message) {
   // Mutate the App element into a banner.
   el.classList.add("banner");
   if (options.notDismissible) {
@@ -200,7 +201,7 @@ function MakeIntoBanner(el, message, options) {
     });
   }
 }
-function MakeIntoModal(el, message, options) {
+function MakeIntoModal(el, message) {
   // Mutate the App element into a modal.
   el.classList.add("modal");
   if (options.notDismissible) {
@@ -232,7 +233,8 @@ function MakeIntoModal(el, message, options) {
 // updateElement Function
 //
 
-function updateElement(options) {
+function updateElement() {
+  // Determine whether app is enabled.
   if (!options.enabled || !INSTALL.matchPage(options.pages)) {
     if (appElement) {
       appElement.remove();
@@ -242,7 +244,8 @@ function updateElement(options) {
 
   var location = void 0;
   if (options.displayMode === "banner" && options.notDismissible) {
-    ;location = options.location;
+    ;var _options = options;
+    location = _options.location;
   } else {
     location = { selector: "body", method: "prepend" };
   }
@@ -267,9 +270,9 @@ function updateElement(options) {
 
   // Insert the HTML.
   if (options.displayMode === "banner") {
-    MakeIntoBanner(appElement, message, options);
+    MakeIntoBanner(appElement, message);
   } else {
-    MakeIntoModal(appElement, message, options);
+    MakeIntoModal(appElement, message);
   }
 
   // Set the z-index to max + 1
@@ -319,23 +322,49 @@ function updateElement(options) {
   }
 }
 
+//
+//  Physical Switch Functions
+//
+
+function requestSwitchState() {
+  fetch("https://iot.resource.name/" + options.physicalSwitchId, {
+    mode: "cors"
+  }).then(function (res) {
+    if (!res.ok || res.status !== 200) {
+      updateElement();
+    } else {
+      res.json().then(function (data) {
+        options.enabled = data.enabled;
+        updateElement();
+      });
+    }
+  });
+}
+
+function updateElementWrapper() {
+  if (options.usePhysicalSwitch) {
+    requestSwitchState();
+  } else {
+    updateElement();
+  }
+}
+
 function init() {
   if (!window.addEventListener) return; // Check for IE9+
 
   // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
   window.INSTALL_SCOPE = {
-    setOptions: function setOptions(options) {
-      updateElement(options);
+    setOptions: function setOptions(nextOptions) {
+      options = nextOptions;
+      updateElementWrapper();
     }
   };
 
   // This code ensures that the app doesn't run before the page is loaded.
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      return updateElement(INSTALL_OPTIONS);
-    });
+    document.addEventListener("DOMContentLoaded", updateElementWrapper);
   } else {
-    updateElement(INSTALL_OPTIONS);
+    updateElementWrapper();
   }
 }
 
