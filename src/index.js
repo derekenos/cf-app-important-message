@@ -4,6 +4,9 @@ import css from "./styles.css"
 // Constants
 //
 
+const APP_NAME = "important-message"
+const DISMISSED_UNTIL_SESSION_KEY = `${APP_NAME}-dismissedUntil`
+
 const PREDEFINED_MESSAGES = {
   minorServiceInterruption: `&#9888; We're experiencing a minor service interruption - some features may not work.`,
   majorServiceInterruption: `&#9888; We're experiencing a major service outage - many features may not work.`,
@@ -68,6 +71,42 @@ function getPixelScaleFactor() {
 }
 
 //
+//  Dismissal Helper Functions
+//
+
+const nowMs = Date.now
+
+const setDismissedUntil = value =>
+  localStorage.setItem(DISMISSED_UNTIL_SESSION_KEY, `${value}`)
+
+const getDismissedUntil = () => {
+  const dismissedUntil = localStorage.getItem(DISMISSED_UNTIL_SESSION_KEY)
+  return dismissedUntil === null ? null : parseInt(dismissedUntil, 10)
+}
+
+function dismiss() {
+  // Set the dismissedUntil time and remove the element from the DOM.
+  if (options.dismissalPeriodMinutes > 0) {
+    const dismissedUntil = nowMs() + options.dismissalPeriodMinutes * 1000 * 60
+    setDismissedUntil(dismissedUntil)
+  }
+  appElement.remove()
+}
+
+function isDismissed() {
+  // Return a Boolean indicating whether user dismissal is active.
+  const dismissedUntil = getDismissedUntil()
+  if (dismissedUntil === null) {
+    return false
+  }
+  if (nowMs() >= dismissedUntil) {
+    localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY)
+    return false
+  }
+  return true
+}
+
+//
 //  appElement Mutation Functions
 //
 
@@ -103,12 +142,12 @@ function configureAppElementAsBanner(message) {
     })
 
     // Remove the element on click.
-    appElement.addEventListener("click", e => appElement.remove())
+    appElement.addEventListener("click", e => dismiss())
 
     // Remove the element on Escape.
     window.addEventListener("keydown", e => {
       if (e.key === "Escape") {
-        appElement.remove()
+        dismiss()
       }
     })
   }
@@ -143,14 +182,14 @@ function configureAppElementAsModal(message) {
         e.target.tagName === "CLOUDFLARE-APP" ||
         e.target.tagName === "CLOSER"
       ) {
-        appElement.remove()
+        dismiss()
       }
     })
 
     // Close the modal if either Escape or Enter was pressed.
     window.addEventListener("keydown", e => {
       if (e.key === "Escape" || e.key === "Enter") {
-        appElement.remove()
+        dismiss()
       }
     })
   }
@@ -161,7 +200,7 @@ function configureAppElementAsModal(message) {
 //
 
 function updateElement() {
-  if (!options.enabled || !INSTALL.matchPage(options.pages)) {
+  if (!options.enabled || !INSTALL.matchPage(options.pages) || isDismissed()) {
     if (appElement) {
       appElement.remove()
     }
@@ -177,7 +216,7 @@ function updateElement() {
   appElement = INSTALL.createElement(location, appElement)
 
   // Set the app attribute to your app's dash-delimited alias.
-  appElement.setAttribute("app", "important-message")
+  appElement.setAttribute("app", APP_NAME)
 
   // Set the font-size and image max-width based on the display pixel density.
   const pixelScaleFactor = getPixelScaleFactor()

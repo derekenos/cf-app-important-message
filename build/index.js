@@ -108,6 +108,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // Constants
 //
 
+var APP_NAME = "important-message";
+var DISMISSED_UNTIL_SESSION_KEY = APP_NAME + "-dismissedUntil";
+
 var PREDEFINED_MESSAGES = {
   minorServiceInterruption: "&#9888; We're experiencing a minor service interruption - some features may not work.",
   majorServiceInterruption: "&#9888; We're experiencing a major service outage - many features may not work.",
@@ -162,6 +165,43 @@ function getPixelScaleFactor() {
 }
 
 //
+//  Dismissal Helper Functions
+//
+
+var nowMs = Date.now;
+
+var setDismissedUntil = function setDismissedUntil(value) {
+  return localStorage.setItem(DISMISSED_UNTIL_SESSION_KEY, "" + value);
+};
+
+var getDismissedUntil = function getDismissedUntil() {
+  var dismissedUntil = localStorage.getItem(DISMISSED_UNTIL_SESSION_KEY);
+  return dismissedUntil === null ? null : parseInt(dismissedUntil, 10);
+};
+
+function dismiss() {
+  // Set the dismissedUntil time and remove the element from the DOM.
+  if (options.dismissalPeriodMinutes > 0) {
+    var dismissedUntil = nowMs() + options.dismissalPeriodMinutes * 1000 * 60;
+    setDismissedUntil(dismissedUntil);
+  }
+  appElement.remove();
+}
+
+function isDismissed() {
+  // Return a Boolean indicating whether user dismissal is active.
+  var dismissedUntil = getDismissedUntil();
+  if (dismissedUntil === null) {
+    return false;
+  }
+  if (nowMs() >= dismissedUntil) {
+    localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY);
+    return false;
+  }
+  return true;
+}
+
+//
 //  appElement Mutation Functions
 //
 
@@ -191,13 +231,13 @@ function configureAppElementAsBanner(message) {
 
     // Remove the element on click.
     appElement.addEventListener("click", function (e) {
-      return appElement.remove();
+      return dismiss();
     });
 
     // Remove the element on Escape.
     window.addEventListener("keydown", function (e) {
       if (e.key === "Escape") {
-        appElement.remove();
+        dismiss();
       }
     });
   }
@@ -218,14 +258,14 @@ function configureAppElementAsModal(message) {
     // Close the modal on overlay or button click.
     window.addEventListener("click", function (e) {
       if (e.target.tagName === "CLOUDFLARE-APP" || e.target.tagName === "CLOSER") {
-        appElement.remove();
+        dismiss();
       }
     });
 
     // Close the modal if either Escape or Enter was pressed.
     window.addEventListener("keydown", function (e) {
       if (e.key === "Escape" || e.key === "Enter") {
-        appElement.remove();
+        dismiss();
       }
     });
   }
@@ -236,7 +276,7 @@ function configureAppElementAsModal(message) {
 //
 
 function updateElement() {
-  if (!options.enabled || !INSTALL.matchPage(options.pages)) {
+  if (!options.enabled || !INSTALL.matchPage(options.pages) || isDismissed()) {
     if (appElement) {
       appElement.remove();
     }
@@ -253,7 +293,7 @@ function updateElement() {
   appElement = INSTALL.createElement(location, appElement);
 
   // Set the app attribute to your app's dash-delimited alias.
-  appElement.setAttribute("app", "important-message");
+  appElement.setAttribute("app", APP_NAME);
 
   // Set the font-size and image max-width based on the display pixel density.
   var pixelScaleFactor = getPixelScaleFactor();
