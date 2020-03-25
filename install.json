@@ -98,16 +98,33 @@
         "placeholder": "Write your custom message here."
       },
 
-      "customRichMessage": {
+      "customRichMessageGroup": {
         "showIf": {
           "messageType": "customRich"
         },
         "order": 4,
-        "title": "Write a Custom Message",
-        "type": "string",
-        "format": "richtext",
-        "default": "Your Custom Message",
-        "placeholder": "Write your custom message here."
+        "title": "Rich Text Message",
+        "type": "object",
+        "properties": {
+          "message": {
+            "order": 1,
+            "title": "Write a Custom Message",
+            "type": "string",
+            "format": "richtext",
+            "default": "Your Custom Message",
+            "placeholder": "Write your custom message here."
+          },
+          "maxImageWidth": {
+            "order": 2,
+            "title": "Adjust the Maximum Image Width",
+            "type": "number",
+            "format": "slider",
+            "default": 200,
+            "minimum": 20,
+            "maximum": 800,
+            "step": 10
+          }
+        }
       },
 
       "displayMode": {

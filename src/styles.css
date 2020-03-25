@@ -92,3 +92,7 @@ cloudflare-app[app="important-message"] a {
     margin: 0;
     padding: 0;
 }
+
+cloudflare-app[app="important-message"] img {
+    max-width: 200px;
+}

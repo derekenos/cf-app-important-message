@@ -179,8 +179,9 @@ function updateElement() {
   // Set the app attribute to your app's dash-delimited alias.
   appElement.setAttribute("app", "important-message")
 
-  // Set the font-size based on the display pixel density.
-  appElement.style.fontSize = `${16 * getPixelScaleFactor()}px`
+  // Set the font-size and image max-width based on the display pixel density.
+  const pixelScaleFactor = getPixelScaleFactor()
+  appElement.style.fontSize = `${16 * pixelScaleFactor}px`
 
   // Get the message content.
   let message
@@ -196,7 +197,7 @@ function updateElement() {
       break
 
     case "customRich":
-      message = options.customRichMessage
+      ;({ message } = options.customRichMessageGroup)
       break
 
     default:
@@ -256,6 +257,17 @@ function updateElement() {
   // borderRadius
   if (options.displayMode === "modal") {
     messageEl.style.borderRadius = `${options.borderRadius}px`
+  }
+
+  // image max-width
+  if (options.messageType === "customRich") {
+    messageEl.querySelectorAll("img").forEach(el => {
+      el.setAttribute(
+        "style",
+        `max-width: ${options.customRichMessageGroup.maxImageWidth *
+          pixelScaleFactor}px`,
+      )
+    })
   }
 }
 
