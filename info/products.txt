@@ -1,0 +1,9 @@
+
+basic
+BASIC
+Basic features with limited customization.
+
+full
+FULL
+All the features with full customization.
+Choose custom colors and add formatting, links, and images to your message!
