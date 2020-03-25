@@ -251,7 +251,7 @@ function updateElement() {
 
   // padding
   const messageInnerEl = messageEl.querySelector("message-inner")
-  messageInnerEl.style.padding = `${options.padding}em`
+  messageInnerEl.style.padding = `${options.verticalPadding}em ${options.horizontalPadding}em ${options.verticalPadding}em ${options.horizontalPadding}em`
 
   // borderRadius
   if (options.displayMode === "modal") {

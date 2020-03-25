@@ -270,9 +270,20 @@
         "step": 0.1
       },
 
-      "padding": {
+      "horizontalPadding": {
         "order": 15,
-        "title": "Whitespace Padding",
+        "title": "Horizontal Whitespace Padding",
+        "type": "number",
+        "format": "slider",
+        "default": 0,
+        "minimum": 0,
+        "maximum": 10,
+        "step": 0.1
+      },
+
+      "verticalPadding": {
+        "order": 16,
+        "title": "Vertical Whitespace Padding",
         "type": "number",
         "format": "slider",
         "default": 0,
@@ -285,7 +296,7 @@
         "showIf": {
           "displayMode": "modal"
         },
-        "order": 16,
+        "order": 17,
         "title": "Corner Roundness",
         "type": "number",
         "format": "slider",
