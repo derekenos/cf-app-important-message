@@ -20,6 +20,10 @@
       {
         "options": ["_default"],
         "execute": "INSTALL_SCOPE.setOptions(INSTALL_OPTIONS)"
+      },
+      {
+        "options": ["_product"],
+        "execute": "INSTALL_SCOPE.setProduct(INSTALL_PRODUCT)"
       }
     ]
   },
@@ -48,13 +52,18 @@
         "format": "radios",
         "enum": [
           "predefined",
-          "custom"
+          "customPlain",
+          "customRich"
         ],
         "enumNames": {
           "predefined": "Predefined",
-          "custom": "Custom"
+          "customPlain": "Custom Plain Text",
+          "customRich": "Custom Rich Text"
         },
-        "default": "predefined"
+        "default": "predefined",
+        "products": {
+          "customRich": ["full"]
+        }
       },
 
       "predefinedMessage": {
@@ -62,7 +71,7 @@
           "messageType": "predefined"
         },
         "order": 4,
-        "title": "Select Predefined Message Type",
+        "title": "Select a Predefined Message",
         "type": "string",
         "format": "radios",
         "enum": [
@@ -78,9 +87,20 @@
         "default": "minorServiceInterruption"
       },
 
-      "customMessage": {
+      "customPlainMessage": {
         "showIf": {
-          "messageType": "custom"
+          "messageType": "customPlain"
+        },
+        "order": 4,
+        "title": "Your Custom Message",
+        "type": "string",
+        "default": "Your Custom Message",
+        "placeholder": "Write your custom message here."
+      },
+
+      "customRichMessage": {
+        "showIf": {
+          "messageType": "customRich"
         },
         "order": 4,
         "title": "Write a Custom Message",
@@ -143,7 +163,10 @@
           "predefined": "Predefined",
           "custom": "Custom"
         },
-        "default": "predefined"
+        "default": "predefined",
+        "products": {
+          "custom": ["full"]
+        }
       },
 
       "predefinedColorScheme": {

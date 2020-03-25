@@ -14,6 +14,8 @@ const PREDEFINED_MESSAGES = {
 // Variables
 //
 
+let options = INSTALL_OPTIONS
+let product = INSTALL_PRODUCT
 let appElement
 
 //
@@ -69,15 +71,15 @@ function getPixelScaleFactor() {
 //  appElement Mutation Functions
 //
 
-function MakeIntoBanner(el, message, options) {
+function configureAppElementAsBanner(message) {
   // Mutate the App element into a banner.
-  el.classList.add("banner")
+  appElement.classList.add("banner")
   if (options.notDismissible) {
-    el.classList.add("non-dismissible")
+    appElement.classList.add("non-dismissible")
   } else {
-    el.classList.add("dismissible")
+    appElement.classList.add("dismissible")
   }
-  el.appendChild(
+  appElement.appendChild(
     Element(
       `<message>
            ${options.notDismissible ? "" : "<closer>x</closer>"}
@@ -88,38 +90,39 @@ function MakeIntoBanner(el, message, options) {
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
-    const closerEl = el.querySelector("closer")
+    const closerEl = appElement.querySelector("closer")
 
     // Bold the X on mouse enter.
-    el.addEventListener("mouseenter", e => {
+    appElement.addEventListener("mouseenter", e => {
       closerEl.style.fontWeight = "bold"
     })
 
     // Unbold the X on mouse leave.
-    el.addEventListener("mouseleave", e => {
+    appElement.addEventListener("mouseleave", e => {
       closerEl.style.fontWeight = "normal"
     })
 
     // Remove the element on click.
-    el.addEventListener("click", e => el.remove())
+    appElement.addEventListener("click", e => appElement.remove())
 
     // Remove the element on Escape.
     window.addEventListener("keydown", e => {
       if (e.key === "Escape") {
-        el.remove()
+        appElement.remove()
       }
     })
   }
 }
-function MakeIntoModal(el, message, options) {
+
+function configureAppElementAsModal(message) {
   // Mutate the App element into a modal.
-  el.classList.add("modal")
+  appElement.classList.add("modal")
   if (options.notDismissible) {
-    el.classList.add("non-dismissible")
+    appElement.classList.add("non-dismissible")
   } else {
-    el.classList.add("dismissible")
+    appElement.classList.add("dismissible")
   }
-  el.appendChild(
+  appElement.appendChild(
     Element(
       `<message>
            ${message}
@@ -136,14 +139,14 @@ function MakeIntoModal(el, message, options) {
         e.target.tagName === "CLOUDFLARE-APP" ||
         e.target.tagName === "CLOSER"
       ) {
-        el.remove()
+        appElement.remove()
       }
     })
 
     // Close the modal if either Escape or Enter was pressed.
     window.addEventListener("keydown", e => {
       if (e.key === "Escape" || e.key === "Enter") {
-        el.remove()
+        appElement.remove()
       }
     })
   }
@@ -153,7 +156,7 @@ function MakeIntoModal(el, message, options) {
 // updateElement Function
 //
 
-function updateElement(options) {
+function updateElement() {
   if (!options.enabled || !INSTALL.matchPage(options.pages)) {
     if (appElement) {
       appElement.remove()
@@ -177,20 +180,33 @@ function updateElement(options) {
 
   // Get the message content.
   let message
-  if (options.messageType === "predefined") {
-    // Wrap in <p> for consistency with custom message richtext format.
-    message = `<p>${PREDEFINED_MESSAGES[options.predefinedMessage]}</p>`
-  } else {
-    message = options.customMessage
+  switch (options.messageType) {
+    case "predefined":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = `<p>${PREDEFINED_MESSAGES[options.predefinedMessage]}</p>`
+      break
+
+    case "customPlain":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = `<p>${options.customPlainMessage}</p>`
+      break
+
+    case "customRich":
+      message = options.customRichMessage
+      break
+
+    default:
+      break
   }
+
   // Wrap in a <message-inner> element for padding control.
   message = `<message-inner>${message}</message-inner>`
 
   // Insert the HTML.
   if (options.displayMode === "banner") {
-    MakeIntoBanner(appElement, message, options)
+    configureAppElementAsBanner(message)
   } else {
-    MakeIntoModal(appElement, message, options)
+    configureAppElementAsModal(message)
   }
 
   // Set the z-index to max + 1
@@ -244,18 +260,21 @@ function init() {
 
   // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
   window.INSTALL_SCOPE = {
-    setOptions(options) {
-      updateElement(options)
+    setOptions(nextOptions) {
+      options = nextOptions
+      updateElement()
+    },
+    setProduct(nextProduct) {
+      product = nextProduct
+      updateElement()
     },
   }
 
   // This code ensures that the app doesn't run before the page is loaded.
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () =>
-      updateElement(INSTALL_OPTIONS),
-    )
+    document.addEventListener("DOMContentLoaded", () => updateElement())
   } else {
-    updateElement(INSTALL_OPTIONS)
+    updateElement()
   }
 }
 

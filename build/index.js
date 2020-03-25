@@ -117,7 +117,9 @@ var PREDEFINED_MESSAGES = {
   // Variables
   //
 
-};var appElement = void 0;
+};var options = INSTALL_OPTIONS;
+var product = INSTALL_PRODUCT;
+var appElement = void 0;
 
 //
 //  Utility Functions
@@ -163,66 +165,67 @@ function getPixelScaleFactor() {
 //  appElement Mutation Functions
 //
 
-function MakeIntoBanner(el, message, options) {
+function configureAppElementAsBanner(message) {
   // Mutate the App element into a banner.
-  el.classList.add("banner");
+  appElement.classList.add("banner");
   if (options.notDismissible) {
-    el.classList.add("non-dismissible");
+    appElement.classList.add("non-dismissible");
   } else {
-    el.classList.add("dismissible");
+    appElement.classList.add("dismissible");
   }
-  el.appendChild(Element("<message>\n           " + (options.notDismissible ? "" : "<closer>x</closer>") + "\n           " + message + "\n         </message>"));
+  appElement.appendChild(Element("<message>\n           " + (options.notDismissible ? "" : "<closer>x</closer>") + "\n           " + message + "\n         </message>"));
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
-    var closerEl = el.querySelector("closer");
+    var closerEl = appElement.querySelector("closer");
 
     // Bold the X on mouse enter.
-    el.addEventListener("mouseenter", function (e) {
+    appElement.addEventListener("mouseenter", function (e) {
       closerEl.style.fontWeight = "bold";
     });
 
     // Unbold the X on mouse leave.
-    el.addEventListener("mouseleave", function (e) {
+    appElement.addEventListener("mouseleave", function (e) {
       closerEl.style.fontWeight = "normal";
     });
 
     // Remove the element on click.
-    el.addEventListener("click", function (e) {
-      return el.remove();
+    appElement.addEventListener("click", function (e) {
+      return appElement.remove();
     });
 
     // Remove the element on Escape.
     window.addEventListener("keydown", function (e) {
       if (e.key === "Escape") {
-        el.remove();
+        appElement.remove();
       }
     });
   }
 }
-function MakeIntoModal(el, message, options) {
+
+function configureAppElementAsModal(message) {
   // Mutate the App element into a modal.
-  el.classList.add("modal");
+  appElement.classList.add("modal");
   if (options.notDismissible) {
-    el.classList.add("non-dismissible");
+    appElement.classList.add("non-dismissible");
   } else {
-    el.classList.add("dismissible");
+    appElement.classList.add("dismissible");
   }
-  el.appendChild(Element("<message>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><closer>OK</closer>") + "\n         </message>"));
+  appElement.appendChild(Element("<message>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><closer>OK</closer>") + "\n         </message>"));
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
     // Close the modal on overlay or button click.
     window.addEventListener("click", function (e) {
       if (e.target.tagName === "CLOUDFLARE-APP" || e.target.tagName === "CLOSER") {
-        el.remove();
+        appElement.remove();
       }
     });
 
     // Close the modal if either Escape or Enter was pressed.
     window.addEventListener("keydown", function (e) {
       if (e.key === "Escape" || e.key === "Enter") {
-        el.remove();
+        appElement.remove();
       }
     });
   }
@@ -232,7 +235,7 @@ function MakeIntoModal(el, message, options) {
 // updateElement Function
 //
 
-function updateElement(options) {
+function updateElement() {
   if (!options.enabled || !INSTALL.matchPage(options.pages)) {
     if (appElement) {
       appElement.remove();
@@ -242,7 +245,8 @@ function updateElement(options) {
 
   var location = void 0;
   if (options.displayMode === "banner" && options.notDismissible) {
-    ;location = options.location;
+    ;var _options = options;
+    location = _options.location;
   } else {
     location = { selector: "body", method: "prepend" };
   }
@@ -256,20 +260,33 @@ function updateElement(options) {
 
   // Get the message content.
   var message = void 0;
-  if (options.messageType === "predefined") {
-    // Wrap in <p> for consistency with custom message richtext format.
-    message = "<p>" + PREDEFINED_MESSAGES[options.predefinedMessage] + "</p>";
-  } else {
-    message = options.customMessage;
+  switch (options.messageType) {
+    case "predefined":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = "<p>" + PREDEFINED_MESSAGES[options.predefinedMessage] + "</p>";
+      break;
+
+    case "customPlain":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = "<p>" + options.customPlainMessage + "</p>";
+      break;
+
+    case "customRich":
+      message = options.customRichMessage;
+      break;
+
+    default:
+      break;
   }
+
   // Wrap in a <message-inner> element for padding control.
   message = "<message-inner>" + message + "</message-inner>";
 
   // Insert the HTML.
   if (options.displayMode === "banner") {
-    MakeIntoBanner(appElement, message, options);
+    configureAppElementAsBanner(message);
   } else {
-    MakeIntoModal(appElement, message, options);
+    configureAppElementAsModal(message);
   }
 
   // Set the z-index to max + 1
@@ -324,18 +341,23 @@ function init() {
 
   // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
   window.INSTALL_SCOPE = {
-    setOptions: function setOptions(options) {
-      updateElement(options);
+    setOptions: function setOptions(nextOptions) {
+      options = nextOptions;
+      updateElement();
+    },
+    setProduct: function setProduct(nextProduct) {
+      product = nextProduct;
+      updateElement();
     }
   };
 
   // This code ensures that the app doesn't run before the page is loaded.
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
-      return updateElement(INSTALL_OPTIONS);
+      return updateElement();
     });
   } else {
-    updateElement(INSTALL_OPTIONS);
+    updateElement();
   }
 }
 
