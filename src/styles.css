@@ -8,8 +8,8 @@ cloudflare-app[app="important-message"] {
 
 cloudflare-app[app="important-message"] message {
     display: block;
-    background-color: #ffa500;
-    color: #fff;
+    background-color: #fff;
+    color: #000;
     position: relative;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
     padding: 1em;

@@ -77,6 +77,26 @@ function escapeHTML(s) {
   return wrapper.innerHTML
 }
 
+function hexToRgb(hex) {
+  // Adapted from: https://stackoverflow.com/a/5624139/2327940
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
+  const v = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v)
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null
+}
+
+function getBackgroundImageGradient(hex) {
+  const { r, g, b } = hexToRgb(hex)
+  return `linear-gradient(0deg, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0.5))`
+}
+
 //
 // Options Getters
 //
@@ -108,6 +128,32 @@ function getMessageContent() {
       break
   }
   return message
+}
+
+function getColors() {
+  let bgColor
+  let color
+  let buttonBgColor
+  let buttonColor
+  if (options.colorScheme === "predefined") {
+    ;[
+      bgColor,
+      color,
+      buttonBgColor,
+      buttonColor,
+    ] = options.predefinedColorScheme.split(",")
+  } else {
+    bgColor = options.customBackgroundColor
+    color = options.customTextColor
+    buttonBgColor = options.customButtonBackgroundColor
+    buttonColor = options.customButtonTextColor
+  }
+  return {
+    bgColor,
+    color,
+    buttonBgColor,
+    buttonColor,
+  }
 }
 
 //
@@ -304,29 +350,14 @@ function updateElement() {
   const messageEl = appElement.querySelector("message")
 
   // colorScheme
-  if (options.colorScheme === "predefined") {
-    const [
-      bgColor,
-      color,
-      buttonBgColor,
-      buttonColor,
-    ] = options.predefinedColorScheme.split(",")
-    messageEl.style.backgroundColor = bgColor
-    messageEl.style.color = color
-    // Apply style to dismissible modal button.
-    if (options.displayMode === "modal" && !options.notDismissible) {
-      const buttonEl = messageEl.querySelector("closer")
-      buttonEl.style.backgroundColor = buttonBgColor
-      buttonEl.style.color = buttonColor
-    }
-  } else {
-    messageEl.style.backgroundColor = options.customBackgroundColor
-    messageEl.style.color = options.customTextColor
-    if (options.displayMode === "modal" && !options.notDismissible) {
-      const buttonEl = messageEl.querySelector("closer")
-      buttonEl.style.backgroundColor = options.customButtonBackgroundColor
-      buttonEl.style.color = options.customButtonTextColor
-    }
+  const { bgColor, color, buttonBgColor, buttonColor } = getColors()
+  messageEl.style.backgroundImage = getBackgroundImageGradient(bgColor)
+  messageEl.style.color = color
+  // Apply style to dismissible modal button.
+  if (options.displayMode === "modal" && !options.notDismissible) {
+    const buttonEl = messageEl.querySelector("closer")
+    buttonEl.style.backgroundColor = buttonBgColor
+    buttonEl.style.color = buttonColor
   }
 
   // fontSize

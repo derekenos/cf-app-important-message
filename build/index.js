@@ -171,6 +171,30 @@ function escapeHTML(s) {
   return wrapper.innerHTML;
 }
 
+function hexToRgb(hex) {
+  // Adapted from: https://stackoverflow.com/a/5624139/2327940
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  var v = hex.replace(shorthandRegex, function (m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+function getBackgroundImageGradient(hex) {
+  var _hexToRgb = hexToRgb(hex),
+      r = _hexToRgb.r,
+      g = _hexToRgb.g,
+      b = _hexToRgb.b;
+
+  return "linear-gradient(0deg, rgba(" + r + ", " + g + ", " + b + ", 1), rgba(" + r + ", " + g + ", " + b + ", 0.5))";
+}
+
 //
 // Options Getters
 //
@@ -205,6 +229,35 @@ function getMessageContent() {
   return message;
 }
 
+function getColors() {
+  var bgColor = void 0;
+  var color = void 0;
+  var buttonBgColor = void 0;
+  var buttonColor = void 0;
+  if (options.colorScheme === "predefined") {
+    ;
+    var _options$predefinedCo = options.predefinedColorScheme.split(",");
+
+    var _options$predefinedCo2 = _slicedToArray(_options$predefinedCo, 4);
+
+    bgColor = _options$predefinedCo2[0];
+    color = _options$predefinedCo2[1];
+    buttonBgColor = _options$predefinedCo2[2];
+    buttonColor = _options$predefinedCo2[3];
+  } else {
+    bgColor = options.customBackgroundColor;
+    color = options.customTextColor;
+    buttonBgColor = options.customButtonBackgroundColor;
+    buttonColor = options.customButtonTextColor;
+  }
+  return {
+    bgColor: bgColor,
+    color: color,
+    buttonBgColor: buttonBgColor,
+    buttonColor: buttonColor
+  };
+}
+
 //
 //  Dismissal Helper Functions
 //
@@ -228,7 +281,7 @@ var getDismissedMessage = function getDismissedMessage() {
   return localStorage.getItem(DISMISSED_MESSAGE_SESSION_KEY);
 };
 
-var clearDismissedStorage = function clearDismissedStorage() {
+var clearDismissalStorage = function clearDismissalStorage() {
   localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY);
   localStorage.removeItem(DISMISSED_MESSAGE_SESSION_KEY);
 };
@@ -254,14 +307,14 @@ function isDismissed() {
   if (dismissedUntil === null) {
     return false;
   }
-  // Check whether the dismissal period has elapsed.
+  // Check whether the dismissal period has expired.
   if (nowMs() >= dismissedUntil) {
-    clearDismissedStorage();
+    clearDismissalStorage();
     return false;
   }
   // Check whether the message content has changed since dismissal.
   if (getMessageContent() !== getDismissedMessage()) {
-    clearDismissedStorage();
+    clearDismissalStorage();
     return false;
   }
   return true;
@@ -386,30 +439,20 @@ function updateElement() {
   var messageEl = appElement.querySelector("message");
 
   // colorScheme
-  if (options.colorScheme === "predefined") {
-    var _options$predefinedCo = options.predefinedColorScheme.split(","),
-        _options$predefinedCo2 = _slicedToArray(_options$predefinedCo, 4),
-        bgColor = _options$predefinedCo2[0],
-        color = _options$predefinedCo2[1],
-        buttonBgColor = _options$predefinedCo2[2],
-        buttonColor = _options$predefinedCo2[3];
 
-    messageEl.style.backgroundColor = bgColor;
-    messageEl.style.color = color;
-    // Apply style to dismissible modal button.
-    if (options.displayMode === "modal" && !options.notDismissible) {
-      var buttonEl = messageEl.querySelector("closer");
-      buttonEl.style.backgroundColor = buttonBgColor;
-      buttonEl.style.color = buttonColor;
-    }
-  } else {
-    messageEl.style.backgroundColor = options.customBackgroundColor;
-    messageEl.style.color = options.customTextColor;
-    if (options.displayMode === "modal" && !options.notDismissible) {
-      var _buttonEl = messageEl.querySelector("closer");
-      _buttonEl.style.backgroundColor = options.customButtonBackgroundColor;
-      _buttonEl.style.color = options.customButtonTextColor;
-    }
+  var _getColors = getColors(),
+      bgColor = _getColors.bgColor,
+      color = _getColors.color,
+      buttonBgColor = _getColors.buttonBgColor,
+      buttonColor = _getColors.buttonColor;
+
+  messageEl.style.backgroundImage = getBackgroundImageGradient(bgColor);
+  messageEl.style.color = color;
+  // Apply style to dismissible modal button.
+  if (options.displayMode === "modal" && !options.notDismissible) {
+    var buttonEl = messageEl.querySelector("closer");
+    buttonEl.style.backgroundColor = buttonBgColor;
+    buttonEl.style.color = buttonColor;
   }
 
   // fontSize
