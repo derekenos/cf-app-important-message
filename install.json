@@ -177,7 +177,7 @@
             "order": 1,
             "title": "Number",
             "type": "number",
-            "default": 1,
+            "default": 0,
             "minimum": 0
           },
           "multipler": {
