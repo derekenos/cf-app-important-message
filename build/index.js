@@ -484,6 +484,7 @@ function init() {
   window.INSTALL_SCOPE = {
     setOptions: function setOptions(nextOptions) {
       options = nextOptions;
+      clearDismissalStorage();
       updateElement();
     },
     setProduct: function setProduct(nextProduct) {
