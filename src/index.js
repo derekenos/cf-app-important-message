@@ -70,6 +70,12 @@ function getPixelScaleFactor() {
   return window.devicePixelRatio
 }
 
+function escapeHTML(s) {
+  const wrapper = Element("div")
+  wrapper.innerText = s
+  return wrapper.innerHTML
+}
+
 //
 //  Dismissal Helper Functions
 //
@@ -233,8 +239,9 @@ function updateElement() {
       break
 
     case "customPlain":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = `<p>${options.customPlainMessage}</p>`
+      // Wrap in <p> for consistency with custom message richtext format and
+      // escape HTML to enforce plain-text.
+      message = `<p>${escapeHTML(options.customPlainMessage)}</p>`
       break
 
     case "customRich":
