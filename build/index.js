@@ -110,6 +110,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var APP_NAME = "important-message";
 var DISMISSED_UNTIL_SESSION_KEY = APP_NAME + "-dismissedUntil";
+var DISMISSED_MESSAGE_SESSION_KEY = APP_NAME + "-dismissedMessage";
 
 var PREDEFINED_MESSAGES = {
   minorServiceInterruption: "&#9888; We're experiencing a minor service interruption - some features may not work.",
@@ -171,6 +172,40 @@ function escapeHTML(s) {
 }
 
 //
+// Options Getters
+//
+
+function getMessageContent() {
+  var message = void 0;
+  switch (options.messageType) {
+    case "predefined":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = "<p>" + PREDEFINED_MESSAGES[options.predefinedMessage] + "</p>";
+      break;
+
+    case "customPlain":
+      // Wrap in <p> for consistency with custom message richtext format and
+      // escape HTML to enforce plain-text.
+      message = "<p>" + escapeHTML(options.customPlainMessage) + "</p>";
+      break;
+
+    case "customRich":
+      ;message = options.customRichMessageGroup.message;
+
+      break;
+
+    case "customHTML":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = "<p>" + options.customHTMLMessage + "</p>";
+      break;
+
+    default:
+      break;
+  }
+  return message;
+}
+
+//
 //  Dismissal Helper Functions
 //
 
@@ -185,6 +220,19 @@ var getDismissedUntil = function getDismissedUntil() {
   return dismissedUntil === null ? null : parseInt(dismissedUntil, 10);
 };
 
+var setDismissedMessage = function setDismissedMessage(message) {
+  return localStorage.setItem(DISMISSED_MESSAGE_SESSION_KEY, message);
+};
+
+var getDismissedMessage = function getDismissedMessage() {
+  return localStorage.getItem(DISMISSED_MESSAGE_SESSION_KEY);
+};
+
+var clearDismissedStorage = function clearDismissedStorage() {
+  localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY);
+  localStorage.removeItem(DISMISSED_MESSAGE_SESSION_KEY);
+};
+
 function dismiss() {
   // Set the dismissedUntil time and remove the element from the DOM.
   var _options$dismissalPer = options.dismissalPeriodGroup,
@@ -194,6 +242,7 @@ function dismiss() {
   if (minutes > 0) {
     var dismissedUntil = nowMs() + minutes * parseInt(multipler, 10) * 1000 * 60;
     setDismissedUntil(dismissedUntil);
+    setDismissedMessage(getMessageContent());
   }
   appElement.remove();
 }
@@ -201,11 +250,18 @@ function dismiss() {
 function isDismissed() {
   // Return a Boolean indicating whether user dismissal is active.
   var dismissedUntil = getDismissedUntil();
+  // Check for any saved dismissedUntil value.
   if (dismissedUntil === null) {
     return false;
   }
+  // Check whether the dismissal period has elapsed.
   if (nowMs() >= dismissedUntil) {
-    localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY);
+    clearDismissedStorage();
+    return false;
+  }
+  // Check whether the message content has changed since dismissal.
+  if (getMessageContent() !== getDismissedMessage()) {
+    clearDismissedStorage();
     return false;
   }
   return true;
@@ -310,32 +366,7 @@ function updateElement() {
   appElement.style.fontSize = 16 * pixelScaleFactor + "px";
 
   // Get the message content.
-  var message = void 0;
-  switch (options.messageType) {
-    case "predefined":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = "<p>" + PREDEFINED_MESSAGES[options.predefinedMessage] + "</p>";
-      break;
-
-    case "customPlain":
-      // Wrap in <p> for consistency with custom message richtext format and
-      // escape HTML to enforce plain-text.
-      message = "<p>" + escapeHTML(options.customPlainMessage) + "</p>";
-      break;
-
-    case "customRich":
-      ;message = options.customRichMessageGroup.message;
-
-      break;
-
-    case "customHTML":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = "<p>" + options.customHTMLMessage + "</p>";
-      break;
-
-    default:
-      break;
-  }
+  var message = getMessageContent();
 
   // Wrap in a <message-inner> element for padding control.
   message = "<message-inner>" + message + "</message-inner>";
@@ -408,7 +439,6 @@ function init() {
   window.INSTALL_SCOPE = {
     setOptions: function setOptions(nextOptions) {
       options = nextOptions;
-      localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY);
       updateElement();
     },
     setProduct: function setProduct(nextProduct) {

@@ -6,6 +6,7 @@ import css from "./styles.css"
 
 const APP_NAME = "important-message"
 const DISMISSED_UNTIL_SESSION_KEY = `${APP_NAME}-dismissedUntil`
+const DISMISSED_MESSAGE_SESSION_KEY = `${APP_NAME}-dismissedMessage`
 
 const PREDEFINED_MESSAGES = {
   minorServiceInterruption: `&#9888; We're experiencing a minor service interruption - some features may not work.`,
@@ -77,6 +78,39 @@ function escapeHTML(s) {
 }
 
 //
+// Options Getters
+//
+
+function getMessageContent() {
+  let message
+  switch (options.messageType) {
+    case "predefined":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = `<p>${PREDEFINED_MESSAGES[options.predefinedMessage]}</p>`
+      break
+
+    case "customPlain":
+      // Wrap in <p> for consistency with custom message richtext format and
+      // escape HTML to enforce plain-text.
+      message = `<p>${escapeHTML(options.customPlainMessage)}</p>`
+      break
+
+    case "customRich":
+      ;({ message } = options.customRichMessageGroup)
+      break
+
+    case "customHTML":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = `<p>${options.customHTMLMessage}</p>`
+      break
+
+    default:
+      break
+  }
+  return message
+}
+
+//
 //  Dismissal Helper Functions
 //
 
@@ -90,6 +124,17 @@ const getDismissedUntil = () => {
   return dismissedUntil === null ? null : parseInt(dismissedUntil, 10)
 }
 
+const setDismissedMessage = message =>
+  localStorage.setItem(DISMISSED_MESSAGE_SESSION_KEY, message)
+
+const getDismissedMessage = () =>
+  localStorage.getItem(DISMISSED_MESSAGE_SESSION_KEY)
+
+const clearDismissalStorage = () => {
+  localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY)
+  localStorage.removeItem(DISMISSED_MESSAGE_SESSION_KEY)
+}
+
 function dismiss() {
   // Set the dismissedUntil time and remove the element from the DOM.
   const { minutes, multipler } = options.dismissalPeriodGroup
@@ -97,6 +142,7 @@ function dismiss() {
     const dismissedUntil =
       nowMs() + minutes * parseInt(multipler, 10) * 1000 * 60
     setDismissedUntil(dismissedUntil)
+    setDismissedMessage(getMessageContent())
   }
   appElement.remove()
 }
@@ -104,11 +150,18 @@ function dismiss() {
 function isDismissed() {
   // Return a Boolean indicating whether user dismissal is active.
   const dismissedUntil = getDismissedUntil()
+  // Check for any saved dismissedUntil value.
   if (dismissedUntil === null) {
     return false
   }
+  // Check whether the dismissal period has expired.
   if (nowMs() >= dismissedUntil) {
-    localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY)
+    clearDismissalStorage()
+    return false
+  }
+  // Check whether the message content has changed since dismissal.
+  if (getMessageContent() !== getDismissedMessage()) {
+    clearDismissalStorage()
     return false
   }
   return true
@@ -231,31 +284,7 @@ function updateElement() {
   appElement.style.fontSize = `${16 * pixelScaleFactor}px`
 
   // Get the message content.
-  let message
-  switch (options.messageType) {
-    case "predefined":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = `<p>${PREDEFINED_MESSAGES[options.predefinedMessage]}</p>`
-      break
-
-    case "customPlain":
-      // Wrap in <p> for consistency with custom message richtext format and
-      // escape HTML to enforce plain-text.
-      message = `<p>${escapeHTML(options.customPlainMessage)}</p>`
-      break
-
-    case "customRich":
-      ;({ message } = options.customRichMessageGroup)
-      break
-
-    case "customHTML":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = `<p>${options.customHTMLMessage}</p>`
-      break
-
-    default:
-      break
-  }
+  let message = getMessageContent()
 
   // Wrap in a <message-inner> element for padding control.
   message = `<message-inner>${message}</message-inner>`
@@ -331,7 +360,6 @@ function init() {
   window.INSTALL_SCOPE = {
     setOptions(nextOptions) {
       options = nextOptions
-      localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY)
       updateElement()
     },
     setProduct(nextProduct) {
