@@ -53,16 +53,19 @@
         "enum": [
           "predefined",
           "customPlain",
-          "customRich"
+          "customRich",
+          "customHTML"
         ],
         "enumNames": {
           "predefined": "Predefined",
           "customPlain": "Custom Plain Text",
-          "customRich": "Custom Rich Text"
+          "customRich": "Custom Rich Text",
+          "customHTML": "Custom HTML"
         },
         "default": "predefined",
         "products": {
-          "customRich": ["full"]
+          "customRich": ["full"],
+          "customHTML": ["full"]
         }
       },
 
@@ -94,7 +97,7 @@
         "order": 15,
         "title": "Your Custom Message",
         "type": "string",
-        "default": "Your Custom Message",
+        "default": "A Custom Plain-Text Message",
         "placeholder": "Write your custom message here."
       },
 
@@ -108,10 +111,9 @@
         "properties": {
           "message": {
             "order": 0,
-            "title": "Write a Custom Message",
             "type": "string",
             "format": "richtext",
-            "default": "Your Custom Message",
+            "default": "A Custom <strong>Rich-Text</strong> Message",
             "placeholder": "Write your custom message here."
           },
           "maxImageWidth": {
@@ -125,6 +127,17 @@
             "step": 10
           }
         }
+      },
+
+      "customHTMLMessage": {
+        "showIf": {
+          "messageType": "customHTML"
+        },
+        "order": 15,
+        "title": "Your Custom Message HTML",
+        "description": "This input allows you to customize the message element HTML. The parent element is a &lt;p&gt;, so specify only inline elements.",
+        "type": "string",
+        "default": "A <span style=\"color: red;\">Custom</span> <b>HTML</b> <a href=\"#\">Message</a>"
       },
 
       "displayMode": {

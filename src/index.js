@@ -248,6 +248,11 @@ function updateElement() {
       ;({ message } = options.customRichMessageGroup)
       break
 
+    case "customHTML":
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = `<p>${options.customHTMLMessage}</p>`
+      break
+
     default:
       break
   }
