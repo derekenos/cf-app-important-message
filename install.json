@@ -288,6 +288,20 @@
         "default": "#e2e3e5"
       },
 
+      "customBackgroundGradientLevel": {
+        "showIf": {
+          "colorScheme": "custom"
+        },
+        "order": 46,
+        "title": "Background Gradient Level",
+        "type": "number",
+        "format": "slider",
+        "default": 0.5,
+        "minimum": 0,
+        "maximum": 1,
+        "step": 0.1
+      },
+
       "customTextColor": {
         "showIf": {
           "colorScheme": "custom"

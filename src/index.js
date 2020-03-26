@@ -92,11 +92,6 @@ function hexToRgb(hex) {
     : null
 }
 
-function getBackgroundImageGradient(hex) {
-  const { r, g, b } = hexToRgb(hex)
-  return `linear-gradient(0deg, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0.5))`
-}
-
 //
 // Options Getters
 //
@@ -154,6 +149,15 @@ function getColors() {
     buttonBgColor,
     buttonColor,
   }
+}
+
+function getBackgroundImageGradient(hex) {
+  const finalOpacity =
+    options.colorScheme === "custom"
+      ? 1 - options.customBackgroundGradientLevel
+      : 0.5
+  const { r, g, b } = hexToRgb(hex)
+  return `linear-gradient(0deg, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, ${finalOpacity}))`
 }
 
 //

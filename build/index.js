@@ -186,15 +186,6 @@ function hexToRgb(hex) {
   } : null;
 }
 
-function getBackgroundImageGradient(hex) {
-  var _hexToRgb = hexToRgb(hex),
-      r = _hexToRgb.r,
-      g = _hexToRgb.g,
-      b = _hexToRgb.b;
-
-  return "linear-gradient(0deg, rgba(" + r + ", " + g + ", " + b + ", 1), rgba(" + r + ", " + g + ", " + b + ", 0.5))";
-}
-
 //
 // Options Getters
 //
@@ -256,6 +247,17 @@ function getColors() {
     buttonBgColor: buttonBgColor,
     buttonColor: buttonColor
   };
+}
+
+function getBackgroundImageGradient(hex) {
+  var finalOpacity = options.colorScheme === "custom" ? 1 - options.customBackgroundGradientLevel : 0.5;
+
+  var _hexToRgb = hexToRgb(hex),
+      r = _hexToRgb.r,
+      g = _hexToRgb.g,
+      b = _hexToRgb.b;
+
+  return "linear-gradient(0deg, rgba(" + r + ", " + g + ", " + b + ", 1), rgba(" + r + ", " + g + ", " + b + ", " + finalOpacity + "))";
 }
 
 //
