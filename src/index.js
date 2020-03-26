@@ -86,8 +86,10 @@ const getDismissedUntil = () => {
 
 function dismiss() {
   // Set the dismissedUntil time and remove the element from the DOM.
-  if (options.dismissalPeriodMinutes > 0) {
-    const dismissedUntil = nowMs() + options.dismissalPeriodMinutes * 1000 * 60
+  const { minutes, multipler } = options.dismissalPeriodGroup
+  if (minutes > 0) {
+    const dismissedUntil =
+      nowMs() + minutes * parseInt(multipler, 10) * 1000 * 60
     setDismissedUntil(dismissedUntil)
   }
   appElement.remove()
@@ -317,6 +319,7 @@ function init() {
   window.INSTALL_SCOPE = {
     setOptions(nextOptions) {
       options = nextOptions
+      localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY)
       updateElement()
     },
     setProduct(nextProduct) {

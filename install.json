@@ -151,16 +151,40 @@
         "default": false
       },
 
-      "dismissalPeriodMinutes": {
+      "dismissalPeriodGroup": {
         "showIf": {
           "notDismissible": false
         },
         "order": 26,
         "title": "Dismissal Period",
-        "description": "Set the number of minutes to hide this message from a visitor after they've dismissed it. A value of 0 will display the message to them on every page load.",
-        "type": "number",
-        "default": 1,
-        "minimum": 0
+        "description": "Set the amount of time to hide this message from a visitor after they've dismissed it. A value of 0 will display the message to them on every page load.",
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "order": 1,
+            "title": "Number",
+            "type": "number",
+            "default": 1,
+            "minimum": 0
+          },
+          "multipler": {
+            "order": 2,
+            "title": "Unit",
+            "type": "string",
+            "format": "radios",
+            "enum": [
+              "1",
+              "60",
+              "1440"
+            ],
+            "enumNames": {
+              "1": "Minutes",
+              "60": "Hours",
+              "1440": "Days"
+            },
+            "default": "1440"
+          }
+        }
       },
 
       "buttonText": {
