@@ -301,10 +301,10 @@ function updateElement() {
   }
 
   // fontSize
-  messageEl.style.fontSize = `${options.fontSize}em`
+  const messageInnerEl = messageEl.querySelector("message-inner")
+  messageInnerEl.style.fontSize = `${options.fontSize}em`
 
   // padding
-  const messageInnerEl = messageEl.querySelector("message-inner")
   messageInnerEl.style.padding = `${options.verticalPadding}em ${options.horizontalPadding}em ${options.verticalPadding}em ${options.horizontalPadding}em`
 
   // borderRadius
