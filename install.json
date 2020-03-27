@@ -138,16 +138,45 @@
       "notDismissible": {
         "order": 25,
         "title": "Not Dismissible",
-        "description": "Do not allow users to dismiss this message.",
+        "description": "Do not allow visitors to dismiss this message.",
         "type": "boolean",
         "default": false
       },
 
-      "dismissalPeriodGroup": {
+      "dismissalType": {
         "showIf": {
           "notDismissible": false
         },
         "order": 26,
+        "title": "After the visitor dismisses the message, show again:",
+        "type": "string",
+        "format": "radios",
+        "enum": [
+          "0",
+          "10",
+          "60",
+          "1440",
+          "custom"
+        ],
+        "enumNames": {
+          "0": "on the next page load",
+          "10": "in 10 Minutes",
+          "60": "in 1 Hour",
+          "1440": "in 1 Day",
+          "custom": "~ Custom ~"
+        },
+        "default": "0",
+        "products": {
+          "custom": ["full"]
+        }
+      },
+
+      "customDismissalPeriodGroup": {
+        "showIf": {
+          "notDismissible": false,
+          "dismissalType": "custom"
+        },
+        "order": 27,
         "title": "Dismissal Period",
         "description": "Set the amount of time to hide this message from a visitor after they've dismissed it. A value of 0 will display the message to them on every page load.",
         "type": "object",
@@ -231,7 +260,7 @@
           "#d1ecf1,#0c5460,#17a2b8,#ffffff": "Info",
           "#fefefe,#818182,#f8f9fa,#212529": "Light",
           "#d6d8d9,#1b1e21,#343a40,#ffffff": "Dark",
-          "custom": "Custom"
+          "custom": "~ Custom ~"
         },
         "default": "#cce5ff,#004085,#007bff,#ffffff",
         "products": {
