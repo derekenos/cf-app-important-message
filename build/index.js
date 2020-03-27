@@ -129,6 +129,10 @@ var appElement = void 0;
 //  Utility Functions
 //
 
+var parseDecInt = function parseDecInt(s) {
+  return parseInt(s, 10);
+};
+
 function Element(tagNameOrDOMString) {
   var wrapperTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "div";
 
@@ -149,7 +153,7 @@ function getMaxZIndex() {
   var max = 0;
   var elements = document.getElementsByTagName("*");
   Array.prototype.slice.call(elements).forEach(function (element) {
-    var zIndex = parseInt(document.defaultView.getComputedStyle(element).zIndex, 10);
+    var zIndex = parseDecInt(document.defaultView.getComputedStyle(element).zIndex);
     max = zIndex ? Math.max(max, zIndex) : max;
   });
   return max;
@@ -224,6 +228,13 @@ function getColors() {
   return [options.customBackgroundColor, options.customTextColor, options.customButtonBackgroundColor, options.customButtonTextColor];
 }
 
+function getDismissedUntilMinutes() {
+  if (options.dismissedUntilMinutes !== "custom") {
+    return parseDecInt(options.dismissedUntilMinutes);
+  }
+  return options.customDismissalPeriodGroup.minutes * parseDecInt(options.customDismissalPeriodGroup.multiplier);
+}
+
 function getBackgroundImageGradient(hex) {
   var finalOpacity = options.colorScheme === "custom" ? 1 - options.customBackgroundGradientLevel : 0.5;
 
@@ -247,7 +258,7 @@ var setDismissedUntil = function setDismissedUntil(value) {
 
 var getDismissedUntil = function getDismissedUntil() {
   var dismissedUntil = localStorage.getItem(DISMISSED_UNTIL_SESSION_KEY);
-  return dismissedUntil === null ? null : parseInt(dismissedUntil, 10);
+  return dismissedUntil === null ? null : parseDecInt(dismissedUntil);
 };
 
 var setDismissedMessage = function setDismissedMessage(message) {
@@ -265,19 +276,22 @@ var clearDismissalStorage = function clearDismissalStorage() {
 
 function dismiss() {
   // Set the dismissedUntil time and remove the element from the DOM.
-  var _options$dismissalPer = options.dismissalPeriodGroup,
-      minutes = _options$dismissalPer.minutes,
-      multipler = _options$dismissalPer.multipler;
-
-  if (minutes > 0) {
-    var dismissedUntil = nowMs() + minutes * parseInt(multipler, 10) * 1000 * 60;
-    setDismissedUntil(dismissedUntil);
-    setDismissedMessage(getMessageContent());
+  if (options.notDismissible) {
+    clearDismissalStorage();
+  } else {
+    var dismissalPeriodMs = getDismissedUntilMinutes() * 60 * 1000;
+    if (dismissalPeriodMs > 0) {
+      setDismissedUntil(nowMs() + dismissalPeriodMs);
+      setDismissedMessage(getMessageContent());
+    }
   }
   appElement.remove();
 }
 
 function isDismissed() {
+  if (options.notDismissible) {
+    return false;
+  }
   // Return a Boolean indicating whether user dismissal is active.
   var dismissedUntil = getDismissedUntil();
   // Check for any saved dismissedUntil value.

@@ -143,7 +143,7 @@
         "default": false
       },
 
-      "dismissalType": {
+      "dismissedUntilMinutes": {
         "showIf": {
           "notDismissible": false
         },
@@ -174,11 +174,11 @@
       "customDismissalPeriodGroup": {
         "showIf": {
           "notDismissible": false,
-          "dismissalType": "custom"
+          "dismissedUntilMinutes": "custom"
         },
         "order": 27,
-        "title": "Dismissal Period",
-        "description": "Set the amount of time to hide this message from a visitor after they've dismissed it. A value of 0 will display the message to them on every page load.",
+        "title": "Custom Dismissal Period",
+        "description": "Set the amount of time to hide this message from a visitor after they've dismissed it.",
         "type": "object",
         "properties": {
           "minutes": {
@@ -186,9 +186,9 @@
             "title": "Number",
             "type": "number",
             "default": 0,
-            "minimum": 0
+            "minimum": 1
           },
-          "multipler": {
+          "multiplier": {
             "order": 2,
             "title": "Unit",
             "type": "string",

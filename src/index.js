@@ -26,6 +26,8 @@ let appElement
 //  Utility Functions
 //
 
+const parseDecInt = s => parseInt(s, 10)
+
 function Element(tagNameOrDOMString, wrapperTag = "div") {
   // Returna new Element for a given tag name or DOM string.
   if (!tagNameOrDOMString.startsWith("<"))
@@ -47,9 +49,8 @@ function getMaxZIndex() {
   let max = 0
   const elements = document.getElementsByTagName("*")
   Array.prototype.slice.call(elements).forEach(element => {
-    const zIndex = parseInt(
+    const zIndex = parseDecInt(
       document.defaultView.getComputedStyle(element).zIndex,
-      10,
     )
     max = zIndex ? Math.max(max, zIndex) : max
   })
@@ -134,6 +135,16 @@ function getColors() {
   ]
 }
 
+function getDismissedUntilMinutes() {
+  if (options.dismissedUntilMinutes !== "custom") {
+    return parseDecInt(options.dismissedUntilMinutes)
+  }
+  return (
+    options.customDismissalPeriodGroup.minutes *
+    parseDecInt(options.customDismissalPeriodGroup.multiplier)
+  )
+}
+
 function getBackgroundImageGradient(hex) {
   const finalOpacity =
     options.colorScheme === "custom"
@@ -154,7 +165,7 @@ const setDismissedUntil = value =>
 
 const getDismissedUntil = () => {
   const dismissedUntil = localStorage.getItem(DISMISSED_UNTIL_SESSION_KEY)
-  return dismissedUntil === null ? null : parseInt(dismissedUntil, 10)
+  return dismissedUntil === null ? null : parseDecInt(dismissedUntil)
 }
 
 const setDismissedMessage = message =>
@@ -170,17 +181,22 @@ const clearDismissalStorage = () => {
 
 function dismiss() {
   // Set the dismissedUntil time and remove the element from the DOM.
-  const { minutes, multipler } = options.dismissalPeriodGroup
-  if (minutes > 0) {
-    const dismissedUntil =
-      nowMs() + minutes * parseInt(multipler, 10) * 1000 * 60
-    setDismissedUntil(dismissedUntil)
-    setDismissedMessage(getMessageContent())
+  if (options.notDismissible) {
+    clearDismissalStorage()
+  } else {
+    const dismissalPeriodMs = getDismissedUntilMinutes() * 60 * 1000
+    if (dismissalPeriodMs > 0) {
+      setDismissedUntil(nowMs() + dismissalPeriodMs)
+      setDismissedMessage(getMessageContent())
+    }
   }
   appElement.remove()
 }
 
 function isDismissed() {
+  if (options.notDismissible) {
+    return false
+  }
   // Return a Boolean indicating whether user dismissal is active.
   const dismissedUntil = getDismissedUntil()
   // Check for any saved dismissedUntil value.
