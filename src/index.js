@@ -99,11 +99,6 @@ function hexToRgb(hex) {
 function getMessageContent() {
   let message
   switch (options.messageType) {
-    case "predefined":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = `<p>${PREDEFINED_MESSAGES[options.predefinedMessage]}</p>`
-      break
-
     case "customPlain":
       // Wrap in <p> for consistency with custom message richtext format and
       // escape HTML to enforce plain-text.
@@ -120,35 +115,23 @@ function getMessageContent() {
       break
 
     default:
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = `<p>${PREDEFINED_MESSAGES[options.messageType]}</p>`
       break
   }
   return message
 }
 
 function getColors() {
-  let bgColor
-  let color
-  let buttonBgColor
-  let buttonColor
-  if (options.colorScheme === "predefined") {
-    ;[
-      bgColor,
-      color,
-      buttonBgColor,
-      buttonColor,
-    ] = options.predefinedColorScheme.split(",")
-  } else {
-    bgColor = options.customBackgroundColor
-    color = options.customTextColor
-    buttonBgColor = options.customButtonBackgroundColor
-    buttonColor = options.customButtonTextColor
+  if (options.colorScheme !== "custom") {
+    return options.colorScheme.split(",")
   }
-  return {
-    bgColor,
-    color,
-    buttonBgColor,
-    buttonColor,
-  }
+  return [
+    options.customBackgroundColor,
+    options.customTextColor,
+    options.customButtonBackgroundColor,
+    options.customButtonTextColor,
+  ]
 }
 
 function getBackgroundImageGradient(hex) {
@@ -354,7 +337,7 @@ function updateElement() {
   const messageEl = appElement.querySelector("message")
 
   // colorScheme
-  const { bgColor, color, buttonBgColor, buttonColor } = getColors()
+  const [bgColor, color, buttonBgColor, buttonColor] = getColors()
   messageEl.style.backgroundImage = getBackgroundImageGradient(bgColor)
   messageEl.style.color = color
   // Apply style to dismissible modal button.

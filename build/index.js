@@ -193,11 +193,6 @@ function hexToRgb(hex) {
 function getMessageContent() {
   var message = void 0;
   switch (options.messageType) {
-    case "predefined":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = "<p>" + PREDEFINED_MESSAGES[options.predefinedMessage] + "</p>";
-      break;
-
     case "customPlain":
       // Wrap in <p> for consistency with custom message richtext format and
       // escape HTML to enforce plain-text.
@@ -215,38 +210,18 @@ function getMessageContent() {
       break;
 
     default:
+      // Wrap in <p> for consistency with custom message richtext format.
+      message = "<p>" + PREDEFINED_MESSAGES[options.messageType] + "</p>";
       break;
   }
   return message;
 }
 
 function getColors() {
-  var bgColor = void 0;
-  var color = void 0;
-  var buttonBgColor = void 0;
-  var buttonColor = void 0;
-  if (options.colorScheme === "predefined") {
-    ;
-    var _options$predefinedCo = options.predefinedColorScheme.split(",");
-
-    var _options$predefinedCo2 = _slicedToArray(_options$predefinedCo, 4);
-
-    bgColor = _options$predefinedCo2[0];
-    color = _options$predefinedCo2[1];
-    buttonBgColor = _options$predefinedCo2[2];
-    buttonColor = _options$predefinedCo2[3];
-  } else {
-    bgColor = options.customBackgroundColor;
-    color = options.customTextColor;
-    buttonBgColor = options.customButtonBackgroundColor;
-    buttonColor = options.customButtonTextColor;
+  if (options.colorScheme !== "custom") {
+    return options.colorScheme.split(",");
   }
-  return {
-    bgColor: bgColor,
-    color: color,
-    buttonBgColor: buttonBgColor,
-    buttonColor: buttonColor
-  };
+  return [options.customBackgroundColor, options.customTextColor, options.customButtonBackgroundColor, options.customButtonTextColor];
 }
 
 function getBackgroundImageGradient(hex) {
@@ -443,10 +418,11 @@ function updateElement() {
   // colorScheme
 
   var _getColors = getColors(),
-      bgColor = _getColors.bgColor,
-      color = _getColors.color,
-      buttonBgColor = _getColors.buttonBgColor,
-      buttonColor = _getColors.buttonColor;
+      _getColors2 = _slicedToArray(_getColors, 4),
+      bgColor = _getColors2[0],
+      color = _getColors2[1],
+      buttonBgColor = _getColors2[2],
+      buttonColor = _getColors2[3];
 
   messageEl.style.backgroundImage = getBackgroundImageGradient(bgColor);
   messageEl.style.color = color;

@@ -47,45 +47,24 @@
 
       "messageType": {
         "order": 10,
-        "title": "Message Type",
-        "type": "string",
-        "format": "radios",
-        "enum": [
-          "predefined",
-          "customPlain",
-          "customRich",
-          "customHTML"
-        ],
-        "enumNames": {
-          "predefined": "Predefined",
-          "customPlain": "Custom Plain Text",
-          "customRich": "Custom Rich Text",
-          "customHTML": "Custom HTML"
-        },
-        "default": "predefined",
-        "products": {
-          "customRich": ["full"],
-          "customHTML": ["full"]
-        }
-      },
-
-      "predefinedMessage": {
-        "showIf": {
-          "messageType": "predefined"
-        },
-        "order": 15,
-        "title": "Select a Predefined Message",
+        "title": "Select A Message Type",
         "type": "string",
         "format": "radios",
         "enum": [
           "minorServiceInterruption",
           "majorServiceInterruption",
-          "scheduledMaintenance"
+          "scheduledMaintenance",
+          "customPlain",
+          "customRich",
+          "customHTML"
         ],
         "enumNames": {
           "minorServiceInterruption": "Minor service interruption",
           "majorServiceInterruption": "Major service interruption",
-          "scheduledMaintenance": "Scheduled maintenance"
+          "scheduledMaintenance": "Scheduled maintenance",
+          "customPlain": "Custom Plain Text",
+          "customRich": "Custom Rich Text",
+          "customHTML": "Custom HTML"
         },
         "default": "minorServiceInterruption"
       },
@@ -95,7 +74,7 @@
           "messageType": "customPlain"
         },
         "order": 15,
-        "title": "Your Custom Message",
+        "title": "Custom Plain-Text Message",
         "type": "string",
         "default": "A Custom Plain-Text Message",
         "placeholder": "Write your custom message here."
@@ -106,7 +85,7 @@
           "messageType": "customRich"
         },
         "order": 15,
-        "title": "Rich Text Message",
+        "title": "Custom Rich Text Message",
         "type": "object",
         "properties": {
           "message": {
@@ -134,7 +113,7 @@
           "messageType": "customHTML"
         },
         "order": 15,
-        "title": "Your Custom Message HTML",
+        "title": "Custom HTML Message",
         "description": "This input allows you to customize the message element HTML. The parent element is a &lt;p&gt;, so specify only inline elements.",
         "type": "string",
         "default": "A <span style=\"color: red;\">Custom</span> <b>HTML</b> <a href=\"#\">Message</a>"
@@ -229,29 +208,7 @@
 
       "colorScheme": {
         "order": 35,
-        "title": "Color Scheme",
-        "type": "string",
-        "format": "radios",
-        "enum": [
-          "predefined",
-          "custom"
-        ],
-        "enumNames": {
-          "predefined": "Predefined",
-          "custom": "Custom"
-        },
-        "default": "predefined",
-        "products": {
-          "custom": ["full"]
-        }
-      },
-
-      "predefinedColorScheme": {
-        "showIf": {
-          "colorScheme": "predefined"
-        },
-        "order": 40,
-        "title": "Select Predefined Color Scheme",
+        "title": "Select Color Scheme",
         "type": "string",
         "format": "radios",
         "enum": [
@@ -262,7 +219,8 @@
           "#fff3cd,#856404,#ffc107,#212529",
           "#d1ecf1,#0c5460,#17a2b8,#ffffff",
           "#fefefe,#818182,#f8f9fa,#212529",
-          "#d6d8d9,#1b1e21,#343a40,#ffffff"
+          "#d6d8d9,#1b1e21,#343a40,#ffffff",
+          "custom"
         ],
         "enumNames": {
           "#cce5ff,#004085,#007bff,#ffffff": "Primary",
@@ -272,9 +230,13 @@
           "#fff3cd,#856404,#ffc107,#212529": "Warning",
           "#d1ecf1,#0c5460,#17a2b8,#ffffff": "Info",
           "#fefefe,#818182,#f8f9fa,#212529": "Light",
-          "#d6d8d9,#1b1e21,#343a40,#ffffff": "Dark"
+          "#d6d8d9,#1b1e21,#343a40,#ffffff": "Dark",
+          "custom": "Custom"
         },
-        "default": "#cce5ff,#004085,#007bff,#ffffff"
+        "default": "#cce5ff,#004085,#007bff,#ffffff",
+        "products": {
+          "custom": ["full"]
+        }
       },
 
       "customBackgroundColor": {
