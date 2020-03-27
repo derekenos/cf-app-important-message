@@ -343,7 +343,7 @@
 
       "horizontalPadding": {
         "order": 70,
-        "title": "Horizontal Whitespace Padding",
+        "title": "Horizontal Padding",
         "type": "number",
         "format": "slider",
         "default": 0,
@@ -354,7 +354,37 @@
 
       "verticalPadding": {
         "order": 75,
-        "title": "Vertical Whitespace Padding",
+        "title": "Vertical Padding",
+        "type": "number",
+        "format": "slider",
+        "default": 0,
+        "minimum": 0,
+        "maximum": 10,
+        "step": 0.1
+      },
+
+      "horizontalMargin": {
+        "showIf": {
+          "displayMode": "banner",
+          "notDismissible": true
+        },
+        "order": 77,
+        "title": "Horizontal Margin",
+        "type": "number",
+        "format": "slider",
+        "default": 0,
+        "minimum": 0,
+        "maximum": 10,
+        "step": 0.1
+      },
+
+      "verticalMargin": {
+        "showIf": {
+          "displayMode": "banner",
+          "notDismissible": true
+        },
+        "order": 78,
+        "title": "Vertical Margin",
         "type": "number",
         "format": "slider",
         "default": 0,
@@ -364,9 +394,6 @@
       },
 
       "borderRadius": {
-        "showIf": {
-          "displayMode": "modal"
-        },
         "order": 80,
         "title": "Corner Roundness",
         "type": "number",

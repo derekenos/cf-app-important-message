@@ -28,13 +28,15 @@ cloudflare-app[app="important-message"].banner.dismissible {
     left: 0;
     top: 0;
     right: 0;
-    box-shadow: 0 0 1em .2em #444;
-    transition: top .5s;
     cursor: pointer;
 }
 
 cloudflare-app[app="important-message"].banner message {
     text-align: left;
+}
+
+cloudflare-app[app="important-message"].banner.dismissible message {
+    box-shadow: 0 0 1em .2em #444;
 }
 
 cloudflare-app[app="important-message"].banner.dismissible message closer {

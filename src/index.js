@@ -370,8 +370,16 @@ function updateElement() {
   // padding
   messageInnerEl.style.padding = `${options.verticalPadding}em ${options.horizontalPadding}em ${options.verticalPadding}em ${options.horizontalPadding}em`
 
+  // margin
+  if (options.displayMode === "banner" && options.notDismissible) {
+    messageEl.style.margin = `${options.verticalMargin}em ${options.horizontalMargin}em ${options.verticalMargin}em ${options.horizontalMargin}em`
+  }
+
   // borderRadius
-  if (options.displayMode === "modal") {
+  if (options.displayMode === "banner" && !options.notDismissible) {
+    // Only style bottom edge of dismissible banner.
+    messageEl.style.borderRadius = `0 0 ${options.borderRadius}px ${options.borderRadius}px`
+  } else {
     messageEl.style.borderRadius = `${options.borderRadius}px`
   }
 
