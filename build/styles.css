@@ -4,50 +4,57 @@
 
 cloudflare-app[app="important-message"] {
     font-size: 16px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+    text-align: left;
+    color: #000;
 }
 
-cloudflare-app[app="important-message"] message {
-    display: block;
+cloudflare-app[app="important-message"] banner,
+cloudflare-app[app="important-message"] modal {
     background-color: #fff;
-    color: #000;
     position: relative;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
     padding: 1em;
 }
 
-cloudflare-app[app="important-message"] message message-inner {
-    display: block;
+cloudflare-app[app="important-message"] banner message,
+cloudflare-app[app="important-message"] modal message {
     padding: 4em;
 }
 
-
 /* Banner */
 
-cloudflare-app[app="important-message"].banner.dismissible {
+cloudflare-app[app="important-message"] banner {
+    display: flex;
+    width: 100%;
+}
+
+cloudflare-app[app="important-message"].dismissible banner {
     position: fixed;
     left: 0;
     top: 0;
     right: 0;
     cursor: pointer;
-}
-
-cloudflare-app[app="important-message"].banner message {
-    text-align: left;
-}
-
-cloudflare-app[app="important-message"].banner.dismissible message {
     box-shadow: 0 0 1em .2em #444;
+    border: none; /* why is this needed? */
 }
 
-cloudflare-app[app="important-message"].banner.dismissible message closer {
-    float: right;
+cloudflare-app[app="important-message"] banner message {
+    display: inline;
+    flex-grow: 1;
+}
+
+cloudflare-app[app="important-message"].dismissible banner button {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
     font-family: arial;
 }
 
 
 /* Modal */
 
-cloudflare-app[app="important-message"].modal {
+cloudflare-app[app="important-message"] overlay {
     position: fixed;
     left: 0;
     top: 0;
@@ -55,21 +62,31 @@ cloudflare-app[app="important-message"].modal {
     bottom: 0;
     display: flex;
     background-color: rgba(0, 0, 0, .6);
+    cursor: pointer;
 }
 
-cloudflare-app[app="important-message"].modal message {
-    text-align: left;
+cloudflare-app[app="important-message"] modal {
+    display: block;
     margin: auto auto;
     border: solid #000 2px;
     max-width: 60%;
+    max-height: 85%;
+    overflow: auto;
+    cursor: default;
 }
 
-cloudflare-app[app="important-message"].modal.dismissible closer {
-    float: right;
-    padding: .75em 1em;
+cloudflare-app[app="important-message"] modal message {
+    display: block;
+    cursor: text;
+}
+
+cloudflare-app[app="important-message"].dismissible modal button {
+    display: inline;
+    padding: .4em .75em;
     cursor: pointer;
     font-size: 1em;
     border-radius: .25em;
+    float: right;
 }
 
 
@@ -96,5 +113,5 @@ cloudflare-app[app="important-message"] a {
 }
 
 cloudflare-app[app="important-message"] img {
-    max-width: 200px;
+    max-width: 50%;
 }

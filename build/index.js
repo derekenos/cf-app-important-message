@@ -317,26 +317,25 @@ function isDismissed() {
 
 function configureAppElementAsBanner(message) {
   // Mutate the App element into a banner.
-  appElement.classList.add("banner");
   if (options.notDismissible) {
     appElement.classList.add("non-dismissible");
   } else {
     appElement.classList.add("dismissible");
   }
-  appElement.appendChild(Element("<message>\n           " + (options.notDismissible ? "" : "<closer>x</closer>") + "\n           " + message + "\n         </message>"));
+  appElement.appendChild(Element("<banner>\n           " + message + "\n           " + (options.notDismissible ? "" : "<button>x</button>") + "\n         </banner>"));
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
-    var closerEl = appElement.querySelector("closer");
+    var buttonEl = appElement.querySelector("button");
 
     // Bold the X on mouse enter.
     appElement.addEventListener("mouseenter", function (e) {
-      closerEl.style.fontWeight = "bold";
+      buttonEl.style.fontWeight = "bold";
     });
 
     // Unbold the X on mouse leave.
     appElement.addEventListener("mouseleave", function (e) {
-      closerEl.style.fontWeight = "normal";
+      buttonEl.style.fontWeight = "normal";
     });
 
     // Remove the element on click.
@@ -355,19 +354,18 @@ function configureAppElementAsBanner(message) {
 
 function configureAppElementAsModal(message) {
   // Mutate the App element into a modal.
-  appElement.classList.add("modal");
   if (options.notDismissible) {
     appElement.classList.add("non-dismissible");
   } else {
     appElement.classList.add("dismissible");
   }
-  appElement.appendChild(Element("<message>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><closer>" + options.buttonText + "</closer>") + "\n         </message>"));
+  appElement.appendChild(Element("<overlay>\n         <modal>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><button>" + options.buttonText + "</button>") + "\n         </modal>\n       </overlay>"));
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
     // Close the modal on overlay or button click.
     window.addEventListener("click", function (e) {
-      if (e.target.tagName === "CLOUDFLARE-APP" || e.target.tagName === "CLOSER") {
+      if (e.target.tagName === "OVERLAY" || e.target.tagName === "BUTTON") {
         dismiss();
       }
     });
@@ -412,8 +410,8 @@ function updateElement() {
   // Get the message content.
   var message = getMessageContent();
 
-  // Wrap in a <message-inner> element for padding control.
-  message = "<message-inner>" + message + "</message-inner>";
+  // Wrap in a <message> element for padding control.
+  message = "<message>" + message + "</message>";
 
   // Insert the HTML.
   if (options.displayMode === "banner") {
@@ -427,7 +425,7 @@ function updateElement() {
   appElement.style.zIndex = maxZIndex + 1;
 
   // Apply the configurable styles.
-  var messageEl = appElement.querySelector("message");
+  var el = appElement.querySelector(options.displayMode);
 
   // colorScheme
 
@@ -438,39 +436,39 @@ function updateElement() {
       buttonBgColor = _getColors2[2],
       buttonColor = _getColors2[3];
 
-  messageEl.style.backgroundImage = getBackgroundImageGradient(bgColor);
-  messageEl.style.color = color;
+  el.style.backgroundImage = getBackgroundImageGradient(bgColor);
+  el.style.color = color;
   // Apply style to dismissible modal button.
   if (options.displayMode === "modal" && !options.notDismissible) {
-    var buttonEl = messageEl.querySelector("closer");
+    var buttonEl = el.querySelector("button");
     buttonEl.style.backgroundColor = buttonBgColor;
     buttonEl.style.color = buttonColor;
   }
 
   // fontSize
-  var messageInnerEl = messageEl.querySelector("message-inner");
-  messageInnerEl.style.fontSize = options.fontSize + "em";
+  var messageEl = el.querySelector("message");
+  messageEl.style.fontSize = options.fontSize + "em";
 
   // padding
-  messageInnerEl.style.padding = options.verticalPadding + "em " + options.horizontalPadding + "em " + options.verticalPadding + "em " + options.horizontalPadding + "em";
+  messageEl.style.padding = options.verticalPadding + "em " + options.horizontalPadding + "em " + options.verticalPadding + "em " + options.horizontalPadding + "em";
 
   // margin
   if (options.displayMode === "banner" && options.notDismissible) {
-    messageEl.style.margin = options.verticalMargin + "em " + options.horizontalMargin + "em " + options.verticalMargin + "em " + options.horizontalMargin + "em";
+    el.style.margin = options.verticalMargin + "em " + options.horizontalMargin + "em " + options.verticalMargin + "em " + options.horizontalMargin + "em";
   }
 
   // borderRadius
   if (options.displayMode === "banner" && !options.notDismissible) {
     // Only style bottom edge of dismissible banner.
-    messageEl.style.borderRadius = "0 0 " + options.borderRadius + "px " + options.borderRadius + "px";
+    el.style.borderRadius = "0 0 " + options.borderRadius + "px " + options.borderRadius + "px";
   } else {
-    messageEl.style.borderRadius = options.borderRadius + "px";
+    el.style.borderRadius = options.borderRadius + "px";
   }
 
   // image max-width
   if (options.messageType === "customRich") {
-    messageEl.querySelectorAll("img").forEach(function (el) {
-      el.setAttribute("style", "max-width: " + options.customRichMessageGroup.maxImageWidth * pixelScaleFactor + "px");
+    el.querySelectorAll("img").forEach(function (_el) {
+      _el.setAttribute("style", "max-width: " + options.customRichMessageGroup.maxImageWidth + "%");
     });
   }
 }

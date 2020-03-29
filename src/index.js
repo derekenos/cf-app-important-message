@@ -222,7 +222,6 @@ function isDismissed() {
 
 function configureAppElementAsBanner(message) {
   // Mutate the App element into a banner.
-  appElement.classList.add("banner")
   if (options.notDismissible) {
     appElement.classList.add("non-dismissible")
   } else {
@@ -230,25 +229,25 @@ function configureAppElementAsBanner(message) {
   }
   appElement.appendChild(
     Element(
-      `<message>
-           ${options.notDismissible ? "" : "<closer>x</closer>"}
+      `<banner>
            ${message}
-         </message>`,
+           ${options.notDismissible ? "" : "<button>x</button>"}
+         </banner>`,
     ),
   )
 
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
-    const closerEl = appElement.querySelector("closer")
+    const buttonEl = appElement.querySelector("button")
 
     // Bold the X on mouse enter.
     appElement.addEventListener("mouseenter", e => {
-      closerEl.style.fontWeight = "bold"
+      buttonEl.style.fontWeight = "bold"
     })
 
     // Unbold the X on mouse leave.
     appElement.addEventListener("mouseleave", e => {
-      closerEl.style.fontWeight = "normal"
+      buttonEl.style.fontWeight = "normal"
     })
 
     // Remove the element on click.
@@ -265,7 +264,6 @@ function configureAppElementAsBanner(message) {
 
 function configureAppElementAsModal(message) {
   // Mutate the App element into a modal.
-  appElement.classList.add("modal")
   if (options.notDismissible) {
     appElement.classList.add("non-dismissible")
   } else {
@@ -273,14 +271,16 @@ function configureAppElementAsModal(message) {
   }
   appElement.appendChild(
     Element(
-      `<message>
+      `<overlay>
+         <modal>
            ${message}
            ${
              options.notDismissible
                ? ""
-               : `<br><closer>${options.buttonText}</closer>`
+               : `<br><button>${options.buttonText}</button>`
            }
-         </message>`,
+         </modal>
+       </overlay>`,
     ),
   )
 
@@ -288,10 +288,7 @@ function configureAppElementAsModal(message) {
   if (!options.notDismissible) {
     // Close the modal on overlay or button click.
     window.addEventListener("click", e => {
-      if (
-        e.target.tagName === "CLOUDFLARE-APP" ||
-        e.target.tagName === "CLOSER"
-      ) {
+      if (e.target.tagName === "OVERLAY" || e.target.tagName === "BUTTON") {
         dismiss()
       }
     })
@@ -335,8 +332,8 @@ function updateElement() {
   // Get the message content.
   let message = getMessageContent()
 
-  // Wrap in a <message-inner> element for padding control.
-  message = `<message-inner>${message}</message-inner>`
+  // Wrap in a <message> element for padding control.
+  message = `<message>${message}</message>`
 
   // Insert the HTML.
   if (options.displayMode === "banner") {
@@ -350,46 +347,45 @@ function updateElement() {
   appElement.style.zIndex = maxZIndex + 1
 
   // Apply the configurable styles.
-  const messageEl = appElement.querySelector("message")
+  const el = appElement.querySelector(options.displayMode)
 
   // colorScheme
   const [bgColor, color, buttonBgColor, buttonColor] = getColors()
-  messageEl.style.backgroundImage = getBackgroundImageGradient(bgColor)
-  messageEl.style.color = color
+  el.style.backgroundImage = getBackgroundImageGradient(bgColor)
+  el.style.color = color
   // Apply style to dismissible modal button.
   if (options.displayMode === "modal" && !options.notDismissible) {
-    const buttonEl = messageEl.querySelector("closer")
+    const buttonEl = el.querySelector("button")
     buttonEl.style.backgroundColor = buttonBgColor
     buttonEl.style.color = buttonColor
   }
 
   // fontSize
-  const messageInnerEl = messageEl.querySelector("message-inner")
-  messageInnerEl.style.fontSize = `${options.fontSize}em`
+  const messageEl = el.querySelector("message")
+  messageEl.style.fontSize = `${options.fontSize}em`
 
   // padding
-  messageInnerEl.style.padding = `${options.verticalPadding}em ${options.horizontalPadding}em ${options.verticalPadding}em ${options.horizontalPadding}em`
+  messageEl.style.padding = `${options.verticalPadding}em ${options.horizontalPadding}em ${options.verticalPadding}em ${options.horizontalPadding}em`
 
   // margin
   if (options.displayMode === "banner" && options.notDismissible) {
-    messageEl.style.margin = `${options.verticalMargin}em ${options.horizontalMargin}em ${options.verticalMargin}em ${options.horizontalMargin}em`
+    el.style.margin = `${options.verticalMargin}em ${options.horizontalMargin}em ${options.verticalMargin}em ${options.horizontalMargin}em`
   }
 
   // borderRadius
   if (options.displayMode === "banner" && !options.notDismissible) {
     // Only style bottom edge of dismissible banner.
-    messageEl.style.borderRadius = `0 0 ${options.borderRadius}px ${options.borderRadius}px`
+    el.style.borderRadius = `0 0 ${options.borderRadius}px ${options.borderRadius}px`
   } else {
-    messageEl.style.borderRadius = `${options.borderRadius}px`
+    el.style.borderRadius = `${options.borderRadius}px`
   }
 
   // image max-width
   if (options.messageType === "customRich") {
-    messageEl.querySelectorAll("img").forEach(el => {
-      el.setAttribute(
+    el.querySelectorAll("img").forEach(_el => {
+      _el.setAttribute(
         "style",
-        `max-width: ${options.customRichMessageGroup.maxImageWidth *
-          pixelScaleFactor}px`,
+        `max-width: ${options.customRichMessageGroup.maxImageWidth}%`,
       )
     })
   }

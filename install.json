@@ -100,10 +100,10 @@
             "title": "Adjust the Maximum Image Width",
             "type": "number",
             "format": "slider",
-            "default": 200,
-            "minimum": 20,
-            "maximum": 800,
-            "step": 10
+            "default": 50,
+            "minimum": 1,
+            "maximum": 100,
+            "step": 1
           }
         }
       },
@@ -185,7 +185,7 @@
             "order": 1,
             "title": "Number",
             "type": "number",
-            "default": 0,
+            "default": 1,
             "minimum": 1
           },
           "multiplier": {
