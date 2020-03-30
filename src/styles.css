@@ -94,7 +94,7 @@ cloudflare-app[app="important-message"] modal content {
   transform: translate(-50%, -50%);
   display: inline-block;
   border: solid #000 2px;
-  max-width: 60%;
+  max-width: 85%;
   max-height: 85%;
   overflow: auto;
   cursor: default;
