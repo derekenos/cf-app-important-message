@@ -101,8 +101,6 @@ function addEventListener(el, event, fn) {
 }
 
 const removeListeners = () => {
-  // DEBUG
-  console.log(`Removing ${listenerRemovers.length} listeners`)
   while (listenerRemovers.length > 0) {
     listenerRemovers.shift()()
   }

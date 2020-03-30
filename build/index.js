@@ -200,8 +200,6 @@ function addEventListener(el, event, fn) {
 }
 
 var removeListeners = function removeListeners() {
-  // DEBUG
-  console.log("Removing " + listenerRemovers.length + " listeners");
   while (listenerRemovers.length > 0) {
     listenerRemovers.shift()();
   }
