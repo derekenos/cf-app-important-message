@@ -352,9 +352,9 @@ function configureAppElementAsBanner(message) {
       console.log("closed");
     }));
     bannerEl.classList.remove("show");
-    // Need to
+    // See here for why I'm reading the offsetWidth:
     // https://stackoverflow.com/a/30072037/2327940
-    bannerEl.offsetWidth = bannerEl.offsetWidth;
+    var _ = bannerEl.offsetWidth;
     bannerEl.classList.add("hide");
   };
 
