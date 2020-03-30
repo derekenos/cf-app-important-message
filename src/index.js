@@ -242,7 +242,7 @@ function configureAppElementAsBanner(message) {
 
   appElement.appendChild(
     Element(
-      `<banner>
+      `<banner class="show">
            ${message}
            ${options.notDismissible ? "" : "<button>x</button>"}
          </banner>`,
@@ -255,8 +255,25 @@ function configureAppElementAsBanner(message) {
 
   // Add click and keypress handlers.
 
+  const bannerEl = appElement.querySelector("banner")
+
+  const close = () => {
+    listenerRemovers.push(
+      addEventListener(bannerEl, "animationend", () => {
+        removeListeners()
+        dismiss()
+        console.log("closed")
+      }),
+    )
+    bannerEl.classList.remove("show")
+    // See here for why I'm reading the offsetWidth:
+    // https://stackoverflow.com/a/30072037/2327940
+    const _ = bannerEl.offsetWidth
+    bannerEl.classList.add("hide")
+  }
+
   // Bold the X on mouse enter.
-  const buttonEl = appElement.querySelector("button")
+  const buttonEl = bannerEl.querySelector("button")
   listenerRemovers.push(
     addEventListener(appElement, "mouseenter", e => {
       buttonEl.style.fontWeight = "bold"
@@ -273,8 +290,7 @@ function configureAppElementAsBanner(message) {
   // Remove the element on click.
   listenerRemovers.push(
     addEventListener(appElement, "click", e => {
-      removeListeners()
-      dismiss()
+      close()
     }),
   )
 
@@ -282,8 +298,7 @@ function configureAppElementAsBanner(message) {
   listenerRemovers.push(
     addEventListener(window, "keydown", e => {
       if (e.key === "Escape") {
-        removeListeners()
-        dismiss()
+        close()
       }
     }),
   )

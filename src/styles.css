@@ -3,115 +3,136 @@
 /* Global */
 
 cloudflare-app[app="important-message"] {
-    font-size: 16px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-    text-align: left;
-    color: #000;
+  font-size: 16px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  text-align: left;
+  color: #000;
+
 }
 
 cloudflare-app[app="important-message"] banner,
 cloudflare-app[app="important-message"] modal {
-    background-color: #fff;
-    position: relative;
-    padding: 1em;
+  background-color: #fff;
+  position: relative;
+  padding: 1em;
 }
 
 cloudflare-app[app="important-message"] banner message,
 cloudflare-app[app="important-message"] modal message {
-    padding: 4em;
+  padding: 4em;
 }
 
 /* Banner */
 
 cloudflare-app[app="important-message"] banner {
-    display: flex;
-    width: 100%;
+  display: flex;
+  /* width: 100%; */
 }
 
 cloudflare-app[app="important-message"].dismissible banner {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    cursor: pointer;
-    box-shadow: 0 0 1em .2em #444;
-    border: none; /* why is this needed? */
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  box-shadow: 0 0 1em .2em #444;
+  border: none; /* why is this needed? */
 }
 
 cloudflare-app[app="important-message"] banner message {
-    display: inline;
-    flex-grow: 1;
+  display: inline;
+  flex-grow: 1;
 }
 
 cloudflare-app[app="important-message"].dismissible banner button {
-    margin: 0;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    font-family: arial;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  font-family: arial;
 }
 
+cloudflare-app[app="important-message"].dismissible banner.show {
+  animation-duration: 1s;
+  animation-name: slideDown;
+}
+
+cloudflare-app[app="important-message"].dismissible banner.hide {
+  animation-duration: .5s;
+  animation-name: slideDown;
+  animation-direction: reverse;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translate(0, -150%);
+  }
+
+  to {
+    transform: translate(0, 0);
+  }
+}
 
 /* Modal */
 
 cloudflare-app[app="important-message"] overlay {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    background-color: rgba(0, 0, 0, .6);
-    cursor: pointer;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background-color: rgba(0, 0, 0, .6);
+  cursor: pointer;
 }
 
 cloudflare-app[app="important-message"] modal {
-    display: block;
-    margin: auto auto;
-    border: solid #000 2px;
-    max-width: 60%;
-    max-height: 85%;
-    overflow: auto;
-    cursor: default;
+  display: block;
+  margin: auto auto;
+  border: solid #000 2px;
+  max-width: 60%;
+  max-height: 85%;
+  overflow: auto;
+  cursor: default;
 }
 
 cloudflare-app[app="important-message"] modal message {
-    display: block;
-    cursor: text;
+  display: block;
+  cursor: text;
 }
 
 cloudflare-app[app="important-message"].dismissible modal button {
-    display: inline;
-    padding: .4em .75em;
-    cursor: pointer;
-    font-size: 1em;
-    border-radius: .25em;
-    float: right;
+  display: inline;
+  padding: .4em .75em;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: .25em;
+  float: right;
 }
 
 
 /* Style resets for Rich Text */
 
 cloudflare-app[app="important-message"] p {
-    background-color: transparent;
-    border: none;
-    color: inherit;
-    font-size: 1em;
-    line-height: 1.2em;
-    margin: 0;
-    padding: 0;
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+  line-height: 1.2em;
+  margin: 0;
+  padding: 0;
 }
 
 cloudflare-app[app="important-message"] a {
-    background-color: transparent;
-    border: none;
-    color: inherit;
-    font-size: 1em;
-    line-height: 1.2em;
-    margin: 0;
-    padding: 0;
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+  line-height: 1.2em;
+  margin: 0;
+  padding: 0;
 }
 
 cloudflare-app[app="important-message"] img {
-    max-width: 50%;
+  max-width: 50%;
 }

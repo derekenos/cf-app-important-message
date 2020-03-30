@@ -335,7 +335,7 @@ function configureAppElementAsBanner(message) {
   // Mutate the App element into a banner.
   appElement.classList.add(options.notDismissible ? "non-dismissible" : "dismissible");
 
-  appElement.appendChild(Element("<banner>\n           " + message + "\n           " + (options.notDismissible ? "" : "<button>x</button>") + "\n         </banner>"));
+  appElement.appendChild(Element("<banner class=\"show\">\n           " + message + "\n           " + (options.notDismissible ? "" : "<button>x</button>") + "\n         </banner>"));
 
   if (options.notDismissible) {
     return;
@@ -343,8 +343,23 @@ function configureAppElementAsBanner(message) {
 
   // Add click and keypress handlers.
 
+  var bannerEl = appElement.querySelector("banner");
+
+  var close = function close() {
+    listenerRemovers.push(addEventListener(bannerEl, "animationend", function () {
+      removeListeners();
+      dismiss();
+      console.log("closed");
+    }));
+    bannerEl.classList.remove("show");
+    // Need to
+    // https://stackoverflow.com/a/30072037/2327940
+    bannerEl.offsetWidth = bannerEl.offsetWidth;
+    bannerEl.classList.add("hide");
+  };
+
   // Bold the X on mouse enter.
-  var buttonEl = appElement.querySelector("button");
+  var buttonEl = bannerEl.querySelector("button");
   listenerRemovers.push(addEventListener(appElement, "mouseenter", function (e) {
     buttonEl.style.fontWeight = "bold";
   }));
@@ -356,15 +371,13 @@ function configureAppElementAsBanner(message) {
 
   // Remove the element on click.
   listenerRemovers.push(addEventListener(appElement, "click", function (e) {
-    removeListeners();
-    dismiss();
+    close();
   }));
 
   // Remove the element on Escape.
   listenerRemovers.push(addEventListener(window, "keydown", function (e) {
     if (e.key === "Escape") {
-      removeListeners();
-      dismiss();
+      close();
     }
   }));
 }
