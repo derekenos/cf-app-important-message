@@ -93,6 +93,14 @@ function hexToRgb(hex) {
     : null
 }
 
+function addEventListener(el, event, fn) {
+  // Add an event listener and return a function to remove it.
+  el.addEventListener(event, fn)
+  return () => el.removeEventListener(event, fn)
+}
+
+const invokeAll = fns => fns.forEach(fn => fn())
+
 //
 // Options Getters
 //
@@ -236,29 +244,44 @@ function configureAppElementAsBanner(message) {
     ),
   )
 
+  const listenerRemovers = []
+  const removeListeners = () => invokeAll(listenerRemovers)
+
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
     const buttonEl = appElement.querySelector("button")
 
     // Bold the X on mouse enter.
-    appElement.addEventListener("mouseenter", e => {
-      buttonEl.style.fontWeight = "bold"
-    })
+    listenerRemovers.push(
+      addEventListener(appElement, "mouseenter", e => {
+        buttonEl.style.fontWeight = "bold"
+      }),
+    )
 
     // Unbold the X on mouse leave.
-    appElement.addEventListener("mouseleave", e => {
-      buttonEl.style.fontWeight = "normal"
-    })
+    listenerRemovers.push(
+      addEventListener(appElement, "mouseleave", e => {
+        buttonEl.style.fontWeight = "normal"
+      }),
+    )
 
     // Remove the element on click.
-    appElement.addEventListener("click", e => dismiss())
+    listenerRemovers.push(
+      addEventListener(appElement, "click", e => {
+        removeListeners()
+        dismiss()
+      }),
+    )
 
     // Remove the element on Escape.
-    window.addEventListener("keydown", e => {
-      if (e.key === "Escape") {
-        dismiss()
-      }
-    })
+    listenerRemovers.push(
+      addEventListener(window, "keydown", e => {
+        if (e.key === "Escape") {
+          removeListeners()
+          dismiss()
+        }
+      }),
+    )
   }
 }
 
@@ -284,21 +307,30 @@ function configureAppElementAsModal(message) {
     ),
   )
 
+  const listenerRemovers = []
+  const removeListeners = () => invokeAll(listenerRemovers)
+
   // If dismissible, add click and keypress handlers.
   if (!options.notDismissible) {
     // Close the modal on overlay or button click.
-    window.addEventListener("click", e => {
-      if (e.target.tagName === "OVERLAY" || e.target.tagName === "BUTTON") {
-        dismiss()
-      }
-    })
+    listenerRemovers.push(
+      addEventListener(window, "click", e => {
+        if (e.target.tagName === "OVERLAY" || e.target.tagName === "BUTTON") {
+          removeListeners()
+          dismiss()
+        }
+      }),
+    )
 
     // Close the modal if either Escape or Enter was pressed.
-    window.addEventListener("keydown", e => {
-      if (e.key === "Escape" || e.key === "Enter") {
-        dismiss()
-      }
-    })
+    listenerRemovers.push(
+      addEventListener(window, "keydown", e => {
+        if (e.key === "Escape" || e.key === "Enter") {
+          removeListeners()
+          dismiss()
+        }
+      }),
+    )
   }
 }
 
