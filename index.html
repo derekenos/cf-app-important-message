@@ -9,18 +9,20 @@
      window.INSTALL_OPTIONS = {
        enabled: true,
        pages: [],
-       messageType: "minorServiceInterruption",
-       displayMode: "banner",
+       messageType: "customHTML",
+       customHTMLMessage: "<p>We got this new shirt!</p><img src=\"https://images.cloudflareapps.com/L1EYY2q2nJvG/35118722.jpeg\"><p>Buy it <a href=\"#\">here!</a>",
+       displayMode: "modal",
        notDismissible: false,
        dismissedUntilMinutes: "0",
        buttonText: "OK",
-       colorScheme: "#cce5ff,#004085,#007bff,#ffffff",
+       //       colorScheme: "#cce5ff,#004085,#007bff,#ffffff",
+       colorScheme: "#fefefe,#818182,#f8f9fa,#212529",
        fontSize: 1,
        horizontalPadding: 0,
        verticalPadding: 0,
        horizontalMargin: 0,
        verticalMargin: 0,
-       borderRadius: 16,
+       borderRadius: 32,
      }
 
      window.INSTALL_PRODUCT = "free"

@@ -100,7 +100,7 @@ cloudflare-app[app="important-message"] modal content {
 }
 
 cloudflare-app[app="important-message"] modal content message {
-  text-align: left;
+  text-align: center;
   display: block;
   cursor: text;
 }

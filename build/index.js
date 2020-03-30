@@ -332,7 +332,7 @@ function isDismissed() {
 //
 
 function BannerElement(message) {
-  var el = Element("<banner class=\"show\">\n       <message>" + message + "</message>\n       " + (options.notDismissible ? "" : "<button>x</button>") + "\n     </banner>");
+  var el = Element("<banner class=\"show\" role=\"banner\" aria-label=\"Important Message\">\n       <message>" + message + "</message>\n       " + (options.notDismissible ? "" : "<button>x</button>") + "\n     </banner>");
 
   el.classList.add(options.notDismissible ? "non-dismissible" : "dismissible");
 
