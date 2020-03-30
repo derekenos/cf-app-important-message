@@ -95,12 +95,14 @@ function hexToRgb(hex) {
 }
 
 function addEventListener(el, event, fn) {
-  // Add an event listener and return a function to remove it.
+  // Add an event listener and add the remover to listenerRemovers.
   el.addEventListener(event, fn)
-  return () => el.removeEventListener(event, fn)
+  listenerRemovers.push(() => el.removeEventListener(event, fn))
 }
 
 const removeListeners = () => {
+  // DEBUG
+  console.log(`Removing ${listenerRemovers.length} listeners`)
   while (listenerRemovers.length > 0) {
     listenerRemovers.shift()()
   }
@@ -247,12 +249,7 @@ function BannerElement(message) {
   if (!options.notDismissible) {
     // Add click and keypress handlers.
     const close = () => {
-      listenerRemovers.push(
-        addEventListener(el, "animationend", () => {
-          removeListeners()
-          dismiss()
-        }),
-      )
+      addEventListener(el, "animationend", dismiss)
       el.classList.remove("show")
       // See here for why I'm reading the offsetWidth:
       // https://stackoverflow.com/a/30072037/2327940
@@ -262,34 +259,26 @@ function BannerElement(message) {
 
     // Bold the X on mouse enter.
     const buttonEl = el.querySelector("button")
-    listenerRemovers.push(
-      addEventListener(el, "mouseenter", e => {
-        buttonEl.style.fontWeight = "bold"
-      }),
-    )
+    addEventListener(el, "mouseenter", e => {
+      buttonEl.style.fontWeight = "bold"
+    })
 
     // Unbold the X on mouse leave.
-    listenerRemovers.push(
-      addEventListener(el, "mouseleave", e => {
-        buttonEl.style.fontWeight = "normal"
-      }),
-    )
+    addEventListener(el, "mouseleave", e => {
+      buttonEl.style.fontWeight = "normal"
+    })
 
     // Remove the element on click.
-    listenerRemovers.push(
-      addEventListener(el, "click", e => {
-        close()
-      }),
-    )
+    addEventListener(el, "click", e => {
+      close()
+    })
 
     // Remove the element on Escape.
-    listenerRemovers.push(
-      addEventListener(window, "keydown", e => {
-        if (e.key === "Escape") {
-          close()
-        }
-      }),
-    )
+    addEventListener(window, "keydown", e => {
+      if (e.key === "Escape") {
+        close()
+      }
+    })
   }
 
   return el
@@ -315,24 +304,18 @@ function ModalElement(message) {
     // Add click and keypress handlers.
 
     // Close the modal on overlay or button click.
-    listenerRemovers.push(
-      addEventListener(window, "click", e => {
-        if (e.target.tagName === "MODAL" || e.target.tagName === "BUTTON") {
-          removeListeners()
-          dismiss()
-        }
-      }),
-    )
+    addEventListener(window, "click", e => {
+      if (e.target.tagName === "MODAL" || e.target.tagName === "BUTTON") {
+        dismiss()
+      }
+    })
 
     // Close the modal if either Escape or Enter was pressed.
-    listenerRemovers.push(
-      addEventListener(window, "keydown", e => {
-        if (e.key === "Escape" || e.key === "Enter") {
-          removeListeners()
-          dismiss()
-        }
-      }),
-    )
+    addEventListener(window, "keydown", e => {
+      if (e.key === "Escape" || e.key === "Enter") {
+        dismiss()
+      }
+    })
   }
 
   return el
@@ -353,28 +336,6 @@ function updateElement() {
     return
   }
 
-  let location
-  if (options.displayMode === "banner" && options.notDismissible) {
-    ;({ location } = options)
-  } else {
-    location = { selector: "body", method: "prepend" }
-  }
-
-  // Get the message content.
-  const message = getMessageContent()
-
-  // Get the component.
-  let el
-  if (options.displayMode === "banner") {
-    el = BannerElement(message)
-  } else {
-    el = ModalElement(message)
-  }
-
-  // Set the z-index to max + 1
-  const maxZIndex = getMaxZIndex()
-  el.style.zIndex = maxZIndex + 1
-
   // Destructure the options we'll be using.
   const {
     displayMode,
@@ -387,6 +348,23 @@ function updateElement() {
     borderRadius,
     messageType,
   } = options
+
+  let location
+  if (displayMode === "banner" && notDismissible) {
+    ;({ location } = options)
+  } else {
+    location = { selector: "body", method: "prepend" }
+  }
+
+  // Get the message content.
+  const message = getMessageContent()
+
+  // Get the component.
+  const el = (displayMode === "banner" ? BannerElement : ModalElement)(message)
+
+  // Set the z-index to max + 1
+  const maxZIndex = getMaxZIndex()
+  el.style.zIndex = maxZIndex + 1
 
   // Get the content element.
   const contentEl = displayMode === "modal" ? el.querySelector("content") : el

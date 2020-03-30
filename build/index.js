@@ -192,14 +192,16 @@ function hexToRgb(hex) {
 }
 
 function addEventListener(el, event, fn) {
-  // Add an event listener and return a function to remove it.
+  // Add an event listener and add the remover to listenerRemovers.
   el.addEventListener(event, fn);
-  return function () {
+  listenerRemovers.push(function () {
     return el.removeEventListener(event, fn);
-  };
+  });
 }
 
 var removeListeners = function removeListeners() {
+  // DEBUG
+  console.log("Removing " + listenerRemovers.length + " listeners");
   while (listenerRemovers.length > 0) {
     listenerRemovers.shift()();
   }
@@ -339,10 +341,7 @@ function BannerElement(message) {
   if (!options.notDismissible) {
     // Add click and keypress handlers.
     var close = function close() {
-      listenerRemovers.push(addEventListener(el, "animationend", function () {
-        removeListeners();
-        dismiss();
-      }));
+      addEventListener(el, "animationend", dismiss);
       el.classList.remove("show");
       // See here for why I'm reading the offsetWidth:
       // https://stackoverflow.com/a/30072037/2327940
@@ -352,26 +351,26 @@ function BannerElement(message) {
 
     // Bold the X on mouse enter.
     var buttonEl = el.querySelector("button");
-    listenerRemovers.push(addEventListener(el, "mouseenter", function (e) {
+    addEventListener(el, "mouseenter", function (e) {
       buttonEl.style.fontWeight = "bold";
-    }));
+    });
 
     // Unbold the X on mouse leave.
-    listenerRemovers.push(addEventListener(el, "mouseleave", function (e) {
+    addEventListener(el, "mouseleave", function (e) {
       buttonEl.style.fontWeight = "normal";
-    }));
+    });
 
     // Remove the element on click.
-    listenerRemovers.push(addEventListener(el, "click", function (e) {
+    addEventListener(el, "click", function (e) {
       close();
-    }));
+    });
 
     // Remove the element on Escape.
-    listenerRemovers.push(addEventListener(window, "keydown", function (e) {
+    addEventListener(window, "keydown", function (e) {
       if (e.key === "Escape") {
         close();
       }
-    }));
+    });
   }
 
   return el;
@@ -386,20 +385,18 @@ function ModalElement(message) {
     // Add click and keypress handlers.
 
     // Close the modal on overlay or button click.
-    listenerRemovers.push(addEventListener(window, "click", function (e) {
+    addEventListener(window, "click", function (e) {
       if (e.target.tagName === "MODAL" || e.target.tagName === "BUTTON") {
-        removeListeners();
         dismiss();
       }
-    }));
+    });
 
     // Close the modal if either Escape or Enter was pressed.
-    listenerRemovers.push(addEventListener(window, "keydown", function (e) {
+    addEventListener(window, "keydown", function (e) {
       if (e.key === "Escape" || e.key === "Enter") {
-        removeListeners();
         dismiss();
       }
-    }));
+    });
   }
 
   return el;
@@ -420,10 +417,23 @@ function updateElement() {
     return;
   }
 
+  // Destructure the options we'll be using.
+  var _options = options,
+      displayMode = _options.displayMode,
+      fontSize = _options.fontSize,
+      verticalPadding = _options.verticalPadding,
+      horizontalPadding = _options.horizontalPadding,
+      notDismissible = _options.notDismissible,
+      verticalMargin = _options.verticalMargin,
+      horizontalMargin = _options.horizontalMargin,
+      borderRadius = _options.borderRadius,
+      messageType = _options.messageType;
+
+
   var location = void 0;
-  if (options.displayMode === "banner" && options.notDismissible) {
-    ;var _options = options;
-    location = _options.location;
+  if (displayMode === "banner" && notDismissible) {
+    ;var _options2 = options;
+    location = _options2.location;
   } else {
     location = { selector: "body", method: "prepend" };
   }
@@ -432,31 +442,13 @@ function updateElement() {
   var message = getMessageContent();
 
   // Get the component.
-  var el = void 0;
-  if (options.displayMode === "banner") {
-    el = BannerElement(message);
-  } else {
-    el = ModalElement(message);
-  }
+  var el = (displayMode === "banner" ? BannerElement : ModalElement)(message);
 
   // Set the z-index to max + 1
   var maxZIndex = getMaxZIndex();
   el.style.zIndex = maxZIndex + 1;
 
-  // Destructure the options we'll be using.
-  var _options2 = options,
-      displayMode = _options2.displayMode,
-      fontSize = _options2.fontSize,
-      verticalPadding = _options2.verticalPadding,
-      horizontalPadding = _options2.horizontalPadding,
-      notDismissible = _options2.notDismissible,
-      verticalMargin = _options2.verticalMargin,
-      horizontalMargin = _options2.horizontalMargin,
-      borderRadius = _options2.borderRadius,
-      messageType = _options2.messageType;
-
   // Get the content element.
-
   var contentEl = displayMode === "modal" ? el.querySelector("content") : el;
 
   // Set the font-size and image max-width based on the display pixel density.
