@@ -123,6 +123,7 @@ var PREDEFINED_MESSAGES = {
 
 };var options = INSTALL_OPTIONS;
 var product = INSTALL_PRODUCT;
+var listenerRemovers = [];
 var appElement = void 0;
 
 //
@@ -198,10 +199,10 @@ function addEventListener(el, event, fn) {
   };
 }
 
-var invokeAll = function invokeAll(fns) {
-  return fns.forEach(function (fn) {
-    return fn();
-  });
+var removeListeners = function removeListeners() {
+  while (listenerRemovers.length > 0) {
+    listenerRemovers.shift()();
+  }
 };
 
 //
@@ -299,6 +300,7 @@ function dismiss() {
       setDismissedMessage(getMessageContent());
     }
   }
+  removeListeners();
   appElement.remove();
 }
 
@@ -331,81 +333,69 @@ function isDismissed() {
 
 function configureAppElementAsBanner(message) {
   // Mutate the App element into a banner.
-  if (options.notDismissible) {
-    appElement.classList.add("non-dismissible");
-  } else {
-    appElement.classList.add("dismissible");
-  }
+  appElement.classList.add(options.notDismissible ? "non-dismissible" : "dismissible");
+
   appElement.appendChild(Element("<banner>\n           " + message + "\n           " + (options.notDismissible ? "" : "<button>x</button>") + "\n         </banner>"));
 
-  var listenerRemovers = [];
-  var removeListeners = function removeListeners() {
-    return invokeAll(listenerRemovers);
-  };
+  if (options.notDismissible) {
+    return;
+  }
 
-  // If dismissible, add click and keypress handlers.
-  if (!options.notDismissible) {
-    var buttonEl = appElement.querySelector("button");
+  // Add click and keypress handlers.
 
-    // Bold the X on mouse enter.
-    listenerRemovers.push(addEventListener(appElement, "mouseenter", function (e) {
-      buttonEl.style.fontWeight = "bold";
-    }));
+  // Bold the X on mouse enter.
+  var buttonEl = appElement.querySelector("button");
+  listenerRemovers.push(addEventListener(appElement, "mouseenter", function (e) {
+    buttonEl.style.fontWeight = "bold";
+  }));
 
-    // Unbold the X on mouse leave.
-    listenerRemovers.push(addEventListener(appElement, "mouseleave", function (e) {
-      buttonEl.style.fontWeight = "normal";
-    }));
+  // Unbold the X on mouse leave.
+  listenerRemovers.push(addEventListener(appElement, "mouseleave", function (e) {
+    buttonEl.style.fontWeight = "normal";
+  }));
 
-    // Remove the element on click.
-    listenerRemovers.push(addEventListener(appElement, "click", function (e) {
+  // Remove the element on click.
+  listenerRemovers.push(addEventListener(appElement, "click", function (e) {
+    removeListeners();
+    dismiss();
+  }));
+
+  // Remove the element on Escape.
+  listenerRemovers.push(addEventListener(window, "keydown", function (e) {
+    if (e.key === "Escape") {
       removeListeners();
       dismiss();
-    }));
-
-    // Remove the element on Escape.
-    listenerRemovers.push(addEventListener(window, "keydown", function (e) {
-      if (e.key === "Escape") {
-        removeListeners();
-        dismiss();
-      }
-    }));
-  }
+    }
+  }));
 }
 
 function configureAppElementAsModal(message) {
   // Mutate the App element into a modal.
-  if (options.notDismissible) {
-    appElement.classList.add("non-dismissible");
-  } else {
-    appElement.classList.add("dismissible");
-  }
+  appElement.classList.add(options.notDismissible ? "non-dismissible" : "dismissible");
+
   appElement.appendChild(Element("<overlay>\n         <modal>\n           " + message + "\n           " + (options.notDismissible ? "" : "<br><button>" + options.buttonText + "</button>") + "\n         </modal>\n       </overlay>"));
 
-  var listenerRemovers = [];
-  var removeListeners = function removeListeners() {
-    invokeAll(listenerRemovers);
-    console.log("removed " + listenerRemovers.length + " listeners");
-  };
-
-  // If dismissible, add click and keypress handlers.
-  if (!options.notDismissible) {
-    // Close the modal on overlay or button click.
-    listenerRemovers.push(addEventListener(window, "click", function (e) {
-      if (e.target.tagName === "OVERLAY" || e.target.tagName === "BUTTON") {
-        removeListeners();
-        dismiss();
-      }
-    }));
-
-    // Close the modal if either Escape or Enter was pressed.
-    listenerRemovers.push(addEventListener(window, "keydown", function (e) {
-      if (e.key === "Escape" || e.key === "Enter") {
-        removeListeners();
-        dismiss();
-      }
-    }));
+  if (options.notDismissible) {
+    return;
   }
+
+  // Add click and keypress handlers.
+
+  // Close the modal on overlay or button click.
+  listenerRemovers.push(addEventListener(window, "click", function (e) {
+    if (e.target.tagName === "OVERLAY" || e.target.tagName === "BUTTON") {
+      removeListeners();
+      dismiss();
+    }
+  }));
+
+  // Close the modal if either Escape or Enter was pressed.
+  listenerRemovers.push(addEventListener(window, "keydown", function (e) {
+    if (e.key === "Escape" || e.key === "Enter") {
+      removeListeners();
+      dismiss();
+    }
+  }));
 }
 
 //
@@ -413,6 +403,9 @@ function configureAppElementAsModal(message) {
 //
 
 function updateElement() {
+  // Remove any existing event listeners.
+  removeListeners();
+
   if (!options.enabled || !INSTALL.matchPage(options.pages) || isDismissed()) {
     if (appElement) {
       appElement.remove();
@@ -454,6 +447,7 @@ function updateElement() {
   appElement.style.zIndex = maxZIndex + 1;
 
   // Apply the configurable styles.
+  // Get the element with the tag name that's the same as the displayMode.
   var el = appElement.querySelector(options.displayMode);
 
   // colorScheme
