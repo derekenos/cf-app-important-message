@@ -231,125 +231,111 @@ function isDismissed() {
 }
 
 //
-//  appElement Mutation Functions
+//  Component Factory Functions
 //
 
-function configureAppElementAsBanner(message) {
-  // Mutate the App element into a banner.
-  appElement.classList.add(
-    options.notDismissible ? "non-dismissible" : "dismissible",
+function BannerElement(message) {
+  const el = Element(
+    `<banner class="show">
+       <message>${message}</message>
+       ${options.notDismissible ? "" : "<button>x</button>"}
+     </banner>`,
   )
 
-  appElement.appendChild(
-    Element(
-      `<banner class="show">
-           ${message}
-           ${options.notDismissible ? "" : "<button>x</button>"}
-         </banner>`,
-    ),
-  )
+  el.classList.add(options.notDismissible ? "non-dismissible" : "dismissible")
 
-  if (options.notDismissible) {
-    return
-  }
+  if (!options.notDismissible) {
+    // Add click and keypress handlers.
+    const close = () => {
+      listenerRemovers.push(
+        addEventListener(el, "animationend", () => {
+          removeListeners()
+          dismiss()
+        }),
+      )
+      el.classList.remove("show")
+      // See here for why I'm reading the offsetWidth:
+      // https://stackoverflow.com/a/30072037/2327940
+      const _ = el.offsetWidth
+      el.classList.add("hide")
+    }
 
-  // Add click and keypress handlers.
-
-  const bannerEl = appElement.querySelector("banner")
-
-  const close = () => {
+    // Bold the X on mouse enter.
+    const buttonEl = el.querySelector("button")
     listenerRemovers.push(
-      addEventListener(bannerEl, "animationend", () => {
-        removeListeners()
-        dismiss()
-        console.log("closed")
+      addEventListener(el, "mouseenter", e => {
+        buttonEl.style.fontWeight = "bold"
       }),
     )
-    bannerEl.classList.remove("show")
-    // See here for why I'm reading the offsetWidth:
-    // https://stackoverflow.com/a/30072037/2327940
-    const _ = bannerEl.offsetWidth
-    bannerEl.classList.add("hide")
+
+    // Unbold the X on mouse leave.
+    listenerRemovers.push(
+      addEventListener(el, "mouseleave", e => {
+        buttonEl.style.fontWeight = "normal"
+      }),
+    )
+
+    // Remove the element on click.
+    listenerRemovers.push(
+      addEventListener(el, "click", e => {
+        close()
+      }),
+    )
+
+    // Remove the element on Escape.
+    listenerRemovers.push(
+      addEventListener(window, "keydown", e => {
+        if (e.key === "Escape") {
+          close()
+        }
+      }),
+    )
   }
 
-  // Bold the X on mouse enter.
-  const buttonEl = bannerEl.querySelector("button")
-  listenerRemovers.push(
-    addEventListener(appElement, "mouseenter", e => {
-      buttonEl.style.fontWeight = "bold"
-    }),
-  )
-
-  // Unbold the X on mouse leave.
-  listenerRemovers.push(
-    addEventListener(appElement, "mouseleave", e => {
-      buttonEl.style.fontWeight = "normal"
-    }),
-  )
-
-  // Remove the element on click.
-  listenerRemovers.push(
-    addEventListener(appElement, "click", e => {
-      close()
-    }),
-  )
-
-  // Remove the element on Escape.
-  listenerRemovers.push(
-    addEventListener(window, "keydown", e => {
-      if (e.key === "Escape") {
-        close()
-      }
-    }),
-  )
+  return el
 }
 
-function configureAppElementAsModal(message) {
-  // Mutate the App element into a modal.
-  appElement.classList.add(
-    options.notDismissible ? "non-dismissible" : "dismissible",
+function ModalElement(message) {
+  const el = Element(
+    `<modal>
+       <content>
+         <message>${message}</message>
+         ${
+           options.notDismissible
+             ? ""
+             : `<br><button>${options.buttonText}</button>`
+         }
+       </content>
+     </modal>`,
   )
 
-  appElement.appendChild(
-    Element(
-      `<overlay>
-         <modal>
-           ${message}
-           ${
-             options.notDismissible
-               ? ""
-               : `<br><button>${options.buttonText}</button>`
-           }
-         </modal>
-       </overlay>`,
-    ),
-  )
+  el.classList.add(options.notDismissible ? "non-dismissible" : "dismissible")
 
-  if (options.notDismissible) {
-    return
+  if (!options.notDismissible) {
+    // Add click and keypress handlers.
+
+    // Close the modal on overlay or button click.
+    listenerRemovers.push(
+      addEventListener(window, "click", e => {
+        if (e.target.tagName === "MODAL" || e.target.tagName === "BUTTON") {
+          removeListeners()
+          dismiss()
+        }
+      }),
+    )
+
+    // Close the modal if either Escape or Enter was pressed.
+    listenerRemovers.push(
+      addEventListener(window, "keydown", e => {
+        if (e.key === "Escape" || e.key === "Enter") {
+          removeListeners()
+          dismiss()
+        }
+      }),
+    )
   }
 
-  // Add click and keypress handlers.
-
-  // Close the modal on overlay or button click.
-  listenerRemovers.push(
-    addEventListener(window, "click", e => {
-      if (e.target.tagName === "OVERLAY" || e.target.tagName === "BUTTON") {
-        removeListeners()
-        dismiss()
-      }
-    }),
-  )
-
-  // Close the modal if either Escape or Enter was pressed.
-  listenerRemovers.push(
-    addEventListener(window, "keydown", e => {
-      if (e.key === "Escape" || e.key === "Enter") {
-        removeListeners()
-        dismiss()
-      }
-    }),
-  )
+  return el
 }
 
 //
@@ -373,76 +359,89 @@ function updateElement() {
   } else {
     location = { selector: "body", method: "prepend" }
   }
-  appElement = INSTALL.createElement(location, appElement)
-
-  // Set the app attribute to your app's dash-delimited alias.
-  appElement.setAttribute("app", APP_NAME)
-
-  // Set the font-size and image max-width based on the display pixel density.
-  const pixelScaleFactor = getPixelScaleFactor()
-  appElement.style.fontSize = `${16 * pixelScaleFactor}px`
 
   // Get the message content.
-  let message = getMessageContent()
+  const message = getMessageContent()
 
-  // Wrap in a <message> element for padding control.
-  message = `<message>${message}</message>`
-
-  // Insert the HTML.
+  // Get the component.
+  let el
   if (options.displayMode === "banner") {
-    configureAppElementAsBanner(message)
+    el = BannerElement(message)
   } else {
-    configureAppElementAsModal(message)
+    el = ModalElement(message)
   }
 
   // Set the z-index to max + 1
   const maxZIndex = getMaxZIndex()
-  appElement.style.zIndex = maxZIndex + 1
+  el.style.zIndex = maxZIndex + 1
+
+  // Destructure the options we'll be using.
+  const {
+    displayMode,
+    fontSize,
+    verticalPadding,
+    horizontalPadding,
+    notDismissible,
+    verticalMargin,
+    horizontalMargin,
+    borderRadius,
+    messageType,
+  } = options
+
+  // Get the content element.
+  const contentEl = displayMode === "modal" ? el.querySelector("content") : el
+
+  // Set the font-size and image max-width based on the display pixel density.
+  const pixelScaleFactor = getPixelScaleFactor()
+  contentEl.style.fontSize = `${16 * pixelScaleFactor}px`
 
   // Apply the configurable styles.
-  // Get the element with the tag name that's the same as the displayMode.
-  const el = appElement.querySelector(options.displayMode)
 
   // colorScheme
   const [bgColor, color, buttonBgColor, buttonColor] = getColors()
-  el.style.backgroundImage = getBackgroundImageGradient(bgColor)
-  el.style.color = color
+  contentEl.style.backgroundImage = getBackgroundImageGradient(bgColor)
+  contentEl.style.color = color
   // Apply style to dismissible modal button.
-  if (options.displayMode === "modal" && !options.notDismissible) {
-    const buttonEl = el.querySelector("button")
+  if (displayMode === "modal" && !notDismissible) {
+    const buttonEl = contentEl.querySelector("button")
     buttonEl.style.backgroundColor = buttonBgColor
     buttonEl.style.color = buttonColor
   }
 
   // fontSize
-  const messageEl = el.querySelector("message")
-  messageEl.style.fontSize = `${options.fontSize}em`
+  const messageEl = contentEl.querySelector("message")
+  messageEl.style.fontSize = `${fontSize}em`
 
   // padding
-  messageEl.style.padding = `${options.verticalPadding}em ${options.horizontalPadding}em ${options.verticalPadding}em ${options.horizontalPadding}em`
+  messageEl.style.padding = `${verticalPadding}em ${horizontalPadding}em ${verticalPadding}em ${horizontalPadding}em`
 
   // margin
-  if (options.displayMode === "banner" && options.notDismissible) {
-    el.style.margin = `${options.verticalMargin}em ${options.horizontalMargin}em ${options.verticalMargin}em ${options.horizontalMargin}em`
+  if (displayMode === "banner" && notDismissible) {
+    contentEl.style.margin = `${verticalMargin}em ${horizontalMargin}em ${verticalMargin}em ${horizontalMargin}em`
   }
 
   // borderRadius
-  if (options.displayMode === "banner" && !options.notDismissible) {
+  if (displayMode === "banner" && !notDismissible) {
     // Only style bottom edge of dismissible banner.
-    el.style.borderRadius = `0 0 ${options.borderRadius}px ${options.borderRadius}px`
+    contentEl.style.borderRadius = `0 0 ${borderRadius}px ${borderRadius}px`
   } else {
-    el.style.borderRadius = `${options.borderRadius}px`
+    contentEl.style.borderRadius = `${borderRadius}px`
   }
 
   // image max-width
-  if (options.messageType === "customRich") {
-    el.querySelectorAll("img").forEach(_el => {
+  if (messageType === "customRich") {
+    contentEl.querySelectorAll("img").forEach(_el => {
       _el.setAttribute(
         "style",
         `max-width: ${options.customRichMessageGroup.maxImageWidth}%`,
       )
     })
   }
+
+  // Create the appElement, set the "app" prop, and append the component.
+  appElement = INSTALL.createElement(location, appElement)
+  appElement.setAttribute("app", APP_NAME)
+  appElement.appendChild(el)
 }
 
 function init() {
