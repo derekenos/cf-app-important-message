@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+
+    <script>
+     window.INSTALL_OPTIONS = {
+       enabled: true,
+       pages: [],
+       messageType: "minorServiceInterruption",
+       displayMode: "banner",
+       notDismissible: false,
+       dismissedUntilMinutes: "0",
+       buttonText: "OK",
+       colorScheme: "#cce5ff,#004085,#007bff,#ffffff",
+       fontSize: 1,
+       horizontalPadding: 0,
+       verticalPadding: 0,
+       horizontalMargin: 0,
+       verticalMargin: 0,
+       borderRadius: 16,
+     }
+
+     window.INSTALL_PRODUCT = "free"
+
+     window.INSTALL = {
+       matchPage (pages) {
+         return true
+       },
+
+       createElement (location, element) {
+         const el = document.createElement('cloudflare-app')
+         document.body.appendChild(el)
+         return el
+       }
+     }
+    </script>
+
+    <script src="build/index.js"></script>
+    <link rel="stylesheet" href="build/styles.css">
+
+  </head>
+
+  <body>
+  </body>
+</html>
