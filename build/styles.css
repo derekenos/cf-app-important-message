@@ -83,14 +83,16 @@ cloudflare-app[app="important-message"] modal {
   top: 0;
   right: 0;
   bottom: 0;
-  display: flex;
   background-color: rgba(0, 0, 0, .6);
   cursor: pointer;
 }
 
 cloudflare-app[app="important-message"] modal content {
-  display: block;
-  margin: auto auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
   border: solid #000 2px;
   max-width: 60%;
   max-height: 85%;

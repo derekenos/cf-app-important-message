@@ -419,7 +419,7 @@ function updateElement() {
   appElement.setAttribute("app", APP_NAME)
   appElement.appendChild(el)
 
-  if (!notDismissible) {
+  if (!notDismissible && INSTALL_ID !== "preview") {
     // Focus the dismiss button.
     el.querySelector("button").focus()
   }
