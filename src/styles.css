@@ -49,6 +49,7 @@ cloudflare-app[app="important-message"] banner.dismissible button {
   background-color: transparent;
   border: none;
   font-family: arial;
+  font-size: inherit;
 }
 
 cloudflare-app[app="important-message"] banner.dismissible.show {

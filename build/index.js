@@ -504,6 +504,11 @@ function updateElement() {
   appElement = INSTALL.createElement(location, appElement);
   appElement.setAttribute("app", APP_NAME);
   appElement.appendChild(el);
+
+  if (!notDismissible) {
+    // Focus the dismiss button.
+    el.querySelector("button").focus();
+  }
 }
 
 function init() {
