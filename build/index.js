@@ -496,7 +496,7 @@ function updateElement() {
   // image max-width
   if (messageType === "customRich") {
     contentEl.querySelectorAll("img").forEach(function (_el) {
-      _el.setAttribute("style", "max-width: " + options.customRichMessageGroup.maxImageWidth + "%");
+      _el.setAttribute("style", "width: " + options.customRichMessageGroup.maxImageWidth + "px");
     });
   }
 

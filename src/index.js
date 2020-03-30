@@ -409,7 +409,7 @@ function updateElement() {
     contentEl.querySelectorAll("img").forEach(_el => {
       _el.setAttribute(
         "style",
-        `max-width: ${options.customRichMessageGroup.maxImageWidth}%`,
+        `width: ${options.customRichMessageGroup.maxImageWidth}px`,
       )
     })
   }

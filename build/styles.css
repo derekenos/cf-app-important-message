@@ -140,5 +140,6 @@ cloudflare-app[app="important-message"] a {
 }
 
 cloudflare-app[app="important-message"] img {
-  max-width: 50%;
+  width: 100px;
+  height: auto;
 }
