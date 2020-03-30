@@ -236,7 +236,7 @@ function isDismissed() {
 
 function BannerElement(message) {
   const el = Element(
-    `<banner class="show">
+    `<banner class="show" role="banner" aria-label="Important Message">
        <message>${message}</message>
        ${options.notDismissible ? "" : "<button>x</button>"}
      </banner>`,
@@ -284,7 +284,7 @@ function BannerElement(message) {
 
 function ModalElement(message) {
   const el = Element(
-    `<modal>
+    `<modal role="dialog" aria-modal="true" aria-label="Important Message">
        <content>
          <message>${message}</message>
          ${

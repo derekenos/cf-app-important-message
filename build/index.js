@@ -375,7 +375,7 @@ function BannerElement(message) {
 }
 
 function ModalElement(message) {
-  var el = Element("<modal>\n       <content>\n         <message>" + message + "</message>\n         " + (options.notDismissible ? "" : "<br><button>" + options.buttonText + "</button>") + "\n       </content>\n     </modal>");
+  var el = Element("<modal role=\"dialog\" aria-modal=\"true\" aria-label=\"Important Message\">\n       <content>\n         <message>" + message + "</message>\n         " + (options.notDismissible ? "" : "<br><button>" + options.buttonText + "</button>") + "\n       </content>\n     </modal>");
 
   el.classList.add(options.notDismissible ? "non-dismissible" : "dismissible");
 
