@@ -497,7 +497,10 @@ function updateElement() {
 }
 
 function init() {
-  if (!window.addEventListener) return; // Check for IE9+
+  // Check for IE10+
+  if (!window.addEventListener || !document.documentElement.classList) {
+    return;
+  }
 
   // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
   window.INSTALL_SCOPE = {
