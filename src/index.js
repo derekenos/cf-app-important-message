@@ -1,6 +1,6 @@
 import css from "./styles.css"
 
-import { Banner } from "./banner/Banner.jsm"
+import { Banner } from "./components/Banner"
 
 //
 // Constants

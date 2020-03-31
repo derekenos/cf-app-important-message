@@ -86,22 +86,38 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/banner/Banner.jsm":
-/*!*******************************!*\
-  !*** ./src/banner/Banner.jsm ***!
-  \*******************************/
-/*! exports provided: BannerElement, Banner */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "./src/components/Banner.js":
+/*!**********************************!*\
+  !*** ./src/components/Banner.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BannerElement", function() { return BannerElement; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Banner", function() { return Banner; });
-/* harmony import */ var _utils_jsm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.jsm */ "./src/banner/utils.jsm");
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BannerElement = undefined;
 
-const DEFAULTS = {
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+exports.Banner = Banner;
+
+var _utils = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DEFAULTS = {
   BORDER_RADIUS: 16,
   COLOR_SCHEME: "primary",
   DISMISSIBLE: true,
@@ -111,420 +127,361 @@ const DEFAULTS = {
   HORIZONTAL_PADDING: 0,
   VERTICAL_MARGIN: 0,
   VERTICAL_PADDING: 0,
-  LOCATION: {selector: "body", method: "prepend"},
-  MAX_IMAGE_WIDTH: 20,
-}
+  LOCATION: { selector: "body", method: "prepend" },
+  MAX_IMAGE_WIDTH: 20
+};
 
-const SCHEME_NAME_COLORS_MAP = {
-  "primary": "#cce5ff,#004085",
-  "secondary": "#e2e3e5,#383d41",
-  "success": "#d4edda,#155724",
-  "danger": "#f8d7da,#721c24",
-  "warning": "#fff3cd,#856404",
-  "info": "#d1ecf1,#0c5460",
-  "light": "#fefefe,#818182",
-  "dark": "#d6d8d9,#1b1e21",
-}
+var SCHEME_NAME_COLORS_MAP = {
+  primary: "#cce5ff,#004085",
+  secondary: "#e2e3e5,#383d41",
+  success: "#d4edda,#155724",
+  danger: "#f8d7da,#721c24",
+  warning: "#fff3cd,#856404",
+  info: "#d1ecf1,#0c5460",
+  light: "#fefefe,#818182",
+  dark: "#d6d8d9,#1b1e21"
+};
 
-
-function getColors (colorScheme) {
+function getColors(colorScheme) {
   /* Return the colors for the specified scheme as the array:
      [<mainBackgroundColor>, <mainColor>]
    */
-  if (SCHEME_NAME_COLORS_MAP.hasOwnProperty(colorScheme)) {
-    // Get predefined color scheme.
-    colorScheme =  SCHEME_NAME_COLORS_MAP[colorScheme]
-  }
-  return colorScheme.split(",")
+  return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",");
 }
 
+var STYLE = document.createElement("style");
+STYLE.textContent = "\n  .wrapper {\n    display: flex;\n    padding: 1.5em; 1em;\n    font-size: 16px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 1em .2em #444;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    display: inline;\n    flex-grow: 1;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: arial;\n    font-size: inherit;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  p {\n    margin: 0;\n  }\n";
 
-class BannerElement extends HTMLElement {
-  constructor () {
-    super()
-    this.eventListenerRemovers = []
+var BannerElement = exports.BannerElement = function (_HTMLElement) {
+  _inherits(BannerElement, _HTMLElement);
+
+  function BannerElement() {
+    _classCallCheck(this, BannerElement);
+
+    var _this = _possibleConstructorReturn(this, (BannerElement.__proto__ || Object.getPrototypeOf(BannerElement)).call(this));
+
+    _this.eventListenerRemovers = [];
 
     // Define the shadow DOM and attach the <style> element.
-    this.shadow = this.attachShadow({ mode: "open" })
-    this.shadow.appendChild(STYLE)
+    _this.shadow = _this.attachShadow({ mode: "open" });
+    _this.shadow.appendChild(STYLE);
 
     // Define the accessibility attributes.
-    this.setAttribute("role", "banner")
-    this.setAttribute("aria-label", "Important Message")
+    _this.setAttribute("role", "banner");
+    _this.setAttribute("aria-label", "Important Message");
+    return _this;
   }
 
-  connectedCallback () {
-    // Get the configuration attributes.
-    // String-type
-    const getStr = (...args) => Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["getStrAttr"])(this, ...args)
-    const message = getStr("message").replace(/@quot;/g, '"')
-    const colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME)
+  _createClass(BannerElement, [{
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      var _this2 = this;
 
-    // Bool-type
-    const getBool = (...args) => Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["getBoolAttr"])(this, ...args)
-    const dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE)
+      // Get the configuration attributes.
+      // String-type
+      var getStr = function getStr() {
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
 
-    // Int-type
-    const getInt = (...args) => Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["getIntAttr"])(this, ...args)
-    const borderRadius = getInt("border-radius", DEFAULTS.BORDER_RADIUS)
-    const maxImageWidth = getInt("max-image-width", DEFAULTS.MAX_IMAGE_WIDTH)
+        return _utils.getStrAttr.apply(undefined, [_this2].concat(args));
+      };
+      var message = getStr("message").replace(/@quot;/g, '"');
+      var colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME);
 
-    // Float-type
-    const getFloat = (...args) => Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["getFloatAttr"])(this, ...args)
-    const fontSize = getFloat("font-size", DEFAULTS.FONT_SIZE)
-    const xMargin = getFloat("horizontal-margin", DEFAULTS.HORIZONTAL_MARGIN)
-    const yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN)
-    const xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING)
-    const yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING)
-    const gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL)
+      // Bool-type
+      var getBool = function getBool() {
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
 
-    // Define the main wrapper element.
-    const [bgColor, color] = getColors(colorScheme)
-    const bgRGB = Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["hexToRgb"])(bgColor)
-    this.wrapperEl = Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["Element"])(`
-      <div class="wrapper show ${dismissible ? "dismissible" : ""}"
-           style="margin: ${yMargin}em ${xMargin}em;
-                  color: ${color};
-                  border-radius:
-                    ${dismissible ? "0" : borderRadius}px
-                    ${dismissible ? "0" : borderRadius}px
-                    ${borderRadius}px
-                    ${borderRadius}px;
-                  background-image:
-                    linear-gradient(
-                      0deg,
-                      rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, 1),
-                      rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, ${1 - gradientLevel})
-                    );
-                  z-index: ${Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1};"
-      >
-      </div>
-    `)
-    this.shadow.appendChild(this.wrapperEl)
+        return _utils.getBoolAttr.apply(undefined, [_this2].concat(args));
+      };
+      var dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE);
 
-    // Define the message container element.
-    const messageEl = Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["Element"])(`
-      <div class="message"
-         style="font-size: ${fontSize}px;
-                padding: ${yPadding}em ${xPadding}em;"
-      >
-        ${message}
-      </div>
-    `)
-    // Apply max-width to any included images.
-    messageEl.querySelectorAll("img").forEach(el => {
-      const style = el.getAttribute("style") || ""
-      el.setAttribute('style', `max-width: ${maxImageWidth}px; ${style}`)
-    })
-    this.wrapperEl.appendChild(messageEl)
+      // Int-type
+      var getInt = function getInt() {
+        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
 
-    // Skip adding the button, event listeners, etc. if not dismissible.
-    if (!dismissible) {
-      return
-    }
+        return _utils.getIntAttr.apply(undefined, [_this2].concat(args));
+      };
+      var borderRadius = getInt("border-radius", DEFAULTS.BORDER_RADIUS);
+      var maxImageWidth = getInt("max-image-width", DEFAULTS.MAX_IMAGE_WIDTH);
 
-    // Define the dismiss button element.
-    const buttonEl = Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["Element"])("<button>x</button>")
-    this.wrapperEl.appendChild(buttonEl)
+      // Float-type
+      var getFloat = function getFloat() {
+        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
+        }
 
-    // Add event listeners.
-    // Bold the X on mouse enter.
-    this.addEventListener(this, "mouseenter", e => {
-      buttonEl.style.fontWeight = "bold"
-    })
+        return _utils.getFloatAttr.apply(undefined, [_this2].concat(args));
+      };
+      var fontSize = getFloat("font-size", DEFAULTS.FONT_SIZE);
+      var xMargin = getFloat("horizontal-margin", DEFAULTS.HORIZONTAL_MARGIN);
+      var yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN);
+      var xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING);
+      var yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING);
+      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL);
 
-    // Unbold the X on mouse leave.
-    this.addEventListener(this, "mouseleave", e => {
-      buttonEl.style.fontWeight = "normal"
-    })
+      // Define the main wrapper element.
 
-    // Remove the element on click.
-    this.addEventListener(this, "click", () => this.dismiss())
+      var _getColors = getColors(colorScheme),
+          _getColors2 = _slicedToArray(_getColors, 2),
+          bgColor = _getColors2[0],
+          color = _getColors2[1];
 
-    // Remove the element on Escape.
-    this.addEventListener(window, "keydown", e => {
-      if (e.key === "Escape") {
-        this.dismiss()
+      var bgRGB = (0, _utils.hexToRgb)(bgColor);
+      this.wrapperEl = (0, _utils.Element)("\n      <div class=\"wrapper show " + (dismissible ? "dismissible" : "") + "\"\n           style=\"margin: " + yMargin + "em " + xMargin + "em;\n                  color: " + color + ";\n                  border-radius:\n                    " + (dismissible ? "0" : borderRadius) + "px\n                    " + (dismissible ? "0" : borderRadius) + "px\n                    " + borderRadius + "px\n                    " + borderRadius + "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(" + bgRGB.r + ", " + bgRGB.g + ", " + bgRGB.b + ", 1),\n                      rgba(" + bgRGB.r + ", " + bgRGB.g + ", " + bgRGB.b + ", " + (1 - gradientLevel) + ")\n                    );\n                  z-index: " + ((0, _utils.getMaxZIndex)() + 1) + ";\"\n      >\n      </div>\n    ");
+      this.shadow.appendChild(this.wrapperEl);
+
+      // Define the message container element.
+      var messageEl = (0, _utils.Element)("\n      <div class=\"message\"\n         style=\"font-size: " + fontSize + "px;\n                padding: " + yPadding + "em " + xPadding + "em;\"\n      >\n        " + message + "\n      </div>\n    ");
+      // Apply max-width to any included images.
+      messageEl.querySelectorAll("img").forEach(function (el) {
+        var style = el.getAttribute("style") || "";
+        el.setAttribute("style", "max-width: " + maxImageWidth + "px; " + style);
+      });
+      this.wrapperEl.appendChild(messageEl);
+
+      // Skip adding the button, event listeners, etc. if not dismissible.
+      if (!dismissible) {
+        return;
       }
-    })
 
-  }
+      // Define the dismiss button element.
+      var buttonEl = (0, _utils.Element)("<button>x</button>");
+      this.wrapperEl.appendChild(buttonEl);
 
-  disconnectedCallback () {
-    this.removeEventListeners()
-  }
+      // Add event listeners.
+      // Bold the X on mouse enter.
+      this.addEventListener(this, "mouseenter", function (e) {
+        buttonEl.style.fontWeight = "bold";
+      });
 
-  addEventListener (el, event, fn) {
-    if (el instanceof BannerElement) {
-      super.addEventListener(event, fn)
-      this.eventListenerRemovers.push(
-        () => super.removeEventListener(event, fn)
-      )
-    } else {
-      el.addEventListener(event, fn)
-      this.eventListenerRemovers.push(() => el.removeEventListener(event, fn))
+      // Unbold the X on mouse leave.
+      this.addEventListener(this, "mouseleave", function (e) {
+        buttonEl.style.fontWeight = "normal";
+      });
+
+      // Remove the element on click.
+      this.addEventListener(this, "click", function () {
+        return _this2.dismiss();
+      });
+
+      // Remove the element on Escape.
+      this.addEventListener(window, "keydown", function (e) {
+        if (e.key === "Escape") {
+          _this2.dismiss();
+        }
+      });
     }
-  }
-
-  removeEventListeners () {
-    while (this.eventListenerRemovers.length > 0) {
-      this.eventListenerRemovers.shift()()
+  }, {
+    key: "disconnectedCallback",
+    value: function disconnectedCallback() {
+      this.removeEventListeners();
     }
-  }
+  }, {
+    key: "addEventListener",
+    value: function addEventListener(el, event, fn) {
+      var _this3 = this;
 
-  dismiss () {
-    const el = this.wrapperEl
-    this.addEventListener(el, "animationend", () => this.remove())
-    el.classList.remove("show")
-    // See here for why I'm reading the offsetWidth:
-    // https://stackoverflow.com/a/30072037/2327940
-    const _ = el.offsetWidth
-    el.classList.add("hide")
-  }
-}
-
-
-const STYLE = document.createElement("style")
-STYLE.textContent = `
-  .wrapper {
-    display: flex;
-    padding: 1.5em; 1em;
-    font-size: 16px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-    text-align: left;
-    color: #000;
-    background-color: #fff;
-  }
-
-  .wrapper.dismissible {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    cursor: pointer;
-    box-shadow: 0 0 1em .2em #444;
-  }
-
-  .wrapper.dismissible.show {
-    animation-duration: .5s;
-    animation-name: slideDown;
-    animation-timing-function: linear;
-  }
-
-  .wrapper.dismissible.hide {
-    animation-duration: .25s;
-    animation-name: slideDown;
-    animation-timing-function: linear;
-    animation-direction: reverse;
-  }
-
-  .message {
-    display: inline;
-    flex-grow: 1;
-  }
-
-  button {
-    margin: 0;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    font-family: arial;
-    font-size: inherit;
-  }
-
-  @keyframes slideDown {
-    from {
-      transform: translate(0, -150%);
+      if (el instanceof BannerElement) {
+        _get(BannerElement.prototype.__proto__ || Object.getPrototypeOf(BannerElement.prototype), "addEventListener", this).call(this, event, fn);
+        this.eventListenerRemovers.push(function () {
+          return _get(BannerElement.prototype.__proto__ || Object.getPrototypeOf(BannerElement.prototype), "removeEventListener", _this3).call(_this3, event, fn);
+        });
+      } else {
+        el.addEventListener(event, fn);
+        this.eventListenerRemovers.push(function () {
+          return el.removeEventListener(event, fn);
+        });
+      }
     }
-
-    to {
-      transform: translate(0, 0);
+  }, {
+    key: "removeEventListeners",
+    value: function removeEventListeners() {
+      while (this.eventListenerRemovers.length > 0) {
+        this.eventListenerRemovers.shift()();
+      }
     }
-  }
+  }, {
+    key: "dismiss",
+    value: function dismiss() {
+      var _this4 = this;
 
-  p {
-    margin: 0;
-  }
-`
+      var el = this.wrapperEl;
+      this.addEventListener(el, "animationend", function () {
+        return _this4.remove();
+      });
+      el.classList.remove("show");
+      // See here for why I'm reading the offsetWidth:
+      // https://stackoverflow.com/a/30072037/2327940
+      var _ = el.offsetWidth;
+      el.classList.add("hide");
+    }
+  }]);
 
+  return BannerElement;
+}(HTMLElement);
 
-function Banner (options, location) {
+function Banner(options, location) {
   /* Helper to instantiate and optionally insert a banner element via
      Javascript.
    */
 
   // Define helper to get option value if set but otherwise return a default.
-  const getOpt = (k, v) => options.hasOwnProperty(k) ? options[k] : v
-
-  const bannerEl = Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["Element"])(`
-     <x-banner
-       message="${getOpt('message', '').replace(/"/g, "@quot;")}"
-       dismissible="${getOpt('dismissible', DEFAULTS.DISMISSIBLE)}"
-       color-scheme="${getOpt('colorScheme', DEFAULTS.COLOR_SCHEME)}"
-       font-size="${getOpt('fontSize', DEFAULTS.FONT_SIZE)}"
-       horizontal-padding="${getOpt('horizontalPadding', DEFAULTS.HORIZONTAL_PADDING)}"
-       vertical-padding="${getOpt('verticalPadding', DEFAULTS.VERTICAL_PADDING)}"
-       horizontal-margin="${getOpt('horizontalMargin', DEFAULTS.HORIZONTAL_MARGIN)}"
-       vertical-margin="${getOpt('verticalMargin', DEFAULTS.VERTICAL_MARGIN)}"
-       border-radius="${getOpt('borderRadius', DEFAULTS.BORDER_RADIUS)}"
-       gradient-level="${getOpt('gradientLevel', DEFAULTS.GRADIENT_LEVEL)}"
-       max-image-width="${getOpt('maxImageWidth', DEFAULTS.MAX_IMGAGE_WIDTH)}"
-     >
-     </x-banner>
-   `)
+  var getOpt = function getOpt(k, defVal) {
+    return options[k] === undefined ? defVal : options[k];
+  };
+  var bannerEl = (0, _utils.Element)("\n     <x-banner\n       message=\"" + getOpt("message", "").replace(/"/g, "@quot;") + "\"\n       dismissible=\"" + getOpt("dismissible", DEFAULTS.DISMISSIBLE) + "\"\n       color-scheme=\"" + getOpt("colorScheme", DEFAULTS.COLOR_SCHEME) + "\"\n       font-size=\"" + getOpt("fontSize", DEFAULTS.FONT_SIZE) + "\"\n       horizontal-padding=\"" + getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING) + "\"\n       vertical-padding=\"" + getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING) + "\"\n       horizontal-margin=\"" + getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN) + "\"\n       vertical-margin=\"" + getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN) + "\"\n       border-radius=\"" + getOpt("borderRadius", DEFAULTS.BORDER_RADIUS) + "\"\n       gradient-level=\"" + getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL) + "\"\n       max-image-width=\"" + getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH) + "\"\n     >\n     </x-banner>\n   ");
 
   if (!location) {
-    return bannerEl
+    return bannerEl;
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(bannerEl, location.selector, location.method)
-    })
+    document.addEventListener("DOMContentLoaded", function () {
+      (0, _utils.insertElementAtLocation)(bannerEl, location.selector, location.method);
+    });
   } else {
-    Object(_utils_jsm__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(bannerEl, location.selector, location.method)
+    (0, _utils.insertElementAtLocation)(bannerEl, location.selector, location.method);
   }
 }
 
-customElements.define("x-banner", BannerElement)
-
+customElements.define("x-banner", BannerElement);
 
 /***/ }),
 
-/***/ "./src/banner/utils.jsm":
-/*!******************************!*\
-  !*** ./src/banner/utils.jsm ***!
-  \******************************/
-/*! exports provided: Element, getMaxZIndex, getPixelScaleFactor, hexToRgb, getAttr, getStrAttr, getBoolAttr, getIntAttr, getFloatAttr, insertElementAtLocation */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "./src/components/utils.js":
+/*!*********************************!*\
+  !*** ./src/components/utils.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Element", function() { return Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxZIndex", function() { return getMaxZIndex; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPixelScaleFactor", function() { return getPixelScaleFactor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hexToRgb", function() { return hexToRgb; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAttr", function() { return getAttr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStrAttr", function() { return getStrAttr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getBoolAttr", function() { return getBoolAttr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getIntAttr", function() { return getIntAttr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFloatAttr", function() { return getFloatAttr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertElementAtLocation", function() { return insertElementAtLocation; });
 
-function Element(tagNameOrDOMString, wrapperTag = "div") {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Element = Element;
+exports.getMaxZIndex = getMaxZIndex;
+exports.getPixelScaleFactor = getPixelScaleFactor;
+exports.hexToRgb = hexToRgb;
+exports.insertElementAtLocation = insertElementAtLocation;
+function Element(tagNameOrDOMString) {
+  var wrapperTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "div";
+
   // Return a new Element for a given tag name or DOM string.
-  tagNameOrDOMString = tagNameOrDOMString.trim()
-  if (!tagNameOrDOMString.startsWith("<"))
-    return document.createElement(tagNameOrDOMString)
-  const wrapper = document.createElement(wrapperTag)
-  wrapper.innerHTML = tagNameOrDOMString
-  const el = wrapper.firstChild
+  var s = tagNameOrDOMString.trim();
+  if (!s.startsWith("<")) return document.createElement(s);
+  var wrapper = document.createElement(wrapperTag);
+  wrapper.innerHTML = s.trim();
+  var el = wrapper.firstChild;
   if (el.nodeName === "#text") {
-    throw new Error(
-      `Element creation failed. Maybe ${wrapperTag} is not a valid parent for: ${tagNameOrDOMString}`,
-    )
+    throw new Error("Element creation failed. Maybe " + wrapperTag + " is not a valid parent for: " + s);
   }
-  wrapper.removeChild(el)
-  return el
+  wrapper.removeChild(el);
+  return el;
 }
 
 function getMaxZIndex() {
   // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
-  let max = 0
-  const elements = document.getElementsByTagName("*")
-  Array.prototype.slice.call(elements).forEach(element => {
-    const zIndex = parseInt(
-      document.defaultView.getComputedStyle(element).zIndex,
-      10
-    )
-    max = zIndex ? Math.max(max, zIndex) : max
-  })
-  return max
+  var max = 0;
+  var elements = document.getElementsByTagName("*");
+  Array.prototype.slice.call(elements).forEach(function (element) {
+    var zIndex = parseInt(document.defaultView.getComputedStyle(element).zIndex, 10);
+    max = zIndex ? Math.max(max, zIndex) : max;
+  });
+  return max;
 }
 
 function getPixelScaleFactor() {
   // Return the factor with which to scale our absolute pixel values for
   // consistent display across varying resolution displays.
-  const el = document.querySelector("meta[name=viewport]")
-  if (
-    el !== null &&
-    el.content &&
-    el.content.includes("width=device-width") &&
-    el.content.includes("initial-scale=1")
-  ) {
-    return 1
+  var el = document.querySelector("meta[name=viewport]");
+  if (el !== null && el.content && el.content.includes("width=device-width") && el.content.includes("initial-scale=1")) {
+    return 1;
   }
-  return window.devicePixelRatio
+  return window.devicePixelRatio;
 }
 
 function escapeHTML(s) {
-  const wrapper = Element("div")
-  wrapper.innerText = s
-  return wrapper.innerHTML
+  var wrapper = Element("div");
+  wrapper.innerText = s;
+  return wrapper.innerHTML;
 }
 
 function hexToRgb(hex) {
   // Adapted from: https://stackoverflow.com/a/5624139/2327940
   // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
-  const v = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v)
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : null
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  var v = hex.replace(shorthandRegex, function (m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
 }
 
 /* Return the specified element attribute, or defaultValue if attribute
    is unspecified.
  */
-const getAttr = (el, attr, defaultValue) =>
-  el.hasAttribute(attr) ? el.getAttribute(attr) : defaultValue
-const getStrAttr = getAttr
-const getBoolAttr = (...args) => getStrAttr(...args) === "true"
-const getIntAttr = (...args) => parseInt(getStrAttr(...args))
-const getFloatAttr = (...args) => parseFloat(getStrAttr(...args))
+var getAttr = exports.getAttr = function getAttr(el, attr, defaultValue) {
+  return el.hasAttribute(attr) ? el.getAttribute(attr) : defaultValue;
+};
+var getStrAttr = exports.getStrAttr = getAttr;
+var getBoolAttr = exports.getBoolAttr = function getBoolAttr() {
+  return getStrAttr.apply(undefined, arguments) === "true";
+};
+var getIntAttr = exports.getIntAttr = function getIntAttr() {
+  return parseInt(getStrAttr.apply(undefined, arguments), 10);
+};
+var getFloatAttr = exports.getFloatAttr = function getFloatAttr() {
+  return parseFloat(getStrAttr.apply(undefined, arguments));
+};
 
-
-function insertElementAtLocation (element, selector, method) {
+function insertElementAtLocation(element, selector, method) {
   /* Relocate an element to the location specified by selector and method.
    */
-  const target = document.querySelector(selector)
+  var target = document.querySelector(selector);
   if (target === null) {
-    throw new Error(`No location found for selector: ${selector}`)
+    throw new Error("No location found for selector: " + selector);
   }
-  const children = target.childNodes
-  const hasChildren = children.length > 0
+  var children = target.childNodes;
+  var hasChildren = children.length > 0;
+  var nextSibling = target.nextSibling;
+
   switch (method) {
     case "before":
-      target.parentNode.insertBefore(element, target)
-      break
+      target.parentNode.insertBefore(element, target);
+      break;
     case "after":
-      const nextSibling = target.nextSibling
       if (nextSibling === null) {
-        target.parentNode.appendChild(element)
+        target.parentNode.appendChild(element);
       } else {
-        target.parentNode.insertBefore(element, nextSibling)
+        target.parentNode.insertBefore(element, nextSibling);
       }
-      break
+      break;
     case "prepend":
-      target.insertBefore(element, hasChildren ? children[0] : null)
-      break
+      target.insertBefore(element, hasChildren ? children[0] : null);
+      break;
     case "append":
-      target.appendChild(element)
-      break
+      target.appendChild(element);
+      break;
     case "replace":
-      target.replaceWith(element)
-      break
+      target.replaceWith(element);
+      break;
     default:
-      throw new Error(`method "${method}" not implemented`)
-      break
+      throw new Error("method \"" + method + "\" not implemented");
   }
 }
-
 
 /***/ }),
 
@@ -544,7 +501,7 @@ var _styles = __webpack_require__(/*! ./styles.css */ "./src/styles.css");
 
 var _styles2 = _interopRequireDefault(_styles);
 
-var _Banner = __webpack_require__(/*! ./banner/Banner.jsm */ "./src/banner/Banner.jsm");
+var _Banner = __webpack_require__(/*! ./components/Banner */ "./src/components/Banner.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

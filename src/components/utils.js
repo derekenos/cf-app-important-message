@@ -1,15 +1,13 @@
-
 export function Element(tagNameOrDOMString, wrapperTag = "div") {
   // Return a new Element for a given tag name or DOM string.
-  tagNameOrDOMString = tagNameOrDOMString.trim()
-  if (!tagNameOrDOMString.startsWith("<"))
-    return document.createElement(tagNameOrDOMString)
+  const s = tagNameOrDOMString.trim()
+  if (!s.startsWith("<")) return document.createElement(s)
   const wrapper = document.createElement(wrapperTag)
-  wrapper.innerHTML = tagNameOrDOMString
+  wrapper.innerHTML = s.trim()
   const el = wrapper.firstChild
   if (el.nodeName === "#text") {
     throw new Error(
-      `Element creation failed. Maybe ${wrapperTag} is not a valid parent for: ${tagNameOrDOMString}`,
+      `Element creation failed. Maybe ${wrapperTag} is not a valid parent for: ${s}`,
     )
   }
   wrapper.removeChild(el)
@@ -23,7 +21,7 @@ export function getMaxZIndex() {
   Array.prototype.slice.call(elements).forEach(element => {
     const zIndex = parseInt(
       document.defaultView.getComputedStyle(element).zIndex,
-      10
+      10,
     )
     max = zIndex ? Math.max(max, zIndex) : max
   })
@@ -73,11 +71,10 @@ export const getAttr = (el, attr, defaultValue) =>
   el.hasAttribute(attr) ? el.getAttribute(attr) : defaultValue
 export const getStrAttr = getAttr
 export const getBoolAttr = (...args) => getStrAttr(...args) === "true"
-export const getIntAttr = (...args) => parseInt(getStrAttr(...args))
+export const getIntAttr = (...args) => parseInt(getStrAttr(...args), 10)
 export const getFloatAttr = (...args) => parseFloat(getStrAttr(...args))
 
-
-export function insertElementAtLocation (element, selector, method) {
+export function insertElementAtLocation(element, selector, method) {
   /* Relocate an element to the location specified by selector and method.
    */
   const target = document.querySelector(selector)
@@ -86,12 +83,12 @@ export function insertElementAtLocation (element, selector, method) {
   }
   const children = target.childNodes
   const hasChildren = children.length > 0
+  const { nextSibling } = target
   switch (method) {
     case "before":
       target.parentNode.insertBefore(element, target)
       break
     case "after":
-      const nextSibling = target.nextSibling
       if (nextSibling === null) {
         target.parentNode.appendChild(element)
       } else {
@@ -109,6 +106,5 @@ export function insertElementAtLocation (element, selector, method) {
       break
     default:
       throw new Error(`method "${method}" not implemented`)
-      break
   }
 }
