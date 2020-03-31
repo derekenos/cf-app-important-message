@@ -341,6 +341,10 @@ STYLE.textContent = `
       transform: translate(0, 0);
     }
   }
+
+  p {
+    margin: 0;
+  }
 `
 
 
