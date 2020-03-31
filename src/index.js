@@ -1,5 +1,7 @@
 import css from "./styles.css"
 
+import { Banner } from "./banner/Banner.jsm"
+
 //
 // Constants
 //
@@ -234,54 +236,6 @@ function isDismissed() {
 //  Component Factory Functions
 //
 
-function BannerElement(message) {
-  const el = Element(
-    `<banner class="show" role="banner" aria-label="Important Message">
-       <message>${message}</message>
-       ${options.notDismissible ? "" : "<button>x</button>"}
-     </banner>`,
-  )
-
-  el.classList.add(options.notDismissible ? "non-dismissible" : "dismissible")
-
-  if (!options.notDismissible) {
-    // Add click and keypress handlers.
-    const close = () => {
-      addEventListener(el, "animationend", dismiss)
-      el.classList.remove("show")
-      // See here for why I'm reading the offsetWidth:
-      // https://stackoverflow.com/a/30072037/2327940
-      const _ = el.offsetWidth
-      el.classList.add("hide")
-    }
-
-    // Bold the X on mouse enter.
-    const buttonEl = el.querySelector("button")
-    addEventListener(el, "mouseenter", e => {
-      buttonEl.style.fontWeight = "bold"
-    })
-
-    // Unbold the X on mouse leave.
-    addEventListener(el, "mouseleave", e => {
-      buttonEl.style.fontWeight = "normal"
-    })
-
-    // Remove the element on click.
-    addEventListener(el, "click", e => {
-      close()
-    })
-
-    // Remove the element on Escape.
-    addEventListener(window, "keydown", e => {
-      if (e.key === "Escape") {
-        close()
-      }
-    })
-  }
-
-  return el
-}
-
 function ModalElement(message) {
   const el = Element(
     `<modal role="dialog" aria-modal="true" aria-label="Important Message">
@@ -357,8 +311,33 @@ function updateElement() {
   // Get the message content.
   const message = getMessageContent()
 
+  // Get the colors.
+  const [bgColor, color, buttonBgColor, buttonColor] = getColors()
+
   // Get the component.
-  const el = (displayMode === "banner" ? BannerElement : ModalElement)(message)
+  if (displayMode === "banner") {
+    const bannerEl = Banner({
+      borderRadius,
+      colorScheme: `${bgColor},${color}`,
+      dismissible: !notDismissible,
+      fontSize: fontSize * 16,
+      horizontalMargin,
+      horizontalPadding,
+      message,
+      verticalMargin,
+      verticalPadding,
+      gradientLevel: options.customBackgroundGradientLevel,
+      maxImageWidth: options.customRichMessageGroup.maxImageWidth,
+    })
+
+    // Create the appElement, set the "app" prop, and append the component.
+    appElement = INSTALL.createElement(location, appElement)
+    appElement.setAttribute("app", APP_NAME)
+    appElement.appendChild(bannerEl)
+    return
+  }
+
+  const el = ModalElement(message)
 
   // Set the z-index to max + 1
   const maxZIndex = getMaxZIndex()
@@ -374,7 +353,6 @@ function updateElement() {
   // Apply the configurable styles.
 
   // colorScheme
-  const [bgColor, color, buttonBgColor, buttonColor] = getColors()
   contentEl.style.backgroundImage = getBackgroundImageGradient(bgColor)
   contentEl.style.color = color
   // Apply style to dismissible modal button.
