@@ -34,6 +34,7 @@
     "consistent-return": 0,
     "no-console": 0,
     "no-debugger": 0,
+    "no-void": 0,
     "import/extensions": ["warn"],
     "prettier/prettier": "error"
   }

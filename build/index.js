@@ -272,10 +272,10 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
           color = _getColors2[1];
 
       var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["hexToRgb"])(bgColor);
-      this.wrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"wrapper show ".concat(dismissible ? "dismissible" : "", "\"\n           style=\"margin: ").concat(yMargin, "em ").concat(xMargin, "em;\n                  color: ").concat(color, ";\n                  border-radius:\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(borderRadius, "px\n                    ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
+      this.wrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"wrapper show ".concat(dismissible ? "dismissible" : "", "\"\n           style=\"margin: ").concat(yMargin, "em ").concat(xMargin, "em;\n                  font-size: ").concat(fontSize, "px;\n                  color: ").concat(color, ";\n                  border-radius:\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(borderRadius, "px\n                    ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
       this.shadow.appendChild(this.wrapperEl); // Define the message container element.
 
-      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\"\n         style=\"font-size: ".concat(fontSize, "px;\n                padding: ").concat(yPadding, "em ").concat(xPadding, "em;\"\n      >\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
+      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\" style=\"padding: ".concat(yPadding, "em ").concat(xPadding, "em;\">\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
 
       messageEl.querySelectorAll("img").forEach(function (el) {
         var style = el.getAttribute("style") || "";
@@ -292,11 +292,11 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       this.wrapperEl.appendChild(buttonEl); // Add event listeners.
       // Bold the X on mouse enter.
 
-      this.addEventListener(this, "mouseenter", function (e) {
+      this.addEventListener(this, "mouseenter", function () {
         buttonEl.style.fontWeight = "bold";
       }); // Unbold the X on mouse leave.
 
-      this.addEventListener(this, "mouseleave", function (e) {
+      this.addEventListener(this, "mouseleave", function () {
         buttonEl.style.fontWeight = "normal";
       }); // Remove the element on click.
 
@@ -352,7 +352,7 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       el.classList.remove("show"); // See here for why I'm reading the offsetWidth:
       // https://stackoverflow.com/a/30072037/2327940
 
-      var _ = el.offsetWidth;
+      void el.offsetWidth;
       el.classList.add("hide");
     }
   }]);
@@ -452,9 +452,9 @@ var DEFAULTS = {
   FONT_SIZE: 16,
   GRADIENT_LEVEL: 1,
   HORIZONTAL_MARGIN: 0,
-  HORIZONTAL_PADDING: 2,
+  HORIZONTAL_PADDING: 0,
   VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 2,
+  VERTICAL_PADDING: 0,
   LOCATION: {
     selector: "body",
     method: "prepend"
@@ -481,7 +481,7 @@ function getColors(colorScheme) {
 }
 
 var STYLE = document.createElement("style");
-STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: 4em;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n    margin-top: 1.5em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
+STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: 0;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n    margin-top: 1.5em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
 var ModalElement = /*#__PURE__*/function (_HTMLElement) {
   _inherits(ModalElement, _HTMLElement);
 
@@ -583,10 +583,10 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
       var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["hexToRgb"])(bgColor);
       this.wrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("<div class=\"wrapper\"></div>");
       this.shadow.appendChild(this.wrapperEl);
-      var contentEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"content\"\n           style=\"margin: ".concat(yMargin, "em ").concat(xMargin, "em;\n                  color: ").concat(color, ";\n                  border-radius: ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
+      var contentEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"content\"\n           style=\"margin: ".concat(yMargin, "em ").concat(xMargin, "em;\n                  font-size: ").concat(fontSize, "px;\n                  color: ").concat(color, ";\n                  border-radius: ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
       this.wrapperEl.appendChild(contentEl); // Define the message container element.
 
-      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\"\n           style=\"font-size: ".concat(fontSize, "px;\n                  padding: ").concat(yPadding, "em ").concat(xPadding, "em;\"\n      >\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
+      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\"\n           style=\"padding: ".concat(yPadding, "em ").concat(xPadding, "em;\">\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
 
       messageEl.querySelectorAll("img").forEach(function (el) {
         var style = el.getAttribute("style") || "";

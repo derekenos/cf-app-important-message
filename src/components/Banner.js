@@ -159,6 +159,7 @@ export class BannerElement extends HTMLElement {
     this.wrapperEl = Element(`
       <div class="wrapper show ${dismissible ? "dismissible" : ""}"
            style="margin: ${yMargin}em ${xMargin}em;
+                  font-size: ${fontSize}px;
                   color: ${color};
                   border-radius:
                     ${dismissible ? "0" : borderRadius}px
@@ -180,10 +181,7 @@ export class BannerElement extends HTMLElement {
 
     // Define the message container element.
     const messageEl = Element(`
-      <div class="message"
-         style="font-size: ${fontSize}px;
-                padding: ${yPadding}em ${xPadding}em;"
-      >
+      <div class="message" style="padding: ${yPadding}em ${xPadding}em;">
         ${message}
       </div>
     `)
@@ -207,12 +205,12 @@ export class BannerElement extends HTMLElement {
 
     // Add event listeners.
     // Bold the X on mouse enter.
-    this.addEventListener(this, "mouseenter", e => {
+    this.addEventListener(this, "mouseenter", () => {
       buttonEl.style.fontWeight = "bold"
     })
 
     // Unbold the X on mouse leave.
-    this.addEventListener(this, "mouseleave", e => {
+    this.addEventListener(this, "mouseleave", () => {
       buttonEl.style.fontWeight = "normal"
     })
 
@@ -255,7 +253,7 @@ export class BannerElement extends HTMLElement {
     el.classList.remove("show")
     // See here for why I'm reading the offsetWidth:
     // https://stackoverflow.com/a/30072037/2327940
-    const _ = el.offsetWidth
+    void el.offsetWidth
     el.classList.add("hide")
   }
 }

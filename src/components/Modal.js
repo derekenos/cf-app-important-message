@@ -20,9 +20,9 @@ const DEFAULTS = {
   FONT_SIZE: 16,
   GRADIENT_LEVEL: 1,
   HORIZONTAL_MARGIN: 0,
-  HORIZONTAL_PADDING: 2,
+  HORIZONTAL_PADDING: 0,
   VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 2,
+  VERTICAL_PADDING: 0,
   LOCATION: { selector: "body", method: "prepend" },
   MAX_IMAGE_WIDTH: 20,
   STEAL_FOCUS: true,
@@ -78,7 +78,7 @@ STYLE.textContent = `
     text-align: left;
     display: block;
     cursor: text;
-    padding: 4em;
+    padding: 0;
   }
 
   button {
@@ -154,6 +154,7 @@ export class ModalElement extends HTMLElement {
     const contentEl = Element(`
       <div class="content"
            style="margin: ${yMargin}em ${xMargin}em;
+                  font-size: ${fontSize}px;
                   color: ${color};
                   border-radius: ${borderRadius}px;
                   background-image:
@@ -172,9 +173,7 @@ export class ModalElement extends HTMLElement {
     // Define the message container element.
     const messageEl = Element(`
       <div class="message"
-           style="font-size: ${fontSize}px;
-                  padding: ${yPadding}em ${xPadding}em;"
-      >
+           style="padding: ${yPadding}em ${xPadding}em;">
         ${message}
       </div>
     `)
