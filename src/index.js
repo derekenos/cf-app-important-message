@@ -1,6 +1,7 @@
 import css from "./styles.css"
 
 import { Banner } from "./components/Banner"
+import { Modal } from "./components/Modal"
 
 //
 // Constants
@@ -22,7 +23,6 @@ const PREDEFINED_MESSAGES = {
 
 let options = INSTALL_OPTIONS
 let product = INSTALL_PRODUCT
-const listenerRemovers = []
 let appElement
 
 //
@@ -31,81 +31,10 @@ let appElement
 
 const parseDecInt = s => parseInt(s, 10)
 
-function Element(tagNameOrDOMString, wrapperTag = "div") {
-  // Returna new Element for a given tag name or DOM string.
-  if (!tagNameOrDOMString.startsWith("<"))
-    return document.createElement(tagNameOrDOMString)
-  const wrapper = document.createElement(wrapperTag)
-  wrapper.innerHTML = tagNameOrDOMString
-  const el = wrapper.firstChild
-  if (el.nodeName === "#text") {
-    throw new Error(
-      `Element creation failed. Maybe ${wrapperTag} is not a valid parent for: ${tagNameOrDOMString}`,
-    )
-  }
-  wrapper.removeChild(el)
-  return el
-}
-
-function getMaxZIndex() {
-  // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
-  let max = 0
-  const elements = document.getElementsByTagName("*")
-  Array.prototype.slice.call(elements).forEach(element => {
-    const zIndex = parseDecInt(
-      document.defaultView.getComputedStyle(element).zIndex,
-    )
-    max = zIndex ? Math.max(max, zIndex) : max
-  })
-  return max
-}
-
-function getPixelScaleFactor() {
-  // Return the factor with which to scale our absolute pixel values for
-  // consistent display across varying resolution displays.
-  const el = document.querySelector("meta[name=viewport]")
-  if (
-    el !== null &&
-    el.content &&
-    el.content.includes("width=device-width") &&
-    el.content.includes("initial-scale=1")
-  ) {
-    return 1
-  }
-  return window.devicePixelRatio
-}
-
 function escapeHTML(s) {
   const wrapper = Element("div")
   wrapper.innerText = s
   return wrapper.innerHTML
-}
-
-function hexToRgb(hex) {
-  // Adapted from: https://stackoverflow.com/a/5624139/2327940
-  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
-  const v = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v)
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : null
-}
-
-function addEventListener(el, event, fn) {
-  // Add an event listener and add the remover to listenerRemovers.
-  el.addEventListener(event, fn)
-  listenerRemovers.push(() => el.removeEventListener(event, fn))
-}
-
-const removeListeners = () => {
-  while (listenerRemovers.length > 0) {
-    listenerRemovers.shift()()
-  }
 }
 
 //
@@ -160,15 +89,6 @@ function getDismissedUntilMinutes() {
   )
 }
 
-function getBackgroundImageGradient(hex) {
-  const finalOpacity =
-    options.colorScheme === "custom"
-      ? 1 - options.customBackgroundGradientLevel
-      : 0.5
-  const { r, g, b } = hexToRgb(hex)
-  return `linear-gradient(0deg, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, ${finalOpacity}))`
-}
-
 //
 //  Dismissal Helper Functions
 //
@@ -205,7 +125,6 @@ function dismiss() {
       setDismissedMessage(getMessageContent())
     }
   }
-  removeListeners()
   appElement.remove()
 }
 
@@ -233,54 +152,11 @@ function isDismissed() {
 }
 
 //
-//  Component Factory Functions
-//
-
-function ModalElement(message) {
-  const el = Element(
-    `<modal role="dialog" aria-modal="true" aria-label="Important Message">
-       <content>
-         <message>${message}</message>
-         ${
-           options.notDismissible
-             ? ""
-             : `<br><button>${options.buttonText}</button>`
-         }
-       </content>
-     </modal>`,
-  )
-
-  el.classList.add(options.notDismissible ? "non-dismissible" : "dismissible")
-
-  if (!options.notDismissible) {
-    // Add click and keypress handlers.
-
-    // Close the modal on overlay or button click.
-    addEventListener(window, "click", e => {
-      if (e.target.tagName === "MODAL" || e.target.tagName === "BUTTON") {
-        dismiss()
-      }
-    })
-
-    // Close the modal if either Escape or Enter was pressed.
-    addEventListener(window, "keydown", e => {
-      if (e.key === "Escape" || e.key === "Enter") {
-        dismiss()
-      }
-    })
-  }
-
-  return el
-}
-
-//
 // updateElement Function
 //
 
 function updateElement() {
-  // Remove any existing event listeners.
-  removeListeners()
-
+  // Remove the element if it shouldn't be displayed.
   if (!options.enabled || !INSTALL.matchPage(options.pages) || isDismissed()) {
     if (appElement) {
       appElement.remove()
@@ -288,7 +164,6 @@ function updateElement() {
     return
   }
 
-  // Destructure the options we'll be using.
   const {
     displayMode,
     fontSize,
@@ -301,114 +176,41 @@ function updateElement() {
     messageType,
   } = options
 
-  let location
-  if (displayMode === "banner" && notDismissible) {
-    ;({ location } = options)
-  } else {
-    location = { selector: "body", method: "prepend" }
-  }
-
   // Get the message content.
   const message = getMessageContent()
 
   // Get the colors.
   const [bgColor, color, buttonBgColor, buttonColor] = getColors()
 
-  // Get the component.
-  if (displayMode === "banner") {
-    const bannerEl = Banner({
-      borderRadius,
-      colorScheme: `${bgColor},${color}`,
-      dismissible: !notDismissible,
-      fontSize: fontSize * 16,
-      horizontalMargin,
-      horizontalPadding,
-      message,
-      verticalMargin,
-      verticalPadding,
-      gradientLevel: options.customBackgroundGradientLevel,
-      maxImageWidth: options.customRichMessageGroup.maxImageWidth,
-    })
+  // Create the component.
+  const isBanner = displayMode === "banner"
+  const componentEl = (isBanner ? Banner : Modal)({
+    borderRadius,
+    colorScheme: isBanner
+      ? `${bgColor},${color}`
+      : `${bgColor},${color},${buttonBgColor},${buttonColor}`,
+    dismissible: !notDismissible,
+    fontSize: fontSize * 16,
+    horizontalMargin,
+    horizontalPadding,
+    message,
+    verticalMargin,
+    verticalPadding,
+    gradientLevel: options.customBackgroundGradientLevel,
+    maxImageWidth: options.customRichMessageGroup.maxImageWidth,
+  })
 
-    // Create the appElement, set the "app" prop, and append the component.
-    appElement = INSTALL.createElement(location, appElement)
-    appElement.setAttribute("app", APP_NAME)
-    appElement.appendChild(bannerEl)
-    return
-  }
-
-  const el = ModalElement(message)
-
-  // Set the z-index to max + 1
-  const maxZIndex = getMaxZIndex()
-  el.style.zIndex = maxZIndex + 1
-
-  // Get the content element.
-  const contentEl = displayMode === "modal" ? el.querySelector("content") : el
-
-  // Set the font-size and image max-width based on the display pixel density.
-  const pixelScaleFactor = getPixelScaleFactor()
-  contentEl.style.fontSize = `${16 * pixelScaleFactor}px`
-
-  // Apply the configurable styles.
-
-  // colorScheme
-  contentEl.style.backgroundImage = getBackgroundImageGradient(bgColor)
-  contentEl.style.color = color
-  // Apply style to dismissible modal button.
-  if (displayMode === "modal" && !notDismissible) {
-    const buttonEl = contentEl.querySelector("button")
-    buttonEl.style.backgroundColor = buttonBgColor
-    buttonEl.style.color = buttonColor
-  }
-
-  // fontSize
-  const messageEl = contentEl.querySelector("message")
-  messageEl.style.fontSize = `${fontSize}em`
-
-  // padding
-  messageEl.style.padding = `${verticalPadding}em ${horizontalPadding}em ${verticalPadding}em ${horizontalPadding}em`
-
-  // margin
-  if (displayMode === "banner" && notDismissible) {
-    contentEl.style.margin = `${verticalMargin}em ${horizontalMargin}em ${verticalMargin}em ${horizontalMargin}em`
-  }
-
-  // borderRadius
-  if (displayMode === "banner" && !notDismissible) {
-    // Only style bottom edge of dismissible banner.
-    contentEl.style.borderRadius = `0 0 ${borderRadius}px ${borderRadius}px`
-  } else {
-    contentEl.style.borderRadius = `${borderRadius}px`
-  }
-
-  // image max-width
-  if (messageType === "customRich") {
-    contentEl.querySelectorAll("img").forEach(_el => {
-      _el.setAttribute(
-        "style",
-        `width: ${options.customRichMessageGroup.maxImageWidth}px`,
-      )
-    })
-  }
-
-  // Create the appElement, set the "app" prop, and append the component.
+  // Create the appElement.
+  const location =
+    displayMode === "banner" && notDismissible
+      ? options.location
+      : { selector: "body", method: "prepend" }
   appElement = INSTALL.createElement(location, appElement)
   appElement.setAttribute("app", APP_NAME)
-  appElement.appendChild(el)
-
-  if (!notDismissible && INSTALL_ID !== "preview") {
-    // Focus the dismiss button.
-    el.querySelector("button").focus()
-  }
+  appElement.appendChild(componentEl)
 }
 
 function init() {
-  // Check for IE10+
-  if (!window.addEventListener || !document.documentElement.classList) {
-    return
-  }
-
   // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
   window.INSTALL_SCOPE = {
     setOptions(nextOptions) {
@@ -430,4 +232,7 @@ function init() {
   }
 }
 
-init()
+// Check for IE10+
+if (window.addEventListener && document.documentElement.classList) {
+  init()
+}

@@ -178,7 +178,7 @@ function getColors(colorScheme) {
 }
 
 var STYLE = document.createElement("style");
-STYLE.textContent = "\n  .wrapper {\n    display: flex;\n    padding: 1.5em; 1em;\n    font-size: 16px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 1em .2em #444;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    display: inline;\n    flex-grow: 1;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: arial;\n    font-size: inherit;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  p {\n    margin: 0;\n  }\n";
+STYLE.textContent = "\n  .wrapper {\n    display: flex;\n    padding: 1.5em; 1em;\n    font-size: 16px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 1em .2em #444;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    display: inline;\n    flex-grow: 1;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: arial;\n    font-size: 16px;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  p {\n    margin: 0;\n  }\n";
 var BannerElement = /*#__PURE__*/function (_HTMLElement) {
   _inherits(BannerElement, _HTMLElement);
 
@@ -219,9 +219,10 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
         }
 
         return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getStrAttr"].apply(void 0, [_this2].concat(args));
-      };
+      }; // Unescape the double-quotes in the message, e.g. HTML attr values.
 
-      var message = getStr("message").replace(/@quot;/g, '"');
+
+      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrDecode"])(getStr("message"));
       var colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME); // Bool-type
 
       var getBool = function getBool() {
@@ -258,7 +259,12 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       var yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN);
       var xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING);
       var yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING);
-      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL); // Define the main wrapper element.
+      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL); // Get the pixel scale factor and scale the values expressed in px.
+
+      var pxScaleFactor = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getPixelScaleFactor"])();
+      borderRadius *= pxScaleFactor;
+      fontSize *= pxScaleFactor;
+      maxImageWidth *= pxScaleFactor; // Define the main wrapper element.
 
       var _getColors = getColors(colorScheme),
           _getColors2 = _slicedToArray(_getColors, 2),
@@ -282,7 +288,7 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       } // Define the dismiss button element.
 
 
-      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("<button>x</button>");
+      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <button style=\"font-size: ".concat(16 * pxScaleFactor, "px;\">x</button>\n    "));
       this.wrapperEl.appendChild(buttonEl); // Add event listeners.
       // Bold the X on mouse enter.
 
@@ -354,15 +360,16 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
   return BannerElement;
 }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
 function Banner(options, location) {
-  /* Helper to instantiate and optionally insert a banner element via
-     Javascript.
+  /* Create and optionally insert a banner element via JS.
    */
   // Define helper to get option value if set but otherwise return a default.
   var getOpt = function getOpt(k, defVal) {
     return options[k] === undefined ? defVal : options[k];
-  };
+  }; // Define the element, escaping any double-quotes in the message text, which
+  // will occur for HTML messages that specify element attribute values.
 
-  var bannerEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-banner\n       message=\"".concat(getOpt("message", "").replace(/"/g, "@quot;"), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n     >\n     </x-banner>\n   "));
+
+  var bannerEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-banner\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n     >\n     </x-banner>\n   "));
 
   if (!location) {
     return bannerEl;
@@ -380,25 +387,398 @@ customElements.define("x-banner", BannerElement);
 
 /***/ }),
 
-/***/ "./src/components/utils.js":
+/***/ "./src/components/Modal.js":
 /*!*********************************!*\
-  !*** ./src/components/utils.js ***!
+  !*** ./src/components/Modal.js ***!
   \*********************************/
-/*! exports provided: Element, getMaxZIndex, getPixelScaleFactor, hexToRgb, getAttr, getStrAttr, getBoolAttr, getIntAttr, getFloatAttr, insertElementAtLocation */
+/*! exports provided: ModalElement, Modal */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Element", function() { return Element; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxZIndex", function() { return getMaxZIndex; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPixelScaleFactor", function() { return getPixelScaleFactor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hexToRgb", function() { return hexToRgb; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ModalElement", function() { return ModalElement; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modal", function() { return Modal; });
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+var DEFAULTS = {
+  BORDER_RADIUS: 16,
+  BUTTON_TEXT: "OK",
+  COLOR_SCHEME: "primary",
+  DISMISSIBLE: true,
+  FONT_SIZE: 16,
+  GRADIENT_LEVEL: 1,
+  HORIZONTAL_MARGIN: 0,
+  HORIZONTAL_PADDING: 2,
+  VERTICAL_MARGIN: 0,
+  VERTICAL_PADDING: 2,
+  LOCATION: {
+    selector: "body",
+    method: "prepend"
+  },
+  MAX_IMAGE_WIDTH: 20
+};
+var SCHEME_NAME_COLORS_MAP = {
+  primary: "#cce5ff,#004085,#007bff,#ffffff",
+  secondary: "#e2e3e5,#383d41,#6c757d,#ffffff",
+  success: "#d4edda,#155724,#28a745,#ffffff",
+  danger: "#f8d7da,#721c24,#dc3545,#ffffff",
+  warning: "#fff3cd,#856404,#ffc107,#212529",
+  info: "#d1ecf1,#0c5460,#17a2b8,#ffffff",
+  light: "#fefefe,#818182,#f8f9fa,#212529",
+  dark: "#d6d8d9,#1b1e21,#343a40,#ffffff"
+};
+
+function getColors(colorScheme) {
+  /* Return the colors for the specified scheme as the array:
+     [<mainBgColor>, <mainColor>, <buttonBgColor>, <buttonColor>]
+   */
+  return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",");
+}
+
+var STYLE = document.createElement("style");
+STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: center;\n    display: block;\n    cursor: text;\n    padding: 4em;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
+var ModalElement = /*#__PURE__*/function (_HTMLElement) {
+  _inherits(ModalElement, _HTMLElement);
+
+  var _super = _createSuper(ModalElement);
+
+  function ModalElement() {
+    var _this;
+
+    _classCallCheck(this, ModalElement);
+
+    _this = _super.call(this);
+    _this.eventListenerRemovers = []; // Define the shadow DOM and attach the <style> element.
+
+    _this.shadow = _this.attachShadow({
+      mode: "open"
+    });
+
+    _this.shadow.appendChild(STYLE); // Define the accessibility attributes.
+
+
+    _this.setAttribute("role", "dialog");
+
+    _this.setAttribute("aria-label", "Important Message");
+
+    _this.setAttribute("aria-modal", "true");
+
+    return _this;
+  }
+
+  _createClass(ModalElement, [{
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      var _this2 = this;
+
+      // Get the configuration attributes.
+      // String-type
+      var getStr = function getStr() {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getStrAttr"].apply(void 0, [_this2].concat(args));
+      }; // Unescape the double-quotes in the message, e.g. HTML attr values.
+
+
+      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrDecode"])(getStr("message"));
+      var colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME);
+      var buttonText = getStr("button-text", DEFAULTS.BUTTON_TEXT); // Bool-type
+
+      var getBool = function getBool() {
+        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getBoolAttr"].apply(void 0, [_this2].concat(args));
+      };
+
+      var dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE); // Int-type
+
+      var getInt = function getInt() {
+        for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getIntAttr"].apply(void 0, [_this2].concat(args));
+      };
+
+      var borderRadius = getInt("border-radius", DEFAULTS.BORDER_RADIUS);
+      var maxImageWidth = getInt("max-image-width", DEFAULTS.MAX_IMAGE_WIDTH); // Float-type
+
+      var getFloat = function getFloat() {
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
+        }
+
+        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getFloatAttr"].apply(void 0, [_this2].concat(args));
+      };
+
+      var fontSize = getFloat("font-size", DEFAULTS.FONT_SIZE);
+      var xMargin = getFloat("horizontal-margin", DEFAULTS.HORIZONTAL_MARGIN);
+      var yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN);
+      var xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING);
+      var yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING);
+      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL); // Get the pixel scale factor and scale the values expressed in px.
+
+      var pxScaleFactor = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getPixelScaleFactor"])();
+      borderRadius *= pxScaleFactor;
+      fontSize *= pxScaleFactor;
+      maxImageWidth *= pxScaleFactor; // Define the main wrapper element.
+
+      var _getColors = getColors(colorScheme),
+          _getColors2 = _slicedToArray(_getColors, 4),
+          bgColor = _getColors2[0],
+          color = _getColors2[1],
+          buttonBgColor = _getColors2[2],
+          buttonColor = _getColors2[3];
+
+      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["hexToRgb"])(bgColor);
+      this.wrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("<div class=\"wrapper\"></div>");
+      this.shadow.appendChild(this.wrapperEl);
+      var contentEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"content\"\n           style=\"margin: ".concat(yMargin, "em ").concat(xMargin, "em;\n                  color: ").concat(color, ";\n                  border-radius: ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
+      this.wrapperEl.appendChild(contentEl); // Define the message container element.
+
+      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\"\n           style=\"font-size: ".concat(fontSize, "px;\n                  padding: ").concat(yPadding, "em ").concat(xPadding, "em;\"\n      >\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
+
+      messageEl.querySelectorAll("img").forEach(function (el) {
+        var style = el.getAttribute("style") || "";
+        el.setAttribute("style", "max-width: ".concat(maxImageWidth, "px; ").concat(style));
+      });
+      contentEl.appendChild(messageEl); // Skip adding the button, event listeners, etc. if not dismissible.
+
+      if (!dismissible) {
+        return;
+      } // Define the dismiss button element.
+
+
+      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <button style=\"font-size: ".concat(16 * pxScaleFactor, "px;\n                     background-color: ").concat(buttonBgColor, ";\n                     color: ").concat(buttonColor, ";\"\n      >\n        ").concat(buttonText, "\n      </button>\n    "));
+      contentEl.appendChild(buttonEl); // Add event listeners.
+      // Remove the element on click.
+
+      this.addEventListener(this, "click", function (e) {
+        if (e.originalTarget.tagName === "BUTTON" || e.originalTarget.classList.contains("wrapper")) {
+          _this2.dismiss();
+        }
+      }); // Remove the element on Escape.
+
+      this.addEventListener(window, "keydown", function (e) {
+        if (e.key === "Escape") {
+          _this2.dismiss();
+        }
+      }); // Focus the dismiss button.
+
+      buttonEl.focus();
+    }
+  }, {
+    key: "disconnectedCallback",
+    value: function disconnectedCallback() {
+      this.removeEventListeners();
+    }
+  }, {
+    key: "addEventListener",
+    value: function addEventListener(el, event, fn) {
+      var _this3 = this;
+
+      if (el instanceof ModalElement) {
+        _get(_getPrototypeOf(ModalElement.prototype), "addEventListener", this).call(this, event, fn);
+
+        this.eventListenerRemovers.push(function () {
+          return _get(_getPrototypeOf(ModalElement.prototype), "removeEventListener", _this3).call(_this3, event, fn);
+        });
+      } else {
+        el.addEventListener(event, fn);
+        this.eventListenerRemovers.push(function () {
+          return el.removeEventListener(event, fn);
+        });
+      }
+    }
+  }, {
+    key: "removeEventListeners",
+    value: function removeEventListeners() {
+      while (this.eventListenerRemovers.length > 0) {
+        this.eventListenerRemovers.shift()();
+      }
+    }
+  }, {
+    key: "dismiss",
+    value: function dismiss() {
+      this.remove();
+    }
+  }]);
+
+  return ModalElement;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+function Modal(options, location) {
+  /* Create and optionally insert a modal element via JS.
+   */
+  // Define helper to get option value if set but otherwise return a default.
+  var getOpt = function getOpt(k, defVal) {
+    return options[k] === undefined ? defVal : options[k];
+  }; // Define the element, escaping any double-quotes in the message text, which
+  // will occur for HTML messages that specify element attribute values.
+
+
+  var modalEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-modal\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       button-text=\"").concat(getOpt("buttonText", DEFAULTS.BUTTON_TEXT), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n     >\n     </x-modal>\n   "));
+
+  if (!location) {
+    return modalEl;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(modalEl, location.selector, location.method);
+    });
+  } else {
+    Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(modalEl, location.selector, location.method);
+  }
+}
+customElements.define("x-modal", ModalElement);
+
+/***/ }),
+
+/***/ "./src/components/utils.js":
+/*!*********************************!*\
+  !*** ./src/components/utils.js ***!
+  \*********************************/
+/*! exports provided: get, htmlAttrEncode, htmlAttrDecode, getAttr, getStrAttr, getBoolAttr, getIntAttr, getFloatAttr, hexToRgb, Element, getMaxZIndex, getPixelScaleFactor, insertElementAtLocation */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "htmlAttrEncode", function() { return htmlAttrEncode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "htmlAttrDecode", function() { return htmlAttrDecode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAttr", function() { return getAttr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStrAttr", function() { return getStrAttr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getBoolAttr", function() { return getBoolAttr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getIntAttr", function() { return getIntAttr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFloatAttr", function() { return getFloatAttr; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hexToRgb", function() { return hexToRgb; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Element", function() { return Element; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxZIndex", function() { return getMaxZIndex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPixelScaleFactor", function() { return getPixelScaleFactor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertElementAtLocation", function() { return insertElementAtLocation; });
+// /////////////////////////////////////////////////////////////////////////////
+// Generic Utilities
+// /////////////////////////////////////////////////////////////////////////////
+// Simple parsing helpers.
+var parseDecInt = function parseDecInt(s) {
+  return parseInt(s, 10);
+};
+
+var parseHexInt = function parseHexInt(s) {
+  return parseInt(s, 16);
+}; // Return a function that applies a specified parser and uses a specified
+// failure test function to determine whether to return the parsed value or a
+// specified default value.
+
+
+var safeParser = function safeParser(parserFn, failureTestFn) {
+  return function (x, defVal) {
+    var v = parserFn(x);
+    return failureTestFn(v) ? defVal : v;
+  };
+}; // Type-specific variants.
+
+
+var safeParseInt = safeParser(function (x) {
+  return parseInt(x, 10);
+}, Number.isNaN);
+var safeParseFloat = safeParser(function (x) {
+  return parseFloat(x);
+}, Number.isNaN);
+var get = function get(o, k, defVal) {
+  //
+  var v = o[k];
+  return v === undefined || v === null ? defVal : v;
+}; // /////////////////////////////////////////////////////////////////////////////
+// HTML / DOM Utilities
+// /////////////////////////////////////////////////////////////////////////////
+// Encode a string for inclusion as an HTML attribute value.
+
+var htmlAttrEncode = function htmlAttrEncode(s) {
+  return "".concat(s).replace(/"/g, "@quot;");
+}; // Decode an HTML attribute value into the original string value.
+
+var htmlAttrDecode = function htmlAttrDecode(s) {
+  return "".concat(s).replace(/@quot;/g, '"');
+}; // Return the specified element attribute, or a defaultValue if the attribute
+// is unspecified.
+
+var getAttr = function getAttr(el, attr, defVal) {
+  return el.hasAttribute(attr) ? el.getAttribute(attr) : defVal;
+}; // Type-specific variants.
+
+var getStrAttr = getAttr;
+var getBoolAttr = function getBoolAttr() {
+  return getStrAttr.apply(void 0, arguments) === "true";
+};
+var getIntAttr = function getIntAttr() {
+  return safeParseInt(getStrAttr.apply(void 0, arguments));
+};
+var getFloatAttr = function getFloatAttr() {
+  return safeParseFloat(getStrAttr.apply(void 0, arguments));
+};
+function hexToRgb(hex) {
+  // Adapted from: https://stackoverflow.com/a/5624139/2327940
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  var v = hex.replace(shorthandRegex, function (m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v);
+  return result ? {
+    r: parseHexInt(result[1]),
+    g: parseHexInt(result[2]),
+    b: parseHexInt(result[3])
+  } : null;
+}
 function Element(tagNameOrDOMString) {
   var wrapperTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "div";
   // Return a new Element for a given tag name or DOM string.
@@ -415,12 +795,19 @@ function Element(tagNameOrDOMString) {
   wrapper.removeChild(el);
   return el;
 }
+
+function escapeHTML(s) {
+  var wrapper = Element("div");
+  wrapper.innerText = s;
+  return wrapper.innerHTML;
+}
+
 function getMaxZIndex() {
   // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
   var max = 0;
   var elements = document.getElementsByTagName("*");
   Array.prototype.slice.call(elements).forEach(function (element) {
-    var zIndex = parseInt(document.defaultView.getComputedStyle(element).zIndex, 10);
+    var zIndex = parseDecInt(document.defaultView.getComputedStyle(element).zIndex);
     max = zIndex ? Math.max(max, zIndex) : max;
   });
   return max;
@@ -436,47 +823,8 @@ function getPixelScaleFactor() {
 
   return window.devicePixelRatio;
 }
-
-function escapeHTML(s) {
-  var wrapper = Element("div");
-  wrapper.innerText = s;
-  return wrapper.innerHTML;
-}
-
-function hexToRgb(hex) {
-  // Adapted from: https://stackoverflow.com/a/5624139/2327940
-  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  var v = hex.replace(shorthandRegex, function (m, r, g, b) {
-    return r + r + g + g + b + b;
-  });
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null;
-}
-/* Return the specified element attribute, or defaultValue if attribute
-   is unspecified.
- */
-
-var getAttr = function getAttr(el, attr, defaultValue) {
-  return el.hasAttribute(attr) ? el.getAttribute(attr) : defaultValue;
-};
-var getStrAttr = getAttr;
-var getBoolAttr = function getBoolAttr() {
-  return getStrAttr.apply(void 0, arguments) === "true";
-};
-var getIntAttr = function getIntAttr() {
-  return parseInt(getStrAttr.apply(void 0, arguments), 10);
-};
-var getFloatAttr = function getFloatAttr() {
-  return parseFloat(getStrAttr.apply(void 0, arguments));
-};
 function insertElementAtLocation(element, selector, method) {
-  /* Relocate an element to the location specified by selector and method.
-   */
+  // Relocate an element to the location specified by selector and method.
   var target = document.querySelector(selector);
 
   if (target === null) {
@@ -532,6 +880,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./src/styles.css");
 /* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_styles_css__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _components_Banner__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Banner */ "./src/components/Banner.js");
+/* harmony import */ var _components_Modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Modal */ "./src/components/Modal.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -543,6 +892,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
  //
@@ -562,7 +912,6 @@ var PREDEFINED_MESSAGES = {
 
 var options = INSTALL_OPTIONS;
 var product = INSTALL_PRODUCT;
-var listenerRemovers = [];
 var appElement; //
 //  Utility Functions
 //
@@ -571,79 +920,11 @@ var parseDecInt = function parseDecInt(s) {
   return parseInt(s, 10);
 };
 
-function Element(tagNameOrDOMString) {
-  var wrapperTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "div";
-  // Returna new Element for a given tag name or DOM string.
-  if (!tagNameOrDOMString.startsWith("<")) return document.createElement(tagNameOrDOMString);
-  var wrapper = document.createElement(wrapperTag);
-  wrapper.innerHTML = tagNameOrDOMString;
-  var el = wrapper.firstChild;
-
-  if (el.nodeName === "#text") {
-    throw new Error("Element creation failed. Maybe ".concat(wrapperTag, " is not a valid parent for: ").concat(tagNameOrDOMString));
-  }
-
-  wrapper.removeChild(el);
-  return el;
-}
-
-function getMaxZIndex() {
-  // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
-  var max = 0;
-  var elements = document.getElementsByTagName("*");
-  Array.prototype.slice.call(elements).forEach(function (element) {
-    var zIndex = parseDecInt(document.defaultView.getComputedStyle(element).zIndex);
-    max = zIndex ? Math.max(max, zIndex) : max;
-  });
-  return max;
-}
-
-function getPixelScaleFactor() {
-  // Return the factor with which to scale our absolute pixel values for
-  // consistent display across varying resolution displays.
-  var el = document.querySelector("meta[name=viewport]");
-
-  if (el !== null && el.content && el.content.includes("width=device-width") && el.content.includes("initial-scale=1")) {
-    return 1;
-  }
-
-  return window.devicePixelRatio;
-}
-
 function escapeHTML(s) {
   var wrapper = Element("div");
   wrapper.innerText = s;
   return wrapper.innerHTML;
-}
-
-function hexToRgb(hex) {
-  // Adapted from: https://stackoverflow.com/a/5624139/2327940
-  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  var v = hex.replace(shorthandRegex, function (m, r, g, b) {
-    return r + r + g + g + b + b;
-  });
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null;
-}
-
-function addEventListener(el, event, fn) {
-  // Add an event listener and add the remover to listenerRemovers.
-  el.addEventListener(event, fn);
-  listenerRemovers.push(function () {
-    return el.removeEventListener(event, fn);
-  });
-}
-
-var removeListeners = function removeListeners() {
-  while (listenerRemovers.length > 0) {
-    listenerRemovers.shift()();
-  }
-}; //
+} //
 // Options Getters
 //
 
@@ -691,17 +972,6 @@ function getDismissedUntilMinutes() {
   }
 
   return options.customDismissalPeriodGroup.minutes * parseDecInt(options.customDismissalPeriodGroup.multiplier);
-}
-
-function getBackgroundImageGradient(hex) {
-  var finalOpacity = options.colorScheme === "custom" ? 1 - options.customBackgroundGradientLevel : 0.5;
-
-  var _hexToRgb = hexToRgb(hex),
-      r = _hexToRgb.r,
-      g = _hexToRgb.g,
-      b = _hexToRgb.b;
-
-  return "linear-gradient(0deg, rgba(".concat(r, ", ").concat(g, ", ").concat(b, ", 1), rgba(").concat(r, ", ").concat(g, ", ").concat(b, ", ").concat(finalOpacity, "))");
 } //
 //  Dismissal Helper Functions
 //
@@ -744,7 +1014,6 @@ function dismiss() {
     }
   }
 
-  removeListeners();
   appElement.remove();
 }
 
@@ -774,48 +1043,19 @@ function isDismissed() {
 
   return true;
 } //
-//  Component Factory Functions
-//
-
-
-function ModalElement(message) {
-  var el = Element("<modal role=\"dialog\" aria-modal=\"true\" aria-label=\"Important Message\">\n       <content>\n         <message>".concat(message, "</message>\n         ").concat(options.notDismissible ? "" : "<br><button>".concat(options.buttonText, "</button>"), "\n       </content>\n     </modal>"));
-  el.classList.add(options.notDismissible ? "non-dismissible" : "dismissible");
-
-  if (!options.notDismissible) {
-    // Add click and keypress handlers.
-    // Close the modal on overlay or button click.
-    addEventListener(window, "click", function (e) {
-      if (e.target.tagName === "MODAL" || e.target.tagName === "BUTTON") {
-        dismiss();
-      }
-    }); // Close the modal if either Escape or Enter was pressed.
-
-    addEventListener(window, "keydown", function (e) {
-      if (e.key === "Escape" || e.key === "Enter") {
-        dismiss();
-      }
-    });
-  }
-
-  return el;
-} //
 // updateElement Function
 //
 
 
 function updateElement() {
-  // Remove any existing event listeners.
-  removeListeners();
-
+  // Remove the element if it shouldn't be displayed.
   if (!options.enabled || !INSTALL.matchPage(options.pages) || isDismissed()) {
     if (appElement) {
       appElement.remove();
     }
 
     return;
-  } // Destructure the options we'll be using.
-
+  }
 
   var _options = options,
       displayMode = _options.displayMode,
@@ -826,20 +1066,7 @@ function updateElement() {
       verticalMargin = _options.verticalMargin,
       horizontalMargin = _options.horizontalMargin,
       borderRadius = _options.borderRadius,
-      messageType = _options.messageType;
-  var location;
-
-  if (displayMode === "banner" && notDismissible) {
-    ;
-    var _options2 = options;
-    location = _options2.location;
-  } else {
-    location = {
-      selector: "body",
-      method: "prepend"
-    };
-  } // Get the message content.
-
+      messageType = _options.messageType; // Get the message content.
 
   var message = getMessageContent(); // Get the colors.
 
@@ -848,93 +1075,35 @@ function updateElement() {
       bgColor = _getColors2[0],
       color = _getColors2[1],
       buttonBgColor = _getColors2[2],
-      buttonColor = _getColors2[3]; // Get the component.
+      buttonColor = _getColors2[3]; // Create the component.
 
 
-  if (displayMode === "banner") {
-    var bannerEl = Object(_components_Banner__WEBPACK_IMPORTED_MODULE_1__["Banner"])({
-      borderRadius: borderRadius,
-      colorScheme: "".concat(bgColor, ",").concat(color),
-      dismissible: !notDismissible,
-      fontSize: fontSize * 16,
-      horizontalMargin: horizontalMargin,
-      horizontalPadding: horizontalPadding,
-      message: message,
-      verticalMargin: verticalMargin,
-      verticalPadding: verticalPadding,
-      gradientLevel: options.customBackgroundGradientLevel,
-      maxImageWidth: options.customRichMessageGroup.maxImageWidth
-    }); // Create the appElement, set the "app" prop, and append the component.
+  var isBanner = displayMode === "banner";
+  var componentEl = (isBanner ? _components_Banner__WEBPACK_IMPORTED_MODULE_1__["Banner"] : _components_Modal__WEBPACK_IMPORTED_MODULE_2__["Modal"])({
+    borderRadius: borderRadius,
+    colorScheme: isBanner ? "".concat(bgColor, ",").concat(color) : "".concat(bgColor, ",").concat(color, ",").concat(buttonBgColor, ",").concat(buttonColor),
+    dismissible: !notDismissible,
+    fontSize: fontSize * 16,
+    horizontalMargin: horizontalMargin,
+    horizontalPadding: horizontalPadding,
+    message: message,
+    verticalMargin: verticalMargin,
+    verticalPadding: verticalPadding,
+    gradientLevel: options.customBackgroundGradientLevel,
+    maxImageWidth: options.customRichMessageGroup.maxImageWidth
+  }); // Create the appElement.
 
-    appElement = INSTALL.createElement(location, appElement);
-    appElement.setAttribute("app", APP_NAME);
-    appElement.appendChild(bannerEl);
-    return;
-  }
-
-  var el = ModalElement(message); // Set the z-index to max + 1
-
-  var maxZIndex = getMaxZIndex();
-  el.style.zIndex = maxZIndex + 1; // Get the content element.
-
-  var contentEl = displayMode === "modal" ? el.querySelector("content") : el; // Set the font-size and image max-width based on the display pixel density.
-
-  var pixelScaleFactor = getPixelScaleFactor();
-  contentEl.style.fontSize = "".concat(16 * pixelScaleFactor, "px"); // Apply the configurable styles.
-  // colorScheme
-
-  contentEl.style.backgroundImage = getBackgroundImageGradient(bgColor);
-  contentEl.style.color = color; // Apply style to dismissible modal button.
-
-  if (displayMode === "modal" && !notDismissible) {
-    var buttonEl = contentEl.querySelector("button");
-    buttonEl.style.backgroundColor = buttonBgColor;
-    buttonEl.style.color = buttonColor;
-  } // fontSize
-
-
-  var messageEl = contentEl.querySelector("message");
-  messageEl.style.fontSize = "".concat(fontSize, "em"); // padding
-
-  messageEl.style.padding = "".concat(verticalPadding, "em ").concat(horizontalPadding, "em ").concat(verticalPadding, "em ").concat(horizontalPadding, "em"); // margin
-
-  if (displayMode === "banner" && notDismissible) {
-    contentEl.style.margin = "".concat(verticalMargin, "em ").concat(horizontalMargin, "em ").concat(verticalMargin, "em ").concat(horizontalMargin, "em");
-  } // borderRadius
-
-
-  if (displayMode === "banner" && !notDismissible) {
-    // Only style bottom edge of dismissible banner.
-    contentEl.style.borderRadius = "0 0 ".concat(borderRadius, "px ").concat(borderRadius, "px");
-  } else {
-    contentEl.style.borderRadius = "".concat(borderRadius, "px");
-  } // image max-width
-
-
-  if (messageType === "customRich") {
-    contentEl.querySelectorAll("img").forEach(function (_el) {
-      _el.setAttribute("style", "width: ".concat(options.customRichMessageGroup.maxImageWidth, "px"));
-    });
-  } // Create the appElement, set the "app" prop, and append the component.
-
-
+  var location = displayMode === "banner" && notDismissible ? options.location : {
+    selector: "body",
+    method: "prepend"
+  };
   appElement = INSTALL.createElement(location, appElement);
   appElement.setAttribute("app", APP_NAME);
-  appElement.appendChild(el);
-
-  if (!notDismissible && INSTALL_ID !== "preview") {
-    // Focus the dismiss button.
-    el.querySelector("button").focus();
-  }
+  appElement.appendChild(componentEl);
 }
 
 function init() {
-  // Check for IE10+
-  if (!window.addEventListener || !document.documentElement.classList) {
-    return;
-  } // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
-
-
+  // INSTALL_SCOPE is an object that is used to handle option changes without refreshing the page.
   window.INSTALL_SCOPE = {
     setOptions: function setOptions(nextOptions) {
       options = nextOptions;
@@ -954,9 +1123,12 @@ function init() {
   } else {
     updateElement();
   }
-}
+} // Check for IE10+
 
-init();
+
+if (window.addEventListener && document.documentElement.classList) {
+  init();
+}
 
 /***/ }),
 

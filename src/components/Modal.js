@@ -14,32 +14,33 @@ import {
 
 const DEFAULTS = {
   BORDER_RADIUS: 16,
+  BUTTON_TEXT: "OK",
   COLOR_SCHEME: "primary",
   DISMISSIBLE: true,
   FONT_SIZE: 16,
   GRADIENT_LEVEL: 1,
   HORIZONTAL_MARGIN: 0,
-  HORIZONTAL_PADDING: 0,
+  HORIZONTAL_PADDING: 2,
   VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 0,
+  VERTICAL_PADDING: 2,
   LOCATION: { selector: "body", method: "prepend" },
   MAX_IMAGE_WIDTH: 20,
 }
 
 const SCHEME_NAME_COLORS_MAP = {
-  primary: "#cce5ff,#004085",
-  secondary: "#e2e3e5,#383d41",
-  success: "#d4edda,#155724",
-  danger: "#f8d7da,#721c24",
-  warning: "#fff3cd,#856404",
-  info: "#d1ecf1,#0c5460",
-  light: "#fefefe,#818182",
-  dark: "#d6d8d9,#1b1e21",
+  primary: "#cce5ff,#004085,#007bff,#ffffff",
+  secondary: "#e2e3e5,#383d41,#6c757d,#ffffff",
+  success: "#d4edda,#155724,#28a745,#ffffff",
+  danger: "#f8d7da,#721c24,#dc3545,#ffffff",
+  warning: "#fff3cd,#856404,#ffc107,#212529",
+  info: "#d1ecf1,#0c5460,#17a2b8,#ffffff",
+  light: "#fefefe,#818182,#f8f9fa,#212529",
+  dark: "#d6d8d9,#1b1e21,#343a40,#ffffff",
 }
 
 function getColors(colorScheme) {
   /* Return the colors for the specified scheme as the array:
-     [<mainBackgroundColor>, <mainColor>]
+     [<mainBgColor>, <mainColor>, <buttonBgColor>, <buttonColor>]
    */
   return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",")
 }
@@ -47,59 +48,45 @@ function getColors(colorScheme) {
 const STYLE = document.createElement("style")
 STYLE.textContent = `
   .wrapper {
-    display: flex;
-    padding: 1.5em; 1em;
-    font-size: 16px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-    text-align: left;
-    color: #000;
-    background-color: #fff;
-  }
-
-  .wrapper.dismissible {
     position: fixed;
     left: 0;
     top: 0;
     right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .6);
     cursor: pointer;
-    box-shadow: 0 0 1em .2em #444;
   }
 
-  .wrapper.dismissible.show {
-    animation-duration: .5s;
-    animation-name: slideDown;
-    animation-timing-function: linear;
-  }
-
-  .wrapper.dismissible.hide {
-    animation-duration: .25s;
-    animation-name: slideDown;
-    animation-timing-function: linear;
-    animation-direction: reverse;
+  .content {
+    display: inline-block;
+    max-width: 85%;
+    max-height: 85%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: solid #000 2px;
+    overflow: auto;
+    cursor: default;
+    text-align: right;
+    padding: 1em;
+    background-color: #fff;
   }
 
   .message {
-    display: inline;
-    flex-grow: 1;
+    text-align: center;
+    display: block;
+    cursor: text;
+    padding: 4em;
   }
 
   button {
-    margin: 0;
-    padding: 0;
-    background-color: transparent;
+    display: inline;
+    padding: .4em .75em;
+    cursor: pointer;
+    font-size: 1em;
     border: none;
-    font-family: arial;
-    font-size: 16px;
-  }
-
-  @keyframes slideDown {
-    from {
-      transform: translate(0, -150%);
-    }
-
-    to {
-      transform: translate(0, 0);
-    }
+    border-radius: .25em;
   }
 
   p {
@@ -107,7 +94,7 @@ STYLE.textContent = `
   }
 `
 
-export class BannerElement extends HTMLElement {
+export class ModalElement extends HTMLElement {
   constructor() {
     super()
     this.eventListenerRemovers = []
@@ -117,8 +104,9 @@ export class BannerElement extends HTMLElement {
     this.shadow.appendChild(STYLE)
 
     // Define the accessibility attributes.
-    this.setAttribute("role", "banner")
+    this.setAttribute("role", "dialog")
     this.setAttribute("aria-label", "Important Message")
+    this.setAttribute("aria-modal", "true")
   }
 
   connectedCallback() {
@@ -128,6 +116,7 @@ export class BannerElement extends HTMLElement {
     // Unescape the double-quotes in the message, e.g. HTML attr values.
     const message = htmlAttrDecode(getStr("message"))
     const colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME)
+    const buttonText = getStr("button-text", DEFAULTS.BUTTON_TEXT)
 
     // Bool-type
     const getBool = (...args) => getBoolAttr(this, ...args)
@@ -154,17 +143,16 @@ export class BannerElement extends HTMLElement {
     maxImageWidth *= pxScaleFactor
 
     // Define the main wrapper element.
-    const [bgColor, color] = getColors(colorScheme)
+    const [bgColor, color, buttonBgColor, buttonColor] = getColors(colorScheme)
     const bgRGB = hexToRgb(bgColor)
-    this.wrapperEl = Element(`
-      <div class="wrapper show ${dismissible ? "dismissible" : ""}"
+    this.wrapperEl = Element(`<div class="wrapper"></div>`)
+    this.shadow.appendChild(this.wrapperEl)
+
+    const contentEl = Element(`
+      <div class="content"
            style="margin: ${yMargin}em ${xMargin}em;
                   color: ${color};
-                  border-radius:
-                    ${dismissible ? "0" : borderRadius}px
-                    ${dismissible ? "0" : borderRadius}px
-                    ${borderRadius}px
-                    ${borderRadius}px;
+                  border-radius: ${borderRadius}px;
                   background-image:
                     linear-gradient(
                       0deg,
@@ -176,13 +164,13 @@ export class BannerElement extends HTMLElement {
       >
       </div>
     `)
-    this.shadow.appendChild(this.wrapperEl)
+    this.wrapperEl.appendChild(contentEl)
 
     // Define the message container element.
     const messageEl = Element(`
       <div class="message"
-         style="font-size: ${fontSize}px;
-                padding: ${yPadding}em ${xPadding}em;"
+           style="font-size: ${fontSize}px;
+                  padding: ${yPadding}em ${xPadding}em;"
       >
         ${message}
       </div>
@@ -192,7 +180,7 @@ export class BannerElement extends HTMLElement {
       const style = el.getAttribute("style") || ""
       el.setAttribute("style", `max-width: ${maxImageWidth}px; ${style}`)
     })
-    this.wrapperEl.appendChild(messageEl)
+    contentEl.appendChild(messageEl)
 
     // Skip adding the button, event listeners, etc. if not dismissible.
     if (!dismissible) {
@@ -201,23 +189,25 @@ export class BannerElement extends HTMLElement {
 
     // Define the dismiss button element.
     const buttonEl = Element(`
-      <button style="font-size: ${16 * pxScaleFactor}px;">x</button>
+      <button style="font-size: ${16 * pxScaleFactor}px;
+                     background-color: ${buttonBgColor};
+                     color: ${buttonColor};"
+      >
+        ${buttonText}
+      </button>
     `)
-    this.wrapperEl.appendChild(buttonEl)
+    contentEl.appendChild(buttonEl)
 
     // Add event listeners.
-    // Bold the X on mouse enter.
-    this.addEventListener(this, "mouseenter", e => {
-      buttonEl.style.fontWeight = "bold"
-    })
-
-    // Unbold the X on mouse leave.
-    this.addEventListener(this, "mouseleave", e => {
-      buttonEl.style.fontWeight = "normal"
-    })
-
     // Remove the element on click.
-    this.addEventListener(this, "click", () => this.dismiss())
+    this.addEventListener(this, "click", e => {
+      if (
+        e.originalTarget.tagName === "BUTTON" ||
+        e.originalTarget.classList.contains("wrapper")
+      ) {
+        this.dismiss()
+      }
+    })
 
     // Remove the element on Escape.
     this.addEventListener(window, "keydown", e => {
@@ -225,6 +215,9 @@ export class BannerElement extends HTMLElement {
         this.dismiss()
       }
     })
+
+    // Focus the dismiss button.
+    buttonEl.focus()
   }
 
   disconnectedCallback() {
@@ -232,7 +225,7 @@ export class BannerElement extends HTMLElement {
   }
 
   addEventListener(el, event, fn) {
-    if (el instanceof BannerElement) {
+    if (el instanceof ModalElement) {
       super.addEventListener(event, fn)
       this.eventListenerRemovers.push(() =>
         super.removeEventListener(event, fn),
@@ -250,26 +243,21 @@ export class BannerElement extends HTMLElement {
   }
 
   dismiss() {
-    const el = this.wrapperEl
-    this.addEventListener(el, "animationend", () => this.remove())
-    el.classList.remove("show")
-    // See here for why I'm reading the offsetWidth:
-    // https://stackoverflow.com/a/30072037/2327940
-    const _ = el.offsetWidth
-    el.classList.add("hide")
+    this.remove()
   }
 }
 
-export function Banner(options, location) {
-  /* Create and optionally insert a banner element via JS.
+export function Modal(options, location) {
+  /* Create and optionally insert a modal element via JS.
    */
   // Define helper to get option value if set but otherwise return a default.
   const getOpt = (k, defVal) => (options[k] === undefined ? defVal : options[k])
   // Define the element, escaping any double-quotes in the message text, which
   // will occur for HTML messages that specify element attribute values.
-  const bannerEl = Element(`
-     <x-banner
+  const modalEl = Element(`
+     <x-modal
        message="${htmlAttrEncode(getOpt("message", ""))}"
+       button-text="${getOpt("buttonText", DEFAULTS.BUTTON_TEXT)}"
        dismissible="${getOpt("dismissible", DEFAULTS.DISMISSIBLE)}"
        color-scheme="${getOpt("colorScheme", DEFAULTS.COLOR_SCHEME)}"
        font-size="${getOpt("fontSize", DEFAULTS.FONT_SIZE)}"
@@ -290,20 +278,20 @@ export function Banner(options, location) {
        gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
        max-image-width="${getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH)}"
      >
-     </x-banner>
+     </x-modal>
    `)
 
   if (!location) {
-    return bannerEl
+    return modalEl
   }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
-      insertElementAtLocation(bannerEl, location.selector, location.method)
+      insertElementAtLocation(modalEl, location.selector, location.method)
     })
   } else {
-    insertElementAtLocation(bannerEl, location.selector, location.method)
+    insertElementAtLocation(modalEl, location.selector, location.method)
   }
 }
 
-customElements.define("x-banner", BannerElement)
+customElements.define("x-modal", ModalElement)

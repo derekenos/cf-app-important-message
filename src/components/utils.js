@@ -1,3 +1,63 @@
+// /////////////////////////////////////////////////////////////////////////////
+// Generic Utilities
+// /////////////////////////////////////////////////////////////////////////////
+
+// Simple parsing helpers.
+const parseDecInt = s => parseInt(s, 10)
+const parseHexInt = s => parseInt(s, 16)
+
+// Return a function that applies a specified parser and uses a specified
+// failure test function to determine whether to return the parsed value or a
+// specified default value.
+const safeParser = (parserFn, failureTestFn) => (x, defVal) => {
+  const v = parserFn(x)
+  return failureTestFn(v) ? defVal : v
+}
+// Type-specific variants.
+const safeParseInt = safeParser(x => parseInt(x, 10), Number.isNaN)
+const safeParseFloat = safeParser(x => parseFloat(x), Number.isNaN)
+
+export const get = (o, k, defVal) => {
+  //
+  const v = o[k]
+  return v === undefined || v === null ? defVal : v
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// HTML / DOM Utilities
+// /////////////////////////////////////////////////////////////////////////////
+
+// Encode a string for inclusion as an HTML attribute value.
+export const htmlAttrEncode = s => `${s}`.replace(/"/g, "@quot;")
+
+// Decode an HTML attribute value into the original string value.
+export const htmlAttrDecode = s => `${s}`.replace(/@quot;/g, '"')
+
+// Return the specified element attribute, or a defaultValue if the attribute
+// is unspecified.
+export const getAttr = (el, attr, defVal) =>
+  el.hasAttribute(attr) ? el.getAttribute(attr) : defVal
+// Type-specific variants.
+export const getStrAttr = getAttr
+export const getBoolAttr = (...args) => getStrAttr(...args) === "true"
+export const getIntAttr = (...args) => safeParseInt(getStrAttr(...args))
+export const getFloatAttr = (...args) => safeParseFloat(getStrAttr(...args))
+
+export function hexToRgb(hex) {
+  // Adapted from: https://stackoverflow.com/a/5624139/2327940
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
+  const v = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v)
+  return result
+    ? {
+        r: parseHexInt(result[1]),
+        g: parseHexInt(result[2]),
+        b: parseHexInt(result[3]),
+      }
+    : null
+}
+
 export function Element(tagNameOrDOMString, wrapperTag = "div") {
   // Return a new Element for a given tag name or DOM string.
   const s = tagNameOrDOMString.trim()
@@ -14,14 +74,19 @@ export function Element(tagNameOrDOMString, wrapperTag = "div") {
   return el
 }
 
+function escapeHTML(s) {
+  const wrapper = Element("div")
+  wrapper.innerText = s
+  return wrapper.innerHTML
+}
+
 export function getMaxZIndex() {
   // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
   let max = 0
   const elements = document.getElementsByTagName("*")
   Array.prototype.slice.call(elements).forEach(element => {
-    const zIndex = parseInt(
+    const zIndex = parseDecInt(
       document.defaultView.getComputedStyle(element).zIndex,
-      10,
     )
     max = zIndex ? Math.max(max, zIndex) : max
   })
@@ -43,40 +108,8 @@ export function getPixelScaleFactor() {
   return window.devicePixelRatio
 }
 
-function escapeHTML(s) {
-  const wrapper = Element("div")
-  wrapper.innerText = s
-  return wrapper.innerHTML
-}
-
-export function hexToRgb(hex) {
-  // Adapted from: https://stackoverflow.com/a/5624139/2327940
-  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
-  const v = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v)
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : null
-}
-
-/* Return the specified element attribute, or defaultValue if attribute
-   is unspecified.
- */
-export const getAttr = (el, attr, defaultValue) =>
-  el.hasAttribute(attr) ? el.getAttribute(attr) : defaultValue
-export const getStrAttr = getAttr
-export const getBoolAttr = (...args) => getStrAttr(...args) === "true"
-export const getIntAttr = (...args) => parseInt(getStrAttr(...args), 10)
-export const getFloatAttr = (...args) => parseFloat(getStrAttr(...args))
-
 export function insertElementAtLocation(element, selector, method) {
-  /* Relocate an element to the location specified by selector and method.
-   */
+  // Relocate an element to the location specified by selector and method.
   const target = document.querySelector(selector)
   if (target === null) {
     throw new Error(`No location found for selector: ${selector}`)
