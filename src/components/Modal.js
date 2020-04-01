@@ -25,6 +25,7 @@ const DEFAULTS = {
   VERTICAL_PADDING: 2,
   LOCATION: { selector: "body", method: "prepend" },
   MAX_IMAGE_WIDTH: 20,
+  STEAL_FOCUS: true,
 }
 
 const SCHEME_NAME_COLORS_MAP = {
@@ -74,7 +75,7 @@ STYLE.textContent = `
   }
 
   .message {
-    text-align: center;
+    text-align: left;
     display: block;
     cursor: text;
     padding: 4em;
@@ -87,6 +88,7 @@ STYLE.textContent = `
     font-size: 1em;
     border: none;
     border-radius: .25em;
+    margin-top: 1.5em;
   }
 
   p {
@@ -121,6 +123,7 @@ export class ModalElement extends HTMLElement {
     // Bool-type
     const getBool = (...args) => getBoolAttr(this, ...args)
     const dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE)
+    const stealFocus = getBool("steal-focus", DEFAULTS.STEAL_FOCUS)
 
     // Int-type
     const getInt = (...args) => getIntAttr(this, ...args)
@@ -216,8 +219,11 @@ export class ModalElement extends HTMLElement {
       }
     })
 
-    // Focus the dismiss button.
-    buttonEl.focus()
+    // Save the currently focused element and focus the dismiss button.
+    if (stealFocus) {
+      this.previousFocusEl = document.activeElement
+      buttonEl.focus()
+    }
   }
 
   disconnectedCallback() {
@@ -243,7 +249,11 @@ export class ModalElement extends HTMLElement {
   }
 
   dismiss() {
+    // Remove the element and restore focus.
     this.remove()
+    if (this.previousFocusEl) {
+      this.previousFocusEl.focus()
+    }
   }
 }
 
@@ -277,6 +287,7 @@ export function Modal(options, location) {
        border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
        gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
        max-image-width="${getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH)}"
+       steal-focus="${getOpt("stealFocus", DEFAULTS.STEAL_FOCUS)}"
      >
      </x-modal>
    `)

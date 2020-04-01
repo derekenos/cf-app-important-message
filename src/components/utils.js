@@ -74,12 +74,6 @@ export function Element(tagNameOrDOMString, wrapperTag = "div") {
   return el
 }
 
-function escapeHTML(s) {
-  const wrapper = Element("div")
-  wrapper.innerText = s
-  return wrapper.innerHTML
-}
-
 export function getMaxZIndex() {
   // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
   let max = 0

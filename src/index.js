@@ -32,7 +32,7 @@ let appElement
 const parseDecInt = s => parseInt(s, 10)
 
 function escapeHTML(s) {
-  const wrapper = Element("div")
+  const wrapper = document.createElement("div")
   wrapper.innerText = s
   return wrapper.innerHTML
 }
@@ -183,12 +183,8 @@ function updateElement() {
   const [bgColor, color, buttonBgColor, buttonColor] = getColors()
 
   // Create the component.
-  const isBanner = displayMode === "banner"
-  const componentEl = (isBanner ? Banner : Modal)({
+  const componentOptions = {
     borderRadius,
-    colorScheme: isBanner
-      ? `${bgColor},${color}`
-      : `${bgColor},${color},${buttonBgColor},${buttonColor}`,
     dismissible: !notDismissible,
     fontSize: fontSize * 16,
     horizontalMargin,
@@ -198,7 +194,16 @@ function updateElement() {
     verticalPadding,
     gradientLevel: options.customBackgroundGradientLevel,
     maxImageWidth: options.customRichMessageGroup.maxImageWidth,
-  })
+  }
+  let componentEl
+  if (displayMode === "banner") {
+    componentOptions.colorScheme = `${bgColor},${color}`
+    componentEl = Banner(componentOptions)
+  } else {
+    componentOptions.colorScheme = `${bgColor},${color},${buttonBgColor},${buttonColor}`
+    componentOptions.stealFocus = INSTALL_ID !== "preview" || notDismissible
+    componentEl = Modal(componentOptions)
+  }
 
   // Create the appElement.
   const location =

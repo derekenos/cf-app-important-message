@@ -459,7 +459,8 @@ var DEFAULTS = {
     selector: "body",
     method: "prepend"
   },
-  MAX_IMAGE_WIDTH: 20
+  MAX_IMAGE_WIDTH: 20,
+  STEAL_FOCUS: true
 };
 var SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085,#007bff,#ffffff",
@@ -480,7 +481,7 @@ function getColors(colorScheme) {
 }
 
 var STYLE = document.createElement("style");
-STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: center;\n    display: block;\n    cursor: text;\n    padding: 4em;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
+STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: 4em;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n    margin-top: 1.5em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
 var ModalElement = /*#__PURE__*/function (_HTMLElement) {
   _inherits(ModalElement, _HTMLElement);
 
@@ -538,7 +539,8 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
         return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getBoolAttr"].apply(void 0, [_this2].concat(args));
       };
 
-      var dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE); // Int-type
+      var dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE);
+      var stealFocus = getBool("steal-focus", DEFAULTS.STEAL_FOCUS); // Int-type
 
       var getInt = function getInt() {
         for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
@@ -611,9 +613,12 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
         if (e.key === "Escape") {
           _this2.dismiss();
         }
-      }); // Focus the dismiss button.
+      }); // Save the currently focused element and focus the dismiss button.
 
-      buttonEl.focus();
+      if (stealFocus) {
+        this.previousFocusEl = document.activeElement;
+        buttonEl.focus();
+      }
     }
   }, {
     key: "disconnectedCallback",
@@ -648,7 +653,12 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "dismiss",
     value: function dismiss() {
+      // Remove the element and restore focus.
       this.remove();
+
+      if (this.previousFocusEl) {
+        this.previousFocusEl.focus();
+      }
     }
   }]);
 
@@ -664,7 +674,7 @@ function Modal(options, location) {
   // will occur for HTML messages that specify element attribute values.
 
 
-  var modalEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-modal\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       button-text=\"").concat(getOpt("buttonText", DEFAULTS.BUTTON_TEXT), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n     >\n     </x-modal>\n   "));
+  var modalEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-modal\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       button-text=\"").concat(getOpt("buttonText", DEFAULTS.BUTTON_TEXT), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n       steal-focus=\"").concat(getOpt("stealFocus", DEFAULTS.STEAL_FOCUS), "\"\n     >\n     </x-modal>\n   "));
 
   if (!location) {
     return modalEl;
@@ -795,13 +805,6 @@ function Element(tagNameOrDOMString) {
   wrapper.removeChild(el);
   return el;
 }
-
-function escapeHTML(s) {
-  var wrapper = Element("div");
-  wrapper.innerText = s;
-  return wrapper.innerHTML;
-}
-
 function getMaxZIndex() {
   // Adapted from: https://dash.cloudflare.com/apps/developer/docs/techniques/styles#z-indexes
   var max = 0;
@@ -921,7 +924,7 @@ var parseDecInt = function parseDecInt(s) {
 };
 
 function escapeHTML(s) {
-  var wrapper = Element("div");
+  var wrapper = document.createElement("div");
   wrapper.innerText = s;
   return wrapper.innerHTML;
 } //
@@ -1078,10 +1081,8 @@ function updateElement() {
       buttonColor = _getColors2[3]; // Create the component.
 
 
-  var isBanner = displayMode === "banner";
-  var componentEl = (isBanner ? _components_Banner__WEBPACK_IMPORTED_MODULE_1__["Banner"] : _components_Modal__WEBPACK_IMPORTED_MODULE_2__["Modal"])({
+  var componentOptions = {
     borderRadius: borderRadius,
-    colorScheme: isBanner ? "".concat(bgColor, ",").concat(color) : "".concat(bgColor, ",").concat(color, ",").concat(buttonBgColor, ",").concat(buttonColor),
     dismissible: !notDismissible,
     fontSize: fontSize * 16,
     horizontalMargin: horizontalMargin,
@@ -1091,7 +1092,18 @@ function updateElement() {
     verticalPadding: verticalPadding,
     gradientLevel: options.customBackgroundGradientLevel,
     maxImageWidth: options.customRichMessageGroup.maxImageWidth
-  }); // Create the appElement.
+  };
+  var componentEl;
+
+  if (displayMode === "banner") {
+    componentOptions.colorScheme = "".concat(bgColor, ",").concat(color);
+    componentEl = Object(_components_Banner__WEBPACK_IMPORTED_MODULE_1__["Banner"])(componentOptions);
+  } else {
+    componentOptions.colorScheme = "".concat(bgColor, ",").concat(color, ",").concat(buttonBgColor, ",").concat(buttonColor);
+    componentOptions.stealFocus = INSTALL_ID !== "preview" || notDismissible;
+    componentEl = Object(_components_Modal__WEBPACK_IMPORTED_MODULE_2__["Modal"])(componentOptions);
+  } // Create the appElement.
+
 
   var location = displayMode === "banner" && notDismissible ? options.location : {
     selector: "body",
