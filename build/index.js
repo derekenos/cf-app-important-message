@@ -152,7 +152,7 @@ var DEFAULTS = {
   HORIZONTAL_MARGIN: 0,
   HORIZONTAL_PADDING: 0,
   VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 0,
+  VERTICAL_PADDING: 1,
   LOCATION: {
     selector: "body",
     method: "prepend"
@@ -178,7 +178,7 @@ function getColors(colorScheme) {
 }
 
 var STYLE = document.createElement("style");
-STYLE.textContent = "\n  .wrapper {\n    display: flex;\n    padding: 1.5em; 1em;\n    font-size: 16px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 1em .2em #444;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    display: inline;\n    flex-grow: 1;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: arial;\n    font-size: 16px;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  p {\n    margin: 0;\n  }\n";
+STYLE.textContent = "\n  .wrapper {\n    display: flex;\n    font-size: 16px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 1em .2em #444;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    padding: .25em 1em;\n    display: inline;\n    flex-grow: 1;\n  }\n\n  .button-wrapper {\n    padding: .25em 1em;\n    font-weight: normal;\n    position: relative;\n  }\n\n  .button-wrapper.highlight {\n    border-left: dashed rgba(0, 0, 0, .2) 2px;\n  }\n\n  .button-wrapper:hover {\n    font-weight: bold;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: monospace;\n    font-size: 16px;\n    font-weight: inherit;\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  p {\n    margin: 0;\n  }\n";
 var BannerElement = /*#__PURE__*/function (_HTMLElement) {
   _inherits(BannerElement, _HTMLElement);
 
@@ -222,8 +222,9 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       }; // Unescape the double-quotes in the message, e.g. HTML attr values.
 
 
-      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrDecode"])(getStr("message"));
-      var colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME); // Bool-type
+      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrDecode"])(getStr("message", ""));
+      var colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME);
+      var bannerUrl = getStr("banner-url", ""); // Bool-type
 
       var getBool = function getBool() {
         for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
@@ -275,33 +276,52 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       this.wrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"wrapper show ".concat(dismissible ? "dismissible" : "", "\"\n           style=\"margin: ").concat(yMargin, "em ").concat(xMargin, "em;\n                  font-size: ").concat(fontSize, "px;\n                  color: ").concat(color, ";\n                  border-radius:\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(borderRadius, "px\n                    ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
       this.shadow.appendChild(this.wrapperEl); // Define the message container element.
 
-      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\" style=\"padding: ".concat(yPadding, "em ").concat(xPadding, "em;\">\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
+      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\" style=\"padding: ".concat(yPadding + 0.25, "em ").concat(xPadding + 1, "em;\">\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
 
       messageEl.querySelectorAll("img").forEach(function (el) {
         var style = el.getAttribute("style") || "";
         el.setAttribute("style", "max-width: ".concat(maxImageWidth, "px; ").concat(style));
       });
-      this.wrapperEl.appendChild(messageEl); // Skip adding the button, event listeners, etc. if not dismissible.
+      this.wrapperEl.appendChild(messageEl); // Make the non-dismissible cursor a pointer if bannerUrl is defined.
+
+      if (!dismissible && bannerUrl) {
+        this.style.cursor = "pointer";
+      } // Dismiss the banner or redirect to bannerUrl on main banner click.
+
+
+      this.addEventListener(this, "click", function () {
+        if (bannerUrl) {
+          window.location = bannerUrl;
+        } else if (dismissible) {
+          _this2.dismiss();
+        }
+      }); // Skip adding the button, event listeners, etc. if not dismissible.
 
       if (!dismissible) {
         return;
       } // Define the dismiss button element.
 
 
-      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <button style=\"font-size: ".concat(16 * pxScaleFactor, "px;\">x</button>\n    "));
-      this.wrapperEl.appendChild(buttonEl); // Add event listeners.
-      // Bold the X on mouse enter.
+      var buttonWrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"button-wrapper ".concat(bannerUrl ? "highlight" : "", "\">\n        <button style=\"font-size: ").concat(16 * pxScaleFactor, "px;\">x</button>\n      </div>\n    "));
+      this.wrapperEl.appendChild(buttonWrapperEl); // Add event listeners.
+      // If bannerUrl is not defined, bold the X on any mouse hover.
 
-      this.addEventListener(this, "mouseenter", function () {
-        buttonEl.style.fontWeight = "bold";
-      }); // Unbold the X on mouse leave.
+      if (!bannerUrl) {
+        this.addEventListener(this, "mouseenter", function () {
+          buttonWrapperEl.style.fontWeight = "bold";
+        }); // Unbold the X on mouse leave.
 
-      this.addEventListener(this, "mouseleave", function () {
-        buttonEl.style.fontWeight = "normal";
-      }); // Remove the element on click.
+        this.addEventListener(this, "mouseleave", function () {
+          buttonWrapperEl.style.fontWeight = "normal";
+        });
+      } // Handle clicks events.
+      // Dismiss the banner on button wrapper.
 
-      this.addEventListener(this, "click", function () {
-        return _this2.dismiss();
+
+      this.addEventListener(buttonWrapperEl, "click", function (e) {
+        _this2.dismiss();
+
+        e.stopPropagation();
       }); // Remove the element on Escape.
 
       this.addEventListener(window, "keydown", function (e) {
@@ -369,7 +389,7 @@ function Banner(options, location) {
   // will occur for HTML messages that specify element attribute values.
 
 
-  var bannerEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-banner\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n     >\n     </x-banner>\n   "));
+  var bannerEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-banner\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n       banner-url=\"").concat(getOpt("bannerUrl", ""), "\"\"\n     >\n     </x-banner>\n   "));
 
   if (!location) {
     return bannerEl;
@@ -481,7 +501,7 @@ function getColors(colorScheme) {
 }
 
 var STYLE = document.createElement("style");
-STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: 0;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n    margin-top: 1.5em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
+STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    width: fit-content;\n    max-width: min(85%, 700px);\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: 0;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n    margin-top: 1.5em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
 var ModalElement = /*#__PURE__*/function (_HTMLElement) {
   _inherits(ModalElement, _HTMLElement);
 
@@ -601,12 +621,19 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
 
       var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <button style=\"font-size: ".concat(16 * pxScaleFactor, "px;\n                     background-color: ").concat(buttonBgColor, ";\n                     color: ").concat(buttonColor, ";\"\n      >\n        ").concat(buttonText, "\n      </button>\n    "));
       contentEl.appendChild(buttonEl); // Add event listeners.
-      // Remove the element on click.
+      // Dismiss the modal on wrapper or button click.
+      // It seems as though it's complicated to determine the original event
+      // target within the shadow DOM, so we'll simplify things by adding all the
+      // click handlers we need to control what's happening.
 
-      this.addEventListener(this, "click", function (e) {
-        if (e.originalTarget.tagName === "BUTTON" || e.originalTarget.classList.contains("wrapper")) {
-          _this2.dismiss();
-        }
+      this.addEventListener(this.wrapperEl, "click", function () {
+        return _this2.dismiss();
+      });
+      this.addEventListener(contentEl, "click", function (e) {
+        return e.stopPropagation();
+      });
+      this.addEventListener(buttonEl, "click", function () {
+        return _this2.dismiss();
       }); // Remove the element on Escape.
 
       this.addEventListener(window, "keydown", function (e) {
@@ -717,7 +744,12 @@ __webpack_require__.r(__webpack_exports__);
 // /////////////////////////////////////////////////////////////////////////////
 // Generic Utilities
 // /////////////////////////////////////////////////////////////////////////////
-// Simple parsing helpers.
+// isNaN is a nightmare and apparently doesn't support Number.isNaN, so...
+var _isNaN = function _isNaN(x) {
+  return typeof x === "number" && "".concat(x) === "NaN";
+}; // Simple parsing helpers.
+
+
 var parseDecInt = function parseDecInt(s) {
   return parseInt(s, 10);
 };
@@ -739,10 +771,10 @@ var safeParser = function safeParser(parserFn, failureTestFn) {
 
 var safeParseInt = safeParser(function (x) {
   return parseInt(x, 10);
-}, Number.isNaN);
+}, _isNaN);
 var safeParseFloat = safeParser(function (x) {
   return parseFloat(x);
-}, Number.isNaN);
+}, _isNaN);
 var get = function get(o, k, defVal) {
   //
   var v = o[k];
@@ -824,7 +856,7 @@ function getPixelScaleFactor() {
     return 1;
   }
 
-  return window.devicePixelRatio;
+  return window.devicePixelRatio || 1;
 }
 function insertElementAtLocation(element, selector, method) {
   // Relocate an element to the location specified by selector and method.
@@ -1061,6 +1093,7 @@ function updateElement() {
   }
 
   var _options = options,
+      bannerUrl = _options.bannerUrl,
       displayMode = _options.displayMode,
       fontSize = _options.fontSize,
       verticalPadding = _options.verticalPadding,
@@ -1097,6 +1130,7 @@ function updateElement() {
 
   if (displayMode === "banner") {
     componentOptions.colorScheme = "".concat(bgColor, ",").concat(color);
+    componentOptions.bannerUrl = bannerUrl;
     componentEl = Object(_components_Banner__WEBPACK_IMPORTED_MODULE_1__["Banner"])(componentOptions);
   } else {
     componentOptions.colorScheme = "".concat(bgColor, ",").concat(color, ",").concat(buttonBgColor, ",").concat(buttonColor);

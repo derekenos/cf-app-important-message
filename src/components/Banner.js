@@ -21,7 +21,7 @@ const DEFAULTS = {
   HORIZONTAL_MARGIN: 0,
   HORIZONTAL_PADDING: 0,
   VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 0,
+  VERTICAL_PADDING: 1,
   LOCATION: { selector: "body", method: "prepend" },
   MAX_IMAGE_WIDTH: 20,
 }
@@ -48,7 +48,6 @@ const STYLE = document.createElement("style")
 STYLE.textContent = `
   .wrapper {
     display: flex;
-    padding: 1.5em; 1em;
     font-size: 16px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
     text-align: left;
@@ -79,8 +78,23 @@ STYLE.textContent = `
   }
 
   .message {
+    padding: .25em 1em;
     display: inline;
     flex-grow: 1;
+  }
+
+  .button-wrapper {
+    padding: .25em 1em;
+    font-weight: normal;
+    position: relative;
+  }
+
+  .button-wrapper.highlight {
+    border-left: dashed rgba(0, 0, 0, .2) 2px;
+  }
+
+  .button-wrapper:hover {
+    font-weight: bold;
   }
 
   button {
@@ -88,8 +102,13 @@ STYLE.textContent = `
     padding: 0;
     background-color: transparent;
     border: none;
-    font-family: arial;
+    font-family: monospace;
     font-size: 16px;
+    font-weight: inherit;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   @keyframes slideDown {
@@ -126,8 +145,9 @@ export class BannerElement extends HTMLElement {
     // String-type
     const getStr = (...args) => getStrAttr(this, ...args)
     // Unescape the double-quotes in the message, e.g. HTML attr values.
-    const message = htmlAttrDecode(getStr("message"))
+    const message = htmlAttrDecode(getStr("message", ""))
     const colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME)
+    const bannerUrl = getStr("banner-url", "")
 
     // Bool-type
     const getBool = (...args) => getBoolAttr(this, ...args)
@@ -181,7 +201,8 @@ export class BannerElement extends HTMLElement {
 
     // Define the message container element.
     const messageEl = Element(`
-      <div class="message" style="padding: ${yPadding}em ${xPadding}em;">
+      <div class="message" style="padding: ${yPadding + 0.25}em ${xPadding +
+      1}em;">
         ${message}
       </div>
     `)
@@ -192,30 +213,53 @@ export class BannerElement extends HTMLElement {
     })
     this.wrapperEl.appendChild(messageEl)
 
+    // Make the non-dismissible cursor a pointer if bannerUrl is defined.
+    if (!dismissible && bannerUrl) {
+      this.style.cursor = "pointer"
+    }
+
+    // Dismiss the banner or redirect to bannerUrl on main banner click.
+    this.addEventListener(this, "click", () => {
+      if (bannerUrl) {
+        window.location = bannerUrl
+      } else if (dismissible) {
+        this.dismiss()
+      }
+    })
+
     // Skip adding the button, event listeners, etc. if not dismissible.
     if (!dismissible) {
       return
     }
 
     // Define the dismiss button element.
-    const buttonEl = Element(`
-      <button style="font-size: ${16 * pxScaleFactor}px;">x</button>
+    const buttonWrapperEl = Element(`
+      <div class="button-wrapper ${bannerUrl ? "highlight" : ""}">
+        <button style="font-size: ${16 * pxScaleFactor}px;">x</button>
+      </div>
     `)
-    this.wrapperEl.appendChild(buttonEl)
+    this.wrapperEl.appendChild(buttonWrapperEl)
 
     // Add event listeners.
-    // Bold the X on mouse enter.
-    this.addEventListener(this, "mouseenter", () => {
-      buttonEl.style.fontWeight = "bold"
-    })
 
-    // Unbold the X on mouse leave.
-    this.addEventListener(this, "mouseleave", () => {
-      buttonEl.style.fontWeight = "normal"
-    })
+    // If bannerUrl is not defined, bold the X on any mouse hover.
+    if (!bannerUrl) {
+      this.addEventListener(this, "mouseenter", () => {
+        buttonWrapperEl.style.fontWeight = "bold"
+      })
 
-    // Remove the element on click.
-    this.addEventListener(this, "click", () => this.dismiss())
+      // Unbold the X on mouse leave.
+      this.addEventListener(this, "mouseleave", () => {
+        buttonWrapperEl.style.fontWeight = "normal"
+      })
+    }
+
+    // Handle clicks events.
+    // Dismiss the banner on button wrapper.
+    this.addEventListener(buttonWrapperEl, "click", e => {
+      this.dismiss()
+      e.stopPropagation()
+    })
 
     // Remove the element on Escape.
     this.addEventListener(window, "keydown", e => {
@@ -287,6 +331,7 @@ export function Banner(options, location) {
        border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
        gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
        max-image-width="${getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH)}"
+       banner-url="${getOpt("bannerUrl", "")}""
      >
      </x-banner>
    `)

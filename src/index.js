@@ -165,6 +165,7 @@ function updateElement() {
   }
 
   const {
+    bannerUrl,
     displayMode,
     fontSize,
     verticalPadding,
@@ -198,6 +199,7 @@ function updateElement() {
   let componentEl
   if (displayMode === "banner") {
     componentOptions.colorScheme = `${bgColor},${color}`
+    componentOptions.bannerUrl = bannerUrl
     componentEl = Banner(componentOptions)
   } else {
     componentOptions.colorScheme = `${bgColor},${color},${buttonBgColor},${buttonColor}`

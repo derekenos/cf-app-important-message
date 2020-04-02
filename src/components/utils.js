@@ -2,6 +2,9 @@
 // Generic Utilities
 // /////////////////////////////////////////////////////////////////////////////
 
+// isNaN is a nightmare and apparently doesn't support Number.isNaN, so...
+const _isNaN = x => typeof x === "number" && `${x}` === "NaN"
+
 // Simple parsing helpers.
 const parseDecInt = s => parseInt(s, 10)
 const parseHexInt = s => parseInt(s, 16)
@@ -14,8 +17,8 @@ const safeParser = (parserFn, failureTestFn) => (x, defVal) => {
   return failureTestFn(v) ? defVal : v
 }
 // Type-specific variants.
-const safeParseInt = safeParser(x => parseInt(x, 10), Number.isNaN)
-const safeParseFloat = safeParser(x => parseFloat(x), Number.isNaN)
+const safeParseInt = safeParser(x => parseInt(x, 10), _isNaN)
+const safeParseFloat = safeParser(x => parseFloat(x), _isNaN)
 
 export const get = (o, k, defVal) => {
   //
@@ -99,7 +102,7 @@ export function getPixelScaleFactor() {
   ) {
     return 1
   }
-  return window.devicePixelRatio
+  return window.devicePixelRatio || 1
 }
 
 export function insertElementAtLocation(element, selector, method) {

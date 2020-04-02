@@ -135,6 +135,18 @@
         "default": "banner"
       },
 
+      "bannerUrl": {
+        "showIf": {
+          "displayMode": "banner"
+        },
+        "order": 24,
+        "title": "Banner Click URL",
+        "description": "If you'd like to redirect the visitor to another URL when they click on the banner, enter that URL here.",
+        "type": "string",
+        "format": "url",
+        "default": ""
+      },
+
       "notDismissible": {
         "order": 25,
         "title": "Not Dismissible",

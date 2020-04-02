@@ -60,7 +60,8 @@ STYLE.textContent = `
 
   .content {
     display: inline-block;
-    max-width: 85%;
+    width: fit-content;
+    max-width: min(85%, 700px);
     max-height: 85%;
     position: fixed;
     top: 50%;
@@ -201,15 +202,13 @@ export class ModalElement extends HTMLElement {
     contentEl.appendChild(buttonEl)
 
     // Add event listeners.
-    // Remove the element on click.
-    this.addEventListener(this, "click", e => {
-      if (
-        e.originalTarget.tagName === "BUTTON" ||
-        e.originalTarget.classList.contains("wrapper")
-      ) {
-        this.dismiss()
-      }
-    })
+    // Dismiss the modal on wrapper or button click.
+    // It seems as though it's complicated to determine the original event
+    // target within the shadow DOM, so we'll simplify things by adding all the
+    // click handlers we need to control what's happening.
+    this.addEventListener(this.wrapperEl, "click", () => this.dismiss())
+    this.addEventListener(contentEl, "click", e => e.stopPropagation())
+    this.addEventListener(buttonEl, "click", () => this.dismiss())
 
     // Remove the element on Escape.
     this.addEventListener(window, "keydown", e => {
