@@ -90,14 +90,15 @@
 /*!**********************************!*\
   !*** ./src/components/Banner.js ***!
   \**********************************/
-/*! exports provided: BannerElement, Banner */
+/*! exports provided: BannerComponent, Banner */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BannerElement", function() { return BannerElement; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BannerComponent", function() { return BannerComponent; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Banner", function() { return Banner; });
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
+/* harmony import */ var _DismissibleComponent_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DismissibleComponent.js */ "./src/components/DismissibleComponent.js");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
@@ -128,36 +129,33 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
-
-function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var TAG_NAME = "important-message-banner";
 var DEFAULTS = {
   BORDER_RADIUS: 16,
   COLOR_SCHEME: "primary",
+  DISMISSAL_MINUTES: 0,
   DISMISSIBLE: true,
   FONT_SIZE: 16,
   GRADIENT_LEVEL: 1,
   HORIZONTAL_MARGIN: 0,
   HORIZONTAL_PADDING: 0,
-  VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 1,
   LOCATION: {
     selector: "body",
     method: "prepend"
   },
-  MAX_IMAGE_WIDTH: 20
+  MAX_IMAGE_WIDTH: 20,
+  VERTICAL_MARGIN: 0,
+  VERTICAL_PADDING: 1
 };
 var SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085",
@@ -175,21 +173,26 @@ function getColors(colorScheme) {
      [<mainBackgroundColor>, <mainColor>]
    */
   return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",");
-}
+} //
+// CSS
+//
+
 
 var STYLE = document.createElement("style");
-STYLE.textContent = "\n  .wrapper {\n    display: flex;\n    font-size: 16px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 1em .2em #444;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    padding: .25em 1em;\n    display: inline;\n    flex-grow: 1;\n  }\n\n  .button-wrapper {\n    padding: .25em 1em;\n    font-weight: normal;\n    position: relative;\n  }\n\n  .button-wrapper.highlight {\n    border-left: dashed rgba(0, 0, 0, .2) 2px;\n  }\n\n  .button-wrapper:hover {\n    font-weight: bold;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: monospace;\n    font-size: 16px;\n    font-weight: inherit;\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  p {\n    margin: 0;\n  }\n";
-var BannerElement = /*#__PURE__*/function (_HTMLElement) {
-  _inherits(BannerElement, _HTMLElement);
+STYLE.textContent = "\n  .wrapper {\n    display: flex;\n    font-size: 16px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 1em .2em #444;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    padding: .25em 1em;\n    display: inline;\n    flex-grow: 1;\n  }\n\n  .button-wrapper {\n    padding: .25em 2em;\n    font-weight: normal;\n    position: relative;\n  }\n\n  .button-wrapper.highlight {\n    background-color: rgba(255, 255, 255, .25);\n    box-shadow: -1px 0px 8px #888;\n    border-radius: 16px 0 16px 16px;\n  }\n\n  .button-wrapper:hover {\n    font-weight: bold;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: monospace;\n    font-size: 16px;\n    font-weight: inherit;\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    cursor: pointer;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  a {\n    text-decoration: underline;\n  }\n\n  p {\n    margin: 0;\n  }\n";
+var BannerComponent = /*#__PURE__*/function (_DismissibleComponent) {
+  _inherits(BannerComponent, _DismissibleComponent);
 
-  var _super = _createSuper(BannerElement);
+  var _super = _createSuper(BannerComponent);
 
-  function BannerElement() {
+  function BannerComponent() {
     var _this;
 
-    _classCallCheck(this, BannerElement);
+    _classCallCheck(this, BannerComponent);
 
-    _this = _super.call(this);
+    _this = _super.call(this, {
+      contentAttrName: "message"
+    });
     _this.eventListenerRemovers = []; // Define the shadow DOM and attach the <style> element.
 
     _this.shadow = _this.attachShadow({
@@ -206,23 +209,26 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
     return _this;
   }
 
-  _createClass(BannerElement, [{
+  _createClass(BannerComponent, [{
     key: "connectedCallback",
     value: function connectedCallback() {
       var _this2 = this;
 
-      // Get the configuration attributes.
+      _get(_getPrototypeOf(BannerComponent.prototype), "connectedCallback", this).call(this); // Get the configuration attributes.
       // String-type
+
+
       var getStr = function getStr() {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getStrAttr"].apply(void 0, [_this2].concat(args));
-      }; // Unescape the double-quotes in the message, e.g. HTML attr values.
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getStrAttr"].apply(void 0, [_this2].concat(args));
+      };
 
+      var id = getStr("id", ""); // Unescape the double-quotes in the message, e.g. HTML attr values.
 
-      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrDecode"])(getStr("message", ""));
+      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["htmlAttrDecode"])(getStr("message", ""));
       var colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME);
       var bannerUrl = getStr("banner-url", ""); // Bool-type
 
@@ -231,7 +237,7 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
           args[_key2] = arguments[_key2];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getBoolAttr"].apply(void 0, [_this2].concat(args));
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getBoolAttr"].apply(void 0, [_this2].concat(args));
       };
 
       var dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE); // Int-type
@@ -241,7 +247,7 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
           args[_key3] = arguments[_key3];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getIntAttr"].apply(void 0, [_this2].concat(args));
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getIntAttr"].apply(void 0, [_this2].concat(args));
       };
 
       var borderRadius = getInt("border-radius", DEFAULTS.BORDER_RADIUS);
@@ -252,7 +258,7 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
           args[_key4] = arguments[_key4];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getFloatAttr"].apply(void 0, [_this2].concat(args));
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getFloatAttr"].apply(void 0, [_this2].concat(args));
       };
 
       var fontSize = getFloat("font-size", DEFAULTS.FONT_SIZE);
@@ -260,41 +266,36 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       var yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN);
       var xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING);
       var yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING);
-      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL); // Get the pixel scale factor and scale the values expressed in px.
+      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL); // If dismissal is active, remove the component.
 
-      var pxScaleFactor = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getPixelScaleFactor"])();
+      if (this.isDismissed()) {
+        this.remove();
+        return;
+      } // Get the pixel scale factor and scale the values expressed in px.
+
+
+      var pxScaleFactor = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getPixelScaleFactor"])();
       borderRadius *= pxScaleFactor;
       fontSize *= pxScaleFactor;
-      maxImageWidth *= pxScaleFactor; // Define the main wrapper element.
+      maxImageWidth *= pxScaleFactor; // Set the element id if specified.
+
+      if (id) {
+        this.setAttribute("id", id);
+      } // Define the main wrapper element.
+
 
       var _getColors = getColors(colorScheme),
           _getColors2 = _slicedToArray(_getColors, 2),
           bgColor = _getColors2[0],
           color = _getColors2[1];
 
-      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["hexToRgb"])(bgColor);
-      this.wrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"wrapper show ".concat(dismissible ? "dismissible" : "", "\"\n           style=\"margin: ").concat(yMargin, "em ").concat(xMargin, "em;\n                  font-size: ").concat(fontSize, "px;\n                  color: ").concat(color, ";\n                  border-radius:\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(borderRadius, "px\n                    ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
-      this.shadow.appendChild(this.wrapperEl); // Define the message container element.
+      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["hexToRgb"])(bgColor);
+      this.shadow.appendChild(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["Element"])("\n      ".concat(bannerUrl ? "<a href=\"".concat(bannerUrl, "\">") : "", "\n      <div class=\"wrapper show ").concat(dismissible ? "dismissible" : "", "\"\n           style=\"margin: ").concat(yMargin, "em ").concat(xMargin, "em;\n                  font-size: ").concat(fontSize, "px;\n                  color: ").concat(color, ";\n                  border-radius:\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(dismissible ? "0" : borderRadius, "px\n                    ").concat(borderRadius, "px\n                    ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getMaxZIndex"])() + 1, ";\"\n      >\n        <div class=\"message\"\n             style=\"padding: ").concat(yPadding + 0.25, "em ").concat(xPadding + 1, "em;\"\n        >\n          ").concat(message, "\n        </div>\n      </div>\n      ").concat(bannerUrl ? "</a>" : "", "\n    ")));
+      var wrapperEl = this.shadow.querySelector("div.wrapper"); // Apply max-width to any included images.
 
-      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\" style=\"padding: ".concat(yPadding + 0.25, "em ").concat(xPadding + 1, "em;\">\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
-
-      messageEl.querySelectorAll("img").forEach(function (el) {
+      wrapperEl.querySelectorAll("img").forEach(function (el) {
         var style = el.getAttribute("style") || "";
         el.setAttribute("style", "max-width: ".concat(maxImageWidth, "px; ").concat(style));
-      });
-      this.wrapperEl.appendChild(messageEl); // Make the non-dismissible cursor a pointer if bannerUrl is defined.
-
-      if (!dismissible && bannerUrl) {
-        this.style.cursor = "pointer";
-      } // Dismiss the banner or redirect to bannerUrl on main banner click.
-
-
-      this.addEventListener(this, "click", function () {
-        if (bannerUrl) {
-          window.location = bannerUrl;
-        } else if (dismissible) {
-          _this2.dismiss();
-        }
       }); // Skip adding the button, event listeners, etc. if not dismissible.
 
       if (!dismissible) {
@@ -302,8 +303,8 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       } // Define the dismiss button element.
 
 
-      var buttonWrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"button-wrapper ".concat(bannerUrl ? "highlight" : "", "\">\n        <button style=\"font-size: ").concat(16 * pxScaleFactor, "px;\">x</button>\n      </div>\n    "));
-      this.wrapperEl.appendChild(buttonWrapperEl); // Add event listeners.
+      var buttonWrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["Element"])("\n      <div class=\"button-wrapper ".concat(bannerUrl ? "highlight" : "", "\"\n           style=\"border-radius: ").concat(borderRadius, "px 0 ").concat(borderRadius, "px ").concat(borderRadius, "px\">\n        <button style=\"font-size: ").concat(16 * pxScaleFactor, "px;\">x</button>\n      </div>\n    "));
+      wrapperEl.appendChild(buttonWrapperEl); // Add event listeners.
       // If bannerUrl is not defined, bold the X on any mouse hover.
 
       if (!bannerUrl) {
@@ -314,13 +315,14 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
         this.addEventListener(this, "mouseleave", function () {
           buttonWrapperEl.style.fontWeight = "normal";
         });
-      } // Handle clicks events.
-      // Dismiss the banner on button wrapper.
+      } // Dismiss on click. If bannerUrl is defined, only listen for clicks on
+      // the button, otherwise listen for any click.
 
 
-      this.addEventListener(buttonWrapperEl, "click", function (e) {
+      this.addEventListener(bannerUrl ? buttonWrapperEl : this, "click", function (e) {
         _this2.dismiss();
 
+        e.preventDefault();
         e.stopPropagation();
       }); // Remove the element on Escape.
 
@@ -331,43 +333,15 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
       });
     }
   }, {
-    key: "disconnectedCallback",
-    value: function disconnectedCallback() {
-      this.removeEventListeners();
-    }
-  }, {
-    key: "addEventListener",
-    value: function addEventListener(el, event, fn) {
-      var _this3 = this;
-
-      if (el instanceof BannerElement) {
-        _get(_getPrototypeOf(BannerElement.prototype), "addEventListener", this).call(this, event, fn);
-
-        this.eventListenerRemovers.push(function () {
-          return _get(_getPrototypeOf(BannerElement.prototype), "removeEventListener", _this3).call(_this3, event, fn);
-        });
-      } else {
-        el.addEventListener(event, fn);
-        this.eventListenerRemovers.push(function () {
-          return el.removeEventListener(event, fn);
-        });
-      }
-    }
-  }, {
-    key: "removeEventListeners",
-    value: function removeEventListeners() {
-      while (this.eventListenerRemovers.length > 0) {
-        this.eventListenerRemovers.shift()();
-      }
-    }
-  }, {
     key: "dismiss",
     value: function dismiss() {
-      var _this4 = this;
+      var _this3 = this;
 
-      var el = this.wrapperEl;
+      _get(_getPrototypeOf(BannerComponent.prototype), "dismiss", this).call(this);
+
+      var el = this.shadow.querySelector("div.wrapper");
       this.addEventListener(el, "animationend", function () {
-        return _this4.remove();
+        return _this3.remove();
       });
       el.classList.remove("show"); // See here for why I'm reading the offsetWidth:
       // https://stackoverflow.com/a/30072037/2327940
@@ -377,8 +351,8 @@ var BannerElement = /*#__PURE__*/function (_HTMLElement) {
     }
   }]);
 
-  return BannerElement;
-}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+  return BannerComponent;
+}(_DismissibleComponent_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
 function Banner(options, location) {
   /* Create and optionally insert a banner element via JS.
    */
@@ -389,7 +363,7 @@ function Banner(options, location) {
   // will occur for HTML messages that specify element attribute values.
 
 
-  var bannerEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-banner\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n       banner-url=\"").concat(getOpt("bannerUrl", ""), "\"\"\n     >\n     </x-banner>\n   "));
+  var bannerEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["Element"])("\n     <".concat(TAG_NAME, "\n       banner-url=\"").concat(getOpt("bannerUrl", ""), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       dismissal-minutes=\"").concat(getOpt("dismissalMinutes", DEFAULTS.DISMISSAL_MINUTES), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       id=\"").concat(getOpt("id", ""), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n       message=\"").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n     >\n     </").concat(TAG_NAME, ">\n   "));
 
   if (!location) {
     return bannerEl;
@@ -397,41 +371,49 @@ function Banner(options, location) {
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
-      Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(bannerEl, location.selector, location.method);
+      Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["insertElementAtLocation"])(bannerEl, location.selector, location.method);
     });
   } else {
-    Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(bannerEl, location.selector, location.method);
+    Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["insertElementAtLocation"])(bannerEl, location.selector, location.method);
   }
 }
-customElements.define("x-banner", BannerElement);
+
+try {
+  customElements.define(TAG_NAME, BannerComponent);
+} catch (e) {
+  console.warn(e);
+} // Define a variable into which an external process can inject configuration
+// options. If we find at runtime that this has been replaced with an options
+// object,use it to extend DEFAULTS, and immediately instantiate a banner.
+// Define the injection placeholder and do a runtime mutation to confuse the
+// compiler into not optimizing it out.
+
+
+var INJECTED_OPTIONS = "<INJECT-OPTIONS-HERE>";
+
+INJECTED_OPTIONS = function () {
+  return INJECTED_OPTIONS;
+}();
+
+if (_typeof(INJECTED_OPTIONS) === "object") {
+  Banner(Object.assign(INJECTED_OPTIONS, DEFAULTS), {
+    selector: "body",
+    method: "prepend"
+  });
+}
 
 /***/ }),
 
-/***/ "./src/components/Modal.js":
-/*!*********************************!*\
-  !*** ./src/components/Modal.js ***!
-  \*********************************/
-/*! exports provided: ModalElement, Modal */
+/***/ "./src/components/BaseComponent.js":
+/*!*****************************************!*\
+  !*** ./src/components/BaseComponent.js ***!
+  \*****************************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ModalElement", function() { return ModalElement; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modal", function() { return Modal; });
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -463,24 +445,302 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+var BaseComponent = /*#__PURE__*/function (_HTMLElement) {
+  _inherits(BaseComponent, _HTMLElement);
 
+  var _super = _createSuper(BaseComponent);
+
+  function BaseComponent() {
+    _classCallCheck(this, BaseComponent);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(BaseComponent, [{
+    key: "disconnectedCallback",
+    value: function disconnectedCallback() {
+      // Remove all added event listeners.
+      this.removeEventListeners();
+    }
+  }, {
+    key: "addEventListener",
+    value: function addEventListener(el, event, fn) {
+      var _this = this;
+
+      // Override the default addEventListener method to allow non-this elements
+      // to be specified and to generate and collect listener remover functions.
+      if (el instanceof BaseComponent) {
+        _get(_getPrototypeOf(BaseComponent.prototype), "addEventListener", this).call(this, event, fn);
+
+        this.eventListenerRemovers.push(function () {
+          return _get(_getPrototypeOf(BaseComponent.prototype), "removeEventListener", _this).call(_this, event, fn);
+        });
+      } else {
+        el.addEventListener(event, fn);
+        this.eventListenerRemovers.push(function () {
+          return el.removeEventListener(event, fn);
+        });
+      }
+    }
+  }, {
+    key: "removeEventListeners",
+    value: function removeEventListeners() {
+      // Call and remove all eventListenerRemovers functions.
+      while (this.eventListenerRemovers.length > 0) {
+        this.eventListenerRemovers.shift()();
+      }
+    }
+  }]);
+
+  return BaseComponent;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+
+/* harmony default export */ __webpack_exports__["default"] = (BaseComponent);
+
+/***/ }),
+
+/***/ "./src/components/DismissibleComponent.js":
+/*!************************************************!*\
+  !*** ./src/components/DismissibleComponent.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _BaseComponent_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BaseComponent.js */ "./src/components/BaseComponent.js");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+ // Define the default required HTML element attribute names.
+
+var MINUTES_ATTR_NAME = "dismissal-minutes";
+var CONTENT_ATTR_NAME = "content";
+var nowMs = Date.now;
+
+var DismissibleComponent = /*#__PURE__*/function (_BaseComponent) {
+  _inherits(DismissibleComponent, _BaseComponent);
+
+  var _super = _createSuper(DismissibleComponent);
+
+  function DismissibleComponent(_ref) {
+    var _this;
+
+    var props = _extends({}, _ref);
+
+    _classCallCheck(this, DismissibleComponent);
+
+    _this = _super.call(this); // Allow subclass to override the attribute names.
+
+    _this.minutesAttrName = props.minutesAttrName || MINUTES_ATTR_NAME;
+    _this.contentAttrName = props.contentAttrName || CONTENT_ATTR_NAME;
+    return _this;
+  }
+
+  _createClass(DismissibleComponent, [{
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      // Generate the local storage keys using the element tagName and id
+      // attribute value to allow for multiple unique intances of the same
+      // component.
+      var tagName = this.tagName.toLowerCase();
+      var id = this.getAttribute("id") || "";
+      this.dismissedUntilKey = "".concat(tagName, "-").concat(id, "-dismissedUntil");
+      this.dismissedContentKey = "".concat(tagName, "-").concat(id, "-dismissedContent");
+    }
+  }, {
+    key: "getDismissalContent",
+    value: function getDismissalContent() {
+      // Return the component's content attribute value.
+      return Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getStrAttr"])(this, this.contentAttrName, "");
+    }
+  }, {
+    key: "getDismissalMinutes",
+    value: function getDismissalMinutes() {
+      // Return the component's dismissal minutes value.
+      return Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getIntAttr"])(this, this.minutesAttrName, 0);
+    }
+  }, {
+    key: "setDismissedUntil",
+    value: function setDismissedUntil(value) {
+      // Set the dismissedUntil value in local storage.
+      localStorage.setItem(this.dismissedUntilKey, "".concat(value));
+    }
+  }, {
+    key: "getDismissedUntil",
+    value: function getDismissedUntil() {
+      // Return the dismissedUntil value from local storage.
+      var dismissedUntil = localStorage.getItem(this.dismissedUntilKey);
+      return dismissedUntil === null ? null : parseInt(dismissedUntil, 10);
+    }
+  }, {
+    key: "setDismissedContent",
+    value: function setDismissedContent(content) {
+      // Set the dismissedContent value in local storage.
+      localStorage.setItem(this.dismissedContentKey, content);
+    }
+  }, {
+    key: "getDismissedContent",
+    value: function getDismissedContent() {
+      // Return the dismissedContent value from local storage.
+      return localStorage.getItem(this.dismissedContentKey);
+    }
+  }, {
+    key: "clearDismissalStorage",
+    value: function clearDismissalStorage() {
+      // Remove all dismissal-related items from local storage.
+      localStorage.removeItem(this.dismissedUntilKey);
+      localStorage.removeItem(this.dismissedContentKey);
+    }
+  }, {
+    key: "dismiss",
+    value: function dismiss() {
+      var numMinutes = this.getDismissalMinutes();
+
+      if (numMinutes > 0) {
+        // Update local storage with dismissal period expiration time and
+        // dismissed content values.
+        this.setDismissedUntil(nowMs() + numMinutes * 60 * 1000);
+        this.setDismissedContent(this.getDismissalContent());
+      } else {
+        // Purge any dismissal-related items from local storage.
+        this.clearDismissalStorage();
+      }
+    }
+  }, {
+    key: "isDismissed",
+    value: function isDismissed() {
+      // Return a Boolean indicating whether user dismissal is active.
+      // Check whether the configured period is greater than 0.
+      if (!(this.getDismissalMinutes() > 0)) {
+        this.clearDismissalStorage();
+        return false;
+      }
+
+      var dismissedUntil = this.getDismissedUntil(); // Check for any saved dismissedUntil value.
+
+      if (dismissedUntil === null) {
+        return false;
+      } // Check whether the dismissal period has expired.
+
+
+      if (nowMs() >= dismissedUntil) {
+        this.clearDismissalStorage();
+        return false;
+      } // Check whether the content content has changed since dismissal.
+
+
+      if (this.getDismissalContent() !== this.getDismissedContent()) {
+        this.clearDismissalStorage();
+        return false;
+      }
+
+      return true;
+    }
+  }]);
+
+  return DismissibleComponent;
+}(_BaseComponent_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (DismissibleComponent);
+
+/***/ }),
+
+/***/ "./src/components/Modal.js":
+/*!*********************************!*\
+  !*** ./src/components/Modal.js ***!
+  \*********************************/
+/*! exports provided: ModalComponent, Modal */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ModalComponent", function() { return ModalComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modal", function() { return Modal; });
+/* harmony import */ var _DismissibleComponent_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DismissibleComponent.js */ "./src/components/DismissibleComponent.js");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var TAG_NAME = "important-message-modal";
 var DEFAULTS = {
   BORDER_RADIUS: 16,
   BUTTON_TEXT: "OK",
   COLOR_SCHEME: "primary",
+  DISMISSAL_MINUTES: 0,
   DISMISSIBLE: true,
   FONT_SIZE: 16,
   GRADIENT_LEVEL: 1,
   HORIZONTAL_MARGIN: 0,
   HORIZONTAL_PADDING: 0,
-  VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 0,
   LOCATION: {
     selector: "body",
     method: "prepend"
   },
   MAX_IMAGE_WIDTH: 20,
-  STEAL_FOCUS: true
+  STEAL_FOCUS: true,
+  VERTICAL_MARGIN: 0,
+  VERTICAL_PADDING: 0
 };
 var SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085,#007bff,#ffffff",
@@ -502,17 +762,19 @@ function getColors(colorScheme) {
 
 var STYLE = document.createElement("style");
 STYLE.textContent = "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n  }\n\n  .content {\n    display: inline-block;\n    width: fit-content;\n    max-width: min(85%, 700px);\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: 1em;\n    background-color: #fff;\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: 0;\n  }\n\n  button {\n    display: inline;\n    padding: .4em .75em;\n    cursor: pointer;\n    font-size: 1em;\n    border: none;\n    border-radius: .25em;\n    margin-top: 1.5em;\n  }\n\n  p {\n    margin: 0;\n  }\n";
-var ModalElement = /*#__PURE__*/function (_HTMLElement) {
-  _inherits(ModalElement, _HTMLElement);
+var ModalComponent = /*#__PURE__*/function (_DismissibleComponent) {
+  _inherits(ModalComponent, _DismissibleComponent);
 
-  var _super = _createSuper(ModalElement);
+  var _super = _createSuper(ModalComponent);
 
-  function ModalElement() {
+  function ModalComponent() {
     var _this;
 
-    _classCallCheck(this, ModalElement);
+    _classCallCheck(this, ModalComponent);
 
-    _this = _super.call(this);
+    _this = _super.call(this, {
+      contentAttrName: "message"
+    });
     _this.eventListenerRemovers = []; // Define the shadow DOM and attach the <style> element.
 
     _this.shadow = _this.attachShadow({
@@ -531,23 +793,26 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
     return _this;
   }
 
-  _createClass(ModalElement, [{
+  _createClass(ModalComponent, [{
     key: "connectedCallback",
     value: function connectedCallback() {
       var _this2 = this;
 
-      // Get the configuration attributes.
+      _get(_getPrototypeOf(ModalComponent.prototype), "connectedCallback", this).call(this); // Get the configuration attributes.
       // String-type
+
+
       var getStr = function getStr() {
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getStrAttr"].apply(void 0, [_this2].concat(args));
-      }; // Unescape the double-quotes in the message, e.g. HTML attr values.
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getStrAttr"].apply(void 0, [_this2].concat(args));
+      };
 
+      var id = getStr("id", ""); // Unescape the double-quotes in the message, e.g. HTML attr values.
 
-      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrDecode"])(getStr("message"));
+      var message = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["htmlAttrDecode"])(getStr("message"));
       var colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME);
       var buttonText = getStr("button-text", DEFAULTS.BUTTON_TEXT); // Bool-type
 
@@ -556,7 +821,7 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
           args[_key2] = arguments[_key2];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getBoolAttr"].apply(void 0, [_this2].concat(args));
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getBoolAttr"].apply(void 0, [_this2].concat(args));
       };
 
       var dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE);
@@ -567,7 +832,7 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
           args[_key3] = arguments[_key3];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getIntAttr"].apply(void 0, [_this2].concat(args));
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getIntAttr"].apply(void 0, [_this2].concat(args));
       };
 
       var borderRadius = getInt("border-radius", DEFAULTS.BORDER_RADIUS);
@@ -578,7 +843,7 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
           args[_key4] = arguments[_key4];
         }
 
-        return _utils_js__WEBPACK_IMPORTED_MODULE_0__["getFloatAttr"].apply(void 0, [_this2].concat(args));
+        return _utils_js__WEBPACK_IMPORTED_MODULE_1__["getFloatAttr"].apply(void 0, [_this2].concat(args));
       };
 
       var fontSize = getFloat("font-size", DEFAULTS.FONT_SIZE);
@@ -586,12 +851,23 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
       var yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN);
       var xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING);
       var yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING);
-      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL); // Get the pixel scale factor and scale the values expressed in px.
+      var gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL); // If dismissal is active, remove the component.
 
-      var pxScaleFactor = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getPixelScaleFactor"])();
+      if (this.isDismissed()) {
+        this.remove();
+        return;
+      } // Get the pixel scale factor and scale the values expressed in px.
+
+
+      var pxScaleFactor = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getPixelScaleFactor"])();
       borderRadius *= pxScaleFactor;
       fontSize *= pxScaleFactor;
-      maxImageWidth *= pxScaleFactor; // Define the main wrapper element.
+      maxImageWidth *= pxScaleFactor; // Set the element id if specified.
+
+      if (id) {
+        this.setAttribute("id", id);
+      } // Define the main wrapper element.
+
 
       var _getColors = getColors(colorScheme),
           _getColors2 = _slicedToArray(_getColors, 4),
@@ -600,33 +876,28 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
           buttonBgColor = _getColors2[2],
           buttonColor = _getColors2[3];
 
-      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["hexToRgb"])(bgColor);
-      this.wrapperEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("<div class=\"wrapper\"></div>");
-      this.shadow.appendChild(this.wrapperEl);
-      var contentEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"content\"\n           style=\"margin: ".concat(yMargin, "em ").concat(xMargin, "em;\n                  font-size: ").concat(fontSize, "px;\n                  color: ").concat(color, ";\n                  border-radius: ").concat(borderRadius, "px;\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\n                  z-index: ").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getMaxZIndex"])() + 1, ";\"\n      >\n      </div>\n    "));
-      this.wrapperEl.appendChild(contentEl); // Define the message container element.
+      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["hexToRgb"])(bgColor);
+      this.shadow.appendChild(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["Element"])("\n      <div class=\"wrapper\" style=\"z-index: ".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["getMaxZIndex"])() + 1, ";\">\n        <div class=\"content\"\n             style=\"margin: ").concat(yMargin, "em ").concat(xMargin, "em;\n                    font-size: ").concat(fontSize, "px;\n                    color: ").concat(color, ";\n                    border-radius: ").concat(borderRadius, "px;\n                    background-image:\n                      linear-gradient(\n                        0deg,\n                        rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                        rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                      );\"\n        >\n          <div class=\"message\"\n               style=\"padding: ").concat(yPadding, "em ").concat(xPadding, "em;\">\n            ").concat(message, "\n          </div>\n        </div>\n      </div>\n    "))); // Apply max-width to any included images.
 
-      var messageEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <div class=\"message\"\n           style=\"padding: ".concat(yPadding, "em ").concat(xPadding, "em;\">\n        ").concat(message, "\n      </div>\n    ")); // Apply max-width to any included images.
-
-      messageEl.querySelectorAll("img").forEach(function (el) {
+      this.shadow.querySelector(".message").querySelectorAll("img").forEach(function (el) {
         var style = el.getAttribute("style") || "";
         el.setAttribute("style", "max-width: ".concat(maxImageWidth, "px; ").concat(style));
-      });
-      contentEl.appendChild(messageEl); // Skip adding the button, event listeners, etc. if not dismissible.
+      }); // Skip adding the button, event listeners, etc. if not dismissible.
 
       if (!dismissible) {
         return;
       } // Define the dismiss button element.
 
 
-      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <button style=\"font-size: ".concat(16 * pxScaleFactor, "px;\n                     background-color: ").concat(buttonBgColor, ";\n                     color: ").concat(buttonColor, ";\"\n      >\n        ").concat(buttonText, "\n      </button>\n    "));
+      var contentEl = this.shadow.querySelector(".content");
+      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["Element"])("\n      <button style=\"font-size: ".concat(16 * pxScaleFactor, "px;\n                     background-color: ").concat(buttonBgColor, ";\n                     color: ").concat(buttonColor, ";\"\n      >\n        ").concat(buttonText, "\n      </button>\n    "));
       contentEl.appendChild(buttonEl); // Add event listeners.
       // Dismiss the modal on wrapper or button click.
       // It seems as though it's complicated to determine the original event
       // target within the shadow DOM, so we'll simplify things by adding all the
       // click handlers we need to control what's happening.
 
-      this.addEventListener(this.wrapperEl, "click", function () {
+      this.addEventListener(this.shadow, "click", function () {
         return _this2.dismiss();
       });
       this.addEventListener(contentEl, "click", function (e) {
@@ -648,39 +919,11 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
       }
     }
   }, {
-    key: "disconnectedCallback",
-    value: function disconnectedCallback() {
-      this.removeEventListeners();
-    }
-  }, {
-    key: "addEventListener",
-    value: function addEventListener(el, event, fn) {
-      var _this3 = this;
-
-      if (el instanceof ModalElement) {
-        _get(_getPrototypeOf(ModalElement.prototype), "addEventListener", this).call(this, event, fn);
-
-        this.eventListenerRemovers.push(function () {
-          return _get(_getPrototypeOf(ModalElement.prototype), "removeEventListener", _this3).call(_this3, event, fn);
-        });
-      } else {
-        el.addEventListener(event, fn);
-        this.eventListenerRemovers.push(function () {
-          return el.removeEventListener(event, fn);
-        });
-      }
-    }
-  }, {
-    key: "removeEventListeners",
-    value: function removeEventListeners() {
-      while (this.eventListenerRemovers.length > 0) {
-        this.eventListenerRemovers.shift()();
-      }
-    }
-  }, {
     key: "dismiss",
     value: function dismiss() {
       // Remove the element and restore focus.
+      _get(_getPrototypeOf(ModalComponent.prototype), "dismiss", this).call(this);
+
       this.remove();
 
       if (this.previousFocusEl) {
@@ -689,8 +932,8 @@ var ModalElement = /*#__PURE__*/function (_HTMLElement) {
     }
   }]);
 
-  return ModalElement;
-}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+  return ModalComponent;
+}(_DismissibleComponent_js__WEBPACK_IMPORTED_MODULE_0__["default"]);
 function Modal(options, location) {
   /* Create and optionally insert a modal element via JS.
    */
@@ -701,7 +944,7 @@ function Modal(options, location) {
   // will occur for HTML messages that specify element attribute values.
 
 
-  var modalEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n     <x-modal\n       message=\"".concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       button-text=\"").concat(getOpt("buttonText", DEFAULTS.BUTTON_TEXT), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n       steal-focus=\"").concat(getOpt("stealFocus", DEFAULTS.STEAL_FOCUS), "\"\n     >\n     </x-modal>\n   "));
+  var modalEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["Element"])("\n     <".concat(TAG_NAME, "\n       border-radius=\"").concat(getOpt("borderRadius", DEFAULTS.BORDER_RADIUS), "\"\n       button-text=\"").concat(getOpt("buttonText", DEFAULTS.BUTTON_TEXT), "\"\n       color-scheme=\"").concat(getOpt("colorScheme", DEFAULTS.COLOR_SCHEME), "\"\n       dismissal-minutes=\"").concat(getOpt("dismissalMinutes", DEFAULTS.DISMISSAL_MINUTES), "\"\n       dismissible=\"").concat(getOpt("dismissible", DEFAULTS.DISMISSIBLE), "\"\n       font-size=\"").concat(getOpt("fontSize", DEFAULTS.FONT_SIZE), "\"\n       gradient-level=\"").concat(getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL), "\"\n       horizontal-margin=\"").concat(getOpt("horizontalMargin", DEFAULTS.HORIZONTAL_MARGIN), "\"\n       horizontal-padding=\"").concat(getOpt("horizontalPadding", DEFAULTS.HORIZONTAL_PADDING), "\"\n       max-image-width=\"").concat(getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH), "\"\n       message=\"").concat(Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["htmlAttrEncode"])(getOpt("message", "")), "\"\n       steal-focus=\"").concat(getOpt("stealFocus", DEFAULTS.STEAL_FOCUS), "\"\n       vertical-margin=\"").concat(getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN), "\"\n       vertical-padding=\"").concat(getOpt("verticalPadding", DEFAULTS.VERTICAL_PADDING), "\"\n     >\n     </").concat(TAG_NAME, ">\n   "));
 
   if (!location) {
     return modalEl;
@@ -709,13 +952,36 @@ function Modal(options, location) {
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
-      Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(modalEl, location.selector, location.method);
+      Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["insertElementAtLocation"])(modalEl, location.selector, location.method);
     });
   } else {
-    Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["insertElementAtLocation"])(modalEl, location.selector, location.method);
+    Object(_utils_js__WEBPACK_IMPORTED_MODULE_1__["insertElementAtLocation"])(modalEl, location.selector, location.method);
   }
 }
-customElements.define("x-modal", ModalElement);
+
+try {
+  customElements.define(TAG_NAME, ModalComponent);
+} catch (e) {
+  console.warn(e);
+} // Define a variable into which an external process can inject configuration
+// options. If we find at runtime that this has been replaced with an options
+// object,use it to extend DEFAULTS, and immediately instantiate a modal.
+// Define the injection placeholder and do a runtime mutation to confuse the
+// compiler into not optimizing it out.
+
+
+var INJECTED_OPTIONS = "<INJECT-OPTIONS-HERE>";
+
+INJECTED_OPTIONS = function () {
+  return INJECTED_OPTIONS;
+}();
+
+if (_typeof(INJECTED_OPTIONS) === "object") {
+  Modal(Object.assign(INJECTED_OPTIONS, DEFAULTS), {
+    selector: "body",
+    method: "prepend"
+  });
+}
 
 /***/ }),
 
@@ -723,12 +989,11 @@ customElements.define("x-modal", ModalElement);
 /*!*********************************!*\
   !*** ./src/components/utils.js ***!
   \*********************************/
-/*! exports provided: get, htmlAttrEncode, htmlAttrDecode, getAttr, getStrAttr, getBoolAttr, getIntAttr, getFloatAttr, hexToRgb, Element, getMaxZIndex, getPixelScaleFactor, insertElementAtLocation */
+/*! exports provided: htmlAttrEncode, htmlAttrDecode, getAttr, getStrAttr, getBoolAttr, getIntAttr, getFloatAttr, hexToRgb, Element, getMaxZIndex, getPixelScaleFactor, insertElementAtLocation */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "htmlAttrEncode", function() { return htmlAttrEncode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "htmlAttrDecode", function() { return htmlAttrDecode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAttr", function() { return getAttr; });
@@ -741,9 +1006,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxZIndex", function() { return getMaxZIndex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPixelScaleFactor", function() { return getPixelScaleFactor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertElementAtLocation", function() { return insertElementAtLocation; });
-// /////////////////////////////////////////////////////////////////////////////
+//
 // Generic Utilities
-// /////////////////////////////////////////////////////////////////////////////
+//
 // isNaN is a nightmare and apparently doesn't support Number.isNaN, so...
 var _isNaN = function _isNaN(x) {
   return typeof x === "number" && "".concat(x) === "NaN";
@@ -774,14 +1039,9 @@ var safeParseInt = safeParser(function (x) {
 }, _isNaN);
 var safeParseFloat = safeParser(function (x) {
   return parseFloat(x);
-}, _isNaN);
-var get = function get(o, k, defVal) {
-  //
-  var v = o[k];
-  return v === undefined || v === null ? defVal : v;
-}; // /////////////////////////////////////////////////////////////////////////////
+}, _isNaN); //
 // HTML / DOM Utilities
-// /////////////////////////////////////////////////////////////////////////////
+//
 // Encode a string for inclusion as an HTML attribute value.
 
 var htmlAttrEncode = function htmlAttrEncode(s) {
@@ -815,17 +1075,21 @@ function hexToRgb(hex) {
     return r + r + g + g + b + b;
   });
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v);
-  return result ? {
+  return !result ? null : {
     r: parseHexInt(result[1]),
     g: parseHexInt(result[2]),
     b: parseHexInt(result[3])
-  } : null;
+  };
 }
 function Element(tagNameOrDOMString) {
   var wrapperTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "div";
   // Return a new Element for a given tag name or DOM string.
   var s = tagNameOrDOMString.trim();
-  if (!s.startsWith("<")) return document.createElement(s);
+
+  if (!s.startsWith("<")) {
+    return document.createElement(s);
+  }
+
   var wrapper = document.createElement(wrapperTag);
   wrapper.innerHTML = s.trim();
   var el = wrapper.firstChild;
@@ -935,8 +1199,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 
 var APP_NAME = "important-message";
-var DISMISSED_UNTIL_SESSION_KEY = "".concat(APP_NAME, "-dismissedUntil");
-var DISMISSED_MESSAGE_SESSION_KEY = "".concat(APP_NAME, "-dismissedMessage");
 var PREDEFINED_MESSAGES = {
   minorServiceInterruption: "&#9888; We're experiencing a minor service interruption - some features may not work.",
   majorServiceInterruption: "&#9888; We're experiencing a major service outage - many features may not work.",
@@ -1008,83 +1270,13 @@ function getDismissedUntilMinutes() {
 
   return options.customDismissalPeriodGroup.minutes * parseDecInt(options.customDismissalPeriodGroup.multiplier);
 } //
-//  Dismissal Helper Functions
-//
-
-
-var nowMs = Date.now;
-
-var setDismissedUntil = function setDismissedUntil(value) {
-  return localStorage.setItem(DISMISSED_UNTIL_SESSION_KEY, "".concat(value));
-};
-
-var getDismissedUntil = function getDismissedUntil() {
-  var dismissedUntil = localStorage.getItem(DISMISSED_UNTIL_SESSION_KEY);
-  return dismissedUntil === null ? null : parseDecInt(dismissedUntil);
-};
-
-var setDismissedMessage = function setDismissedMessage(message) {
-  return localStorage.setItem(DISMISSED_MESSAGE_SESSION_KEY, message);
-};
-
-var getDismissedMessage = function getDismissedMessage() {
-  return localStorage.getItem(DISMISSED_MESSAGE_SESSION_KEY);
-};
-
-var clearDismissalStorage = function clearDismissalStorage() {
-  localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY);
-  localStorage.removeItem(DISMISSED_MESSAGE_SESSION_KEY);
-};
-
-function dismiss() {
-  // Set the dismissedUntil time and remove the element from the DOM.
-  if (options.notDismissible) {
-    clearDismissalStorage();
-  } else {
-    var dismissalPeriodMs = getDismissedUntilMinutes() * 60 * 1000;
-
-    if (dismissalPeriodMs > 0) {
-      setDismissedUntil(nowMs() + dismissalPeriodMs);
-      setDismissedMessage(getMessageContent());
-    }
-  }
-
-  appElement.remove();
-}
-
-function isDismissed() {
-  if (options.notDismissible) {
-    return false;
-  } // Return a Boolean indicating whether user dismissal is active.
-
-
-  var dismissedUntil = getDismissedUntil(); // Check for any saved dismissedUntil value.
-
-  if (dismissedUntil === null) {
-    return false;
-  } // Check whether the dismissal period has expired.
-
-
-  if (nowMs() >= dismissedUntil) {
-    clearDismissalStorage();
-    return false;
-  } // Check whether the message content has changed since dismissal.
-
-
-  if (getMessageContent() !== getDismissedMessage()) {
-    clearDismissalStorage();
-    return false;
-  }
-
-  return true;
-} //
 // updateElement Function
 //
 
 
 function updateElement() {
   // Remove the element if it shouldn't be displayed.
-  if (!options.enabled || !INSTALL.matchPage(options.pages) || isDismissed()) {
+  if (!options.enabled || !INSTALL.matchPage(options.pages)) {
     if (appElement) {
       appElement.remove();
     }
@@ -1116,15 +1308,16 @@ function updateElement() {
 
   var componentOptions = {
     borderRadius: borderRadius,
+    dismissalMinutes: getDismissedUntilMinutes(),
     dismissible: !notDismissible,
     fontSize: fontSize * 16,
+    gradientLevel: options.customBackgroundGradientLevel,
     horizontalMargin: horizontalMargin,
     horizontalPadding: horizontalPadding,
+    maxImageWidth: options.customRichMessageGroup.maxImageWidth,
     message: message,
     verticalMargin: verticalMargin,
-    verticalPadding: verticalPadding,
-    gradientLevel: options.customBackgroundGradientLevel,
-    maxImageWidth: options.customRichMessageGroup.maxImageWidth
+    verticalPadding: verticalPadding
   };
   var componentEl;
 
@@ -1153,7 +1346,6 @@ function init() {
   window.INSTALL_SCOPE = {
     setOptions: function setOptions(nextOptions) {
       options = nextOptions;
-      clearDismissalStorage();
       updateElement();
     },
     setProduct: function setProduct(nextProduct) {

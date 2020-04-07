@@ -1,6 +1,6 @@
-// /////////////////////////////////////////////////////////////////////////////
+//
 // Generic Utilities
-// /////////////////////////////////////////////////////////////////////////////
+//
 
 // isNaN is a nightmare and apparently doesn't support Number.isNaN, so...
 const _isNaN = x => typeof x === "number" && `${x}` === "NaN"
@@ -16,19 +16,14 @@ const safeParser = (parserFn, failureTestFn) => (x, defVal) => {
   const v = parserFn(x)
   return failureTestFn(v) ? defVal : v
 }
+
 // Type-specific variants.
 const safeParseInt = safeParser(x => parseInt(x, 10), _isNaN)
 const safeParseFloat = safeParser(x => parseFloat(x), _isNaN)
 
-export const get = (o, k, defVal) => {
-  //
-  const v = o[k]
-  return v === undefined || v === null ? defVal : v
-}
-
-// /////////////////////////////////////////////////////////////////////////////
+//
 // HTML / DOM Utilities
-// /////////////////////////////////////////////////////////////////////////////
+//
 
 // Encode a string for inclusion as an HTML attribute value.
 export const htmlAttrEncode = s => `${s}`.replace(/"/g, "@quot;")
@@ -40,6 +35,7 @@ export const htmlAttrDecode = s => `${s}`.replace(/@quot;/g, '"')
 // is unspecified.
 export const getAttr = (el, attr, defVal) =>
   el.hasAttribute(attr) ? el.getAttribute(attr) : defVal
+
 // Type-specific variants.
 export const getStrAttr = getAttr
 export const getBoolAttr = (...args) => getStrAttr(...args) === "true"
@@ -52,19 +48,21 @@ export function hexToRgb(hex) {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
   const v = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(v)
-  return result
-    ? {
+  return !result
+    ? null
+    : {
         r: parseHexInt(result[1]),
         g: parseHexInt(result[2]),
         b: parseHexInt(result[3]),
       }
-    : null
 }
 
 export function Element(tagNameOrDOMString, wrapperTag = "div") {
   // Return a new Element for a given tag name or DOM string.
   const s = tagNameOrDOMString.trim()
-  if (!s.startsWith("<")) return document.createElement(s)
+  if (!s.startsWith("<")) {
+    return document.createElement(s)
+  }
   const wrapper = document.createElement(wrapperTag)
   wrapper.innerHTML = s.trim()
   const el = wrapper.firstChild

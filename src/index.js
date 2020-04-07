@@ -8,8 +8,6 @@ import { Modal } from "./components/Modal"
 //
 
 const APP_NAME = "important-message"
-const DISMISSED_UNTIL_SESSION_KEY = `${APP_NAME}-dismissedUntil`
-const DISMISSED_MESSAGE_SESSION_KEY = `${APP_NAME}-dismissedMessage`
 
 const PREDEFINED_MESSAGES = {
   minorServiceInterruption: `&#9888; We're experiencing a minor service interruption - some features may not work.`,
@@ -90,74 +88,12 @@ function getDismissedUntilMinutes() {
 }
 
 //
-//  Dismissal Helper Functions
-//
-
-const nowMs = Date.now
-
-const setDismissedUntil = value =>
-  localStorage.setItem(DISMISSED_UNTIL_SESSION_KEY, `${value}`)
-
-const getDismissedUntil = () => {
-  const dismissedUntil = localStorage.getItem(DISMISSED_UNTIL_SESSION_KEY)
-  return dismissedUntil === null ? null : parseDecInt(dismissedUntil)
-}
-
-const setDismissedMessage = message =>
-  localStorage.setItem(DISMISSED_MESSAGE_SESSION_KEY, message)
-
-const getDismissedMessage = () =>
-  localStorage.getItem(DISMISSED_MESSAGE_SESSION_KEY)
-
-const clearDismissalStorage = () => {
-  localStorage.removeItem(DISMISSED_UNTIL_SESSION_KEY)
-  localStorage.removeItem(DISMISSED_MESSAGE_SESSION_KEY)
-}
-
-function dismiss() {
-  // Set the dismissedUntil time and remove the element from the DOM.
-  if (options.notDismissible) {
-    clearDismissalStorage()
-  } else {
-    const dismissalPeriodMs = getDismissedUntilMinutes() * 60 * 1000
-    if (dismissalPeriodMs > 0) {
-      setDismissedUntil(nowMs() + dismissalPeriodMs)
-      setDismissedMessage(getMessageContent())
-    }
-  }
-  appElement.remove()
-}
-
-function isDismissed() {
-  if (options.notDismissible) {
-    return false
-  }
-  // Return a Boolean indicating whether user dismissal is active.
-  const dismissedUntil = getDismissedUntil()
-  // Check for any saved dismissedUntil value.
-  if (dismissedUntil === null) {
-    return false
-  }
-  // Check whether the dismissal period has expired.
-  if (nowMs() >= dismissedUntil) {
-    clearDismissalStorage()
-    return false
-  }
-  // Check whether the message content has changed since dismissal.
-  if (getMessageContent() !== getDismissedMessage()) {
-    clearDismissalStorage()
-    return false
-  }
-  return true
-}
-
-//
 // updateElement Function
 //
 
 function updateElement() {
   // Remove the element if it shouldn't be displayed.
-  if (!options.enabled || !INSTALL.matchPage(options.pages) || isDismissed()) {
+  if (!options.enabled || !INSTALL.matchPage(options.pages)) {
     if (appElement) {
       appElement.remove()
     }
@@ -186,15 +122,16 @@ function updateElement() {
   // Create the component.
   const componentOptions = {
     borderRadius,
+    dismissalMinutes: getDismissedUntilMinutes(),
     dismissible: !notDismissible,
     fontSize: fontSize * 16,
+    gradientLevel: options.customBackgroundGradientLevel,
     horizontalMargin,
     horizontalPadding,
+    maxImageWidth: options.customRichMessageGroup.maxImageWidth,
     message,
     verticalMargin,
     verticalPadding,
-    gradientLevel: options.customBackgroundGradientLevel,
-    maxImageWidth: options.customRichMessageGroup.maxImageWidth,
   }
   let componentEl
   if (displayMode === "banner") {
@@ -222,7 +159,6 @@ function init() {
   window.INSTALL_SCOPE = {
     setOptions(nextOptions) {
       options = nextOptions
-      clearDismissalStorage()
       updateElement()
     },
     setProduct(nextProduct) {

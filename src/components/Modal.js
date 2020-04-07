@@ -1,3 +1,5 @@
+import DismissibleComponent from "./DismissibleComponent.js"
+
 import {
   Element,
   getBoolAttr,
@@ -12,20 +14,23 @@ import {
   insertElementAtLocation,
 } from "./utils.js"
 
+const TAG_NAME = "important-message-modal"
+
 const DEFAULTS = {
   BORDER_RADIUS: 16,
   BUTTON_TEXT: "OK",
   COLOR_SCHEME: "primary",
+  DISMISSAL_MINUTES: 0,
   DISMISSIBLE: true,
   FONT_SIZE: 16,
   GRADIENT_LEVEL: 1,
   HORIZONTAL_MARGIN: 0,
   HORIZONTAL_PADDING: 0,
-  VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 0,
   LOCATION: { selector: "body", method: "prepend" },
   MAX_IMAGE_WIDTH: 20,
   STEAL_FOCUS: true,
+  VERTICAL_MARGIN: 0,
+  VERTICAL_PADDING: 0,
 }
 
 const SCHEME_NAME_COLORS_MAP = {
@@ -97,9 +102,9 @@ STYLE.textContent = `
   }
 `
 
-export class ModalElement extends HTMLElement {
+export class ModalComponent extends DismissibleComponent {
   constructor() {
-    super()
+    super({ contentAttrName: "message" })
     this.eventListenerRemovers = []
 
     // Define the shadow DOM and attach the <style> element.
@@ -113,9 +118,11 @@ export class ModalElement extends HTMLElement {
   }
 
   connectedCallback() {
+    super.connectedCallback()
     // Get the configuration attributes.
     // String-type
     const getStr = (...args) => getStrAttr(this, ...args)
+    const id = getStr("id", "")
     // Unescape the double-quotes in the message, e.g. HTML attr values.
     const message = htmlAttrDecode(getStr("message"))
     const colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME)
@@ -140,50 +147,60 @@ export class ModalElement extends HTMLElement {
     const yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING)
     const gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL)
 
+    // If dismissal is active, remove the component.
+    if (this.isDismissed()) {
+      this.remove()
+      return
+    }
+
     // Get the pixel scale factor and scale the values expressed in px.
     const pxScaleFactor = getPixelScaleFactor()
     borderRadius *= pxScaleFactor
     fontSize *= pxScaleFactor
     maxImageWidth *= pxScaleFactor
 
+    // Set the element id if specified.
+    if (id) {
+      this.setAttribute("id", id)
+    }
+
     // Define the main wrapper element.
     const [bgColor, color, buttonBgColor, buttonColor] = getColors(colorScheme)
     const bgRGB = hexToRgb(bgColor)
-    this.wrapperEl = Element(`<div class="wrapper"></div>`)
-    this.shadow.appendChild(this.wrapperEl)
 
-    const contentEl = Element(`
-      <div class="content"
-           style="margin: ${yMargin}em ${xMargin}em;
-                  font-size: ${fontSize}px;
-                  color: ${color};
-                  border-radius: ${borderRadius}px;
-                  background-image:
-                    linear-gradient(
-                      0deg,
-                      rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, 1),
-                      rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, ${1 -
-      gradientLevel})
-                    );
-                  z-index: ${getMaxZIndex() + 1};"
-      >
+    this.shadow.appendChild(
+      Element(`
+      <div class="wrapper" style="z-index: ${getMaxZIndex() + 1};">
+        <div class="content"
+             style="margin: ${yMargin}em ${xMargin}em;
+                    font-size: ${fontSize}px;
+                    color: ${color};
+                    border-radius: ${borderRadius}px;
+                    background-image:
+                      linear-gradient(
+                        0deg,
+                        rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, 1),
+                        rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, ${1 -
+        gradientLevel})
+                      );"
+        >
+          <div class="message"
+               style="padding: ${yPadding}em ${xPadding}em;">
+            ${message}
+          </div>
+        </div>
       </div>
-    `)
-    this.wrapperEl.appendChild(contentEl)
+    `),
+    )
 
-    // Define the message container element.
-    const messageEl = Element(`
-      <div class="message"
-           style="padding: ${yPadding}em ${xPadding}em;">
-        ${message}
-      </div>
-    `)
     // Apply max-width to any included images.
-    messageEl.querySelectorAll("img").forEach(el => {
-      const style = el.getAttribute("style") || ""
-      el.setAttribute("style", `max-width: ${maxImageWidth}px; ${style}`)
-    })
-    contentEl.appendChild(messageEl)
+    this.shadow
+      .querySelector(".message")
+      .querySelectorAll("img")
+      .forEach(el => {
+        const style = el.getAttribute("style") || ""
+        el.setAttribute("style", `max-width: ${maxImageWidth}px; ${style}`)
+      })
 
     // Skip adding the button, event listeners, etc. if not dismissible.
     if (!dismissible) {
@@ -191,6 +208,7 @@ export class ModalElement extends HTMLElement {
     }
 
     // Define the dismiss button element.
+    const contentEl = this.shadow.querySelector(".content")
     const buttonEl = Element(`
       <button style="font-size: ${16 * pxScaleFactor}px;
                      background-color: ${buttonBgColor};
@@ -206,7 +224,7 @@ export class ModalElement extends HTMLElement {
     // It seems as though it's complicated to determine the original event
     // target within the shadow DOM, so we'll simplify things by adding all the
     // click handlers we need to control what's happening.
-    this.addEventListener(this.wrapperEl, "click", () => this.dismiss())
+    this.addEventListener(this.shadow, "click", () => this.dismiss())
     this.addEventListener(contentEl, "click", e => e.stopPropagation())
     this.addEventListener(buttonEl, "click", () => this.dismiss())
 
@@ -224,30 +242,9 @@ export class ModalElement extends HTMLElement {
     }
   }
 
-  disconnectedCallback() {
-    this.removeEventListeners()
-  }
-
-  addEventListener(el, event, fn) {
-    if (el instanceof ModalElement) {
-      super.addEventListener(event, fn)
-      this.eventListenerRemovers.push(() =>
-        super.removeEventListener(event, fn),
-      )
-    } else {
-      el.addEventListener(event, fn)
-      this.eventListenerRemovers.push(() => el.removeEventListener(event, fn))
-    }
-  }
-
-  removeEventListeners() {
-    while (this.eventListenerRemovers.length > 0) {
-      this.eventListenerRemovers.shift()()
-    }
-  }
-
   dismiss() {
     // Remove the element and restore focus.
+    super.dismiss()
     this.remove()
     if (this.previousFocusEl) {
       this.previousFocusEl.focus()
@@ -263,31 +260,35 @@ export function Modal(options, location) {
   // Define the element, escaping any double-quotes in the message text, which
   // will occur for HTML messages that specify element attribute values.
   const modalEl = Element(`
-     <x-modal
-       message="${htmlAttrEncode(getOpt("message", ""))}"
+     <${TAG_NAME}
+       border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
        button-text="${getOpt("buttonText", DEFAULTS.BUTTON_TEXT)}"
-       dismissible="${getOpt("dismissible", DEFAULTS.DISMISSIBLE)}"
        color-scheme="${getOpt("colorScheme", DEFAULTS.COLOR_SCHEME)}"
+       dismissal-minutes="${getOpt(
+         "dismissalMinutes",
+         DEFAULTS.DISMISSAL_MINUTES,
+       )}"
+       dismissible="${getOpt("dismissible", DEFAULTS.DISMISSIBLE)}"
        font-size="${getOpt("fontSize", DEFAULTS.FONT_SIZE)}"
-       horizontal-padding="${getOpt(
-         "horizontalPadding",
-         DEFAULTS.HORIZONTAL_PADDING,
-       )}"
-       vertical-padding="${getOpt(
-         "verticalPadding",
-         DEFAULTS.VERTICAL_PADDING,
-       )}"
+       gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
        horizontal-margin="${getOpt(
          "horizontalMargin",
          DEFAULTS.HORIZONTAL_MARGIN,
        )}"
-       vertical-margin="${getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN)}"
-       border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
-       gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
+       horizontal-padding="${getOpt(
+         "horizontalPadding",
+         DEFAULTS.HORIZONTAL_PADDING,
+       )}"
        max-image-width="${getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH)}"
+       message="${htmlAttrEncode(getOpt("message", ""))}"
        steal-focus="${getOpt("stealFocus", DEFAULTS.STEAL_FOCUS)}"
+       vertical-margin="${getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN)}"
+       vertical-padding="${getOpt(
+         "verticalPadding",
+         DEFAULTS.VERTICAL_PADDING,
+       )}"
      >
-     </x-modal>
+     </${TAG_NAME}>
    `)
 
   if (!location) {
@@ -303,4 +304,24 @@ export function Modal(options, location) {
   }
 }
 
-customElements.define("x-modal", ModalElement)
+try {
+  customElements.define(TAG_NAME, ModalComponent)
+} catch (e) {
+  console.warn(e)
+}
+
+// Define a variable into which an external process can inject configuration
+// options. If we find at runtime that this has been replaced with an options
+// object,use it to extend DEFAULTS, and immediately instantiate a modal.
+
+// Define the injection placeholder and do a runtime mutation to confuse the
+// compiler into not optimizing it out.
+let INJECTED_OPTIONS = "<INJECT-OPTIONS-HERE>"
+INJECTED_OPTIONS = (() => INJECTED_OPTIONS)()
+
+if (typeof INJECTED_OPTIONS === "object") {
+  Modal(Object.assign(INJECTED_OPTIONS, DEFAULTS), {
+    selector: "body",
+    method: "prepend",
+  })
+}

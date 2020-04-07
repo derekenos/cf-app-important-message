@@ -1,3 +1,5 @@
+import DismissibleComponent from "./DismissibleComponent.js"
+
 import {
   Element,
   getBoolAttr,
@@ -12,18 +14,21 @@ import {
   insertElementAtLocation,
 } from "./utils.js"
 
+const TAG_NAME = "important-message-banner"
+
 const DEFAULTS = {
   BORDER_RADIUS: 16,
   COLOR_SCHEME: "primary",
+  DISMISSAL_MINUTES: 0,
   DISMISSIBLE: true,
   FONT_SIZE: 16,
   GRADIENT_LEVEL: 1,
   HORIZONTAL_MARGIN: 0,
   HORIZONTAL_PADDING: 0,
-  VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 1,
   LOCATION: { selector: "body", method: "prepend" },
   MAX_IMAGE_WIDTH: 20,
+  VERTICAL_MARGIN: 0,
+  VERTICAL_PADDING: 1,
 }
 
 const SCHEME_NAME_COLORS_MAP = {
@@ -43,6 +48,10 @@ function getColors(colorScheme) {
    */
   return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",")
 }
+
+//
+// CSS
+//
 
 const STYLE = document.createElement("style")
 STYLE.textContent = `
@@ -84,13 +93,15 @@ STYLE.textContent = `
   }
 
   .button-wrapper {
-    padding: .25em 1em;
+    padding: .25em 2em;
     font-weight: normal;
     position: relative;
   }
 
   .button-wrapper.highlight {
-    border-left: dashed rgba(0, 0, 0, .2) 2px;
+    background-color: rgba(255, 255, 255, .25);
+    box-shadow: -1px 0px 8px #888;
+    border-radius: 16px 0 16px 16px;
   }
 
   .button-wrapper:hover {
@@ -109,6 +120,7 @@ STYLE.textContent = `
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    cursor: pointer;
   }
 
   @keyframes slideDown {
@@ -121,14 +133,18 @@ STYLE.textContent = `
     }
   }
 
+  a {
+    text-decoration: underline;
+  }
+
   p {
     margin: 0;
   }
 `
 
-export class BannerElement extends HTMLElement {
+export class BannerComponent extends DismissibleComponent {
   constructor() {
-    super()
+    super({ contentAttrName: "message" })
     this.eventListenerRemovers = []
 
     // Define the shadow DOM and attach the <style> element.
@@ -141,9 +157,11 @@ export class BannerElement extends HTMLElement {
   }
 
   connectedCallback() {
+    super.connectedCallback()
     // Get the configuration attributes.
     // String-type
     const getStr = (...args) => getStrAttr(this, ...args)
+    const id = getStr("id", "")
     // Unescape the double-quotes in the message, e.g. HTML attr values.
     const message = htmlAttrDecode(getStr("message", ""))
     const colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME)
@@ -167,16 +185,29 @@ export class BannerElement extends HTMLElement {
     const yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING)
     const gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL)
 
+    // If dismissal is active, remove the component.
+    if (this.isDismissed()) {
+      this.remove()
+      return
+    }
+
     // Get the pixel scale factor and scale the values expressed in px.
     const pxScaleFactor = getPixelScaleFactor()
     borderRadius *= pxScaleFactor
     fontSize *= pxScaleFactor
     maxImageWidth *= pxScaleFactor
 
+    // Set the element id if specified.
+    if (id) {
+      this.setAttribute("id", id)
+    }
+
     // Define the main wrapper element.
     const [bgColor, color] = getColors(colorScheme)
     const bgRGB = hexToRgb(bgColor)
-    this.wrapperEl = Element(`
+    this.shadow.appendChild(
+      Element(`
+      ${bannerUrl ? `<a href="${bannerUrl}">` : ""}
       <div class="wrapper show ${dismissible ? "dismissible" : ""}"
            style="margin: ${yMargin}em ${xMargin}em;
                   font-size: ${fontSize}px;
@@ -191,40 +222,26 @@ export class BannerElement extends HTMLElement {
                       0deg,
                       rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, 1),
                       rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, ${1 -
-      gradientLevel})
+        gradientLevel})
                     );
                   z-index: ${getMaxZIndex() + 1};"
       >
+        <div class="message"
+             style="padding: ${yPadding + 0.25}em ${xPadding + 1}em;"
+        >
+          ${message}
+        </div>
       </div>
-    `)
-    this.shadow.appendChild(this.wrapperEl)
+      ${bannerUrl ? "</a>" : ""}
+    `),
+    )
 
-    // Define the message container element.
-    const messageEl = Element(`
-      <div class="message" style="padding: ${yPadding + 0.25}em ${xPadding +
-      1}em;">
-        ${message}
-      </div>
-    `)
+    const wrapperEl = this.shadow.querySelector("div.wrapper")
+
     // Apply max-width to any included images.
-    messageEl.querySelectorAll("img").forEach(el => {
+    wrapperEl.querySelectorAll("img").forEach(el => {
       const style = el.getAttribute("style") || ""
       el.setAttribute("style", `max-width: ${maxImageWidth}px; ${style}`)
-    })
-    this.wrapperEl.appendChild(messageEl)
-
-    // Make the non-dismissible cursor a pointer if bannerUrl is defined.
-    if (!dismissible && bannerUrl) {
-      this.style.cursor = "pointer"
-    }
-
-    // Dismiss the banner or redirect to bannerUrl on main banner click.
-    this.addEventListener(this, "click", () => {
-      if (bannerUrl) {
-        window.location = bannerUrl
-      } else if (dismissible) {
-        this.dismiss()
-      }
     })
 
     // Skip adding the button, event listeners, etc. if not dismissible.
@@ -234,11 +251,12 @@ export class BannerElement extends HTMLElement {
 
     // Define the dismiss button element.
     const buttonWrapperEl = Element(`
-      <div class="button-wrapper ${bannerUrl ? "highlight" : ""}">
+      <div class="button-wrapper ${bannerUrl ? "highlight" : ""}"
+           style="border-radius: ${borderRadius}px 0 ${borderRadius}px ${borderRadius}px">
         <button style="font-size: ${16 * pxScaleFactor}px;">x</button>
       </div>
     `)
-    this.wrapperEl.appendChild(buttonWrapperEl)
+    wrapperEl.appendChild(buttonWrapperEl)
 
     // Add event listeners.
 
@@ -254,10 +272,11 @@ export class BannerElement extends HTMLElement {
       })
     }
 
-    // Handle clicks events.
-    // Dismiss the banner on button wrapper.
-    this.addEventListener(buttonWrapperEl, "click", e => {
+    // Dismiss on click. If bannerUrl is defined, only listen for clicks on
+    // the button, otherwise listen for any click.
+    this.addEventListener(bannerUrl ? buttonWrapperEl : this, "click", e => {
       this.dismiss()
+      e.preventDefault()
       e.stopPropagation()
     })
 
@@ -269,30 +288,9 @@ export class BannerElement extends HTMLElement {
     })
   }
 
-  disconnectedCallback() {
-    this.removeEventListeners()
-  }
-
-  addEventListener(el, event, fn) {
-    if (el instanceof BannerElement) {
-      super.addEventListener(event, fn)
-      this.eventListenerRemovers.push(() =>
-        super.removeEventListener(event, fn),
-      )
-    } else {
-      el.addEventListener(event, fn)
-      this.eventListenerRemovers.push(() => el.removeEventListener(event, fn))
-    }
-  }
-
-  removeEventListeners() {
-    while (this.eventListenerRemovers.length > 0) {
-      this.eventListenerRemovers.shift()()
-    }
-  }
-
   dismiss() {
-    const el = this.wrapperEl
+    super.dismiss()
+    const el = this.shadow.querySelector("div.wrapper")
     this.addEventListener(el, "animationend", () => this.remove())
     el.classList.remove("show")
     // See here for why I'm reading the offsetWidth:
@@ -310,30 +308,35 @@ export function Banner(options, location) {
   // Define the element, escaping any double-quotes in the message text, which
   // will occur for HTML messages that specify element attribute values.
   const bannerEl = Element(`
-     <x-banner
-       message="${htmlAttrEncode(getOpt("message", ""))}"
-       dismissible="${getOpt("dismissible", DEFAULTS.DISMISSIBLE)}"
+     <${TAG_NAME}
+       banner-url="${getOpt("bannerUrl", "")}"
+       border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
        color-scheme="${getOpt("colorScheme", DEFAULTS.COLOR_SCHEME)}"
+       dismissal-minutes="${getOpt(
+         "dismissalMinutes",
+         DEFAULTS.DISMISSAL_MINUTES,
+       )}"
+       dismissible="${getOpt("dismissible", DEFAULTS.DISMISSIBLE)}"
        font-size="${getOpt("fontSize", DEFAULTS.FONT_SIZE)}"
-       horizontal-padding="${getOpt(
-         "horizontalPadding",
-         DEFAULTS.HORIZONTAL_PADDING,
-       )}"
-       vertical-padding="${getOpt(
-         "verticalPadding",
-         DEFAULTS.VERTICAL_PADDING,
-       )}"
+       gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
        horizontal-margin="${getOpt(
          "horizontalMargin",
          DEFAULTS.HORIZONTAL_MARGIN,
        )}"
-       vertical-margin="${getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN)}"
-       border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
-       gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
+       horizontal-padding="${getOpt(
+         "horizontalPadding",
+         DEFAULTS.HORIZONTAL_PADDING,
+       )}"
+       id="${getOpt("id", "")}"
        max-image-width="${getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH)}"
-       banner-url="${getOpt("bannerUrl", "")}""
+       message="${htmlAttrEncode(getOpt("message", ""))}"
+       vertical-margin="${getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN)}"
+       vertical-padding="${getOpt(
+         "verticalPadding",
+         DEFAULTS.VERTICAL_PADDING,
+       )}"
      >
-     </x-banner>
+     </${TAG_NAME}>
    `)
 
   if (!location) {
@@ -349,4 +352,24 @@ export function Banner(options, location) {
   }
 }
 
-customElements.define("x-banner", BannerElement)
+try {
+  customElements.define(TAG_NAME, BannerComponent)
+} catch (e) {
+  console.warn(e)
+}
+
+// Define a variable into which an external process can inject configuration
+// options. If we find at runtime that this has been replaced with an options
+// object,use it to extend DEFAULTS, and immediately instantiate a banner.
+
+// Define the injection placeholder and do a runtime mutation to confuse the
+// compiler into not optimizing it out.
+let INJECTED_OPTIONS = "<INJECT-OPTIONS-HERE>"
+INJECTED_OPTIONS = (() => INJECTED_OPTIONS)()
+
+if (typeof INJECTED_OPTIONS === "object") {
+  Banner(Object.assign(INJECTED_OPTIONS, DEFAULTS), {
+    selector: "body",
+    method: "prepend",
+  })
+}
