@@ -2,46 +2,50 @@
 // Generic Utilities
 //
 
-const identity = x => x
+// Type sentinals and checkers.
+export const TYPES = {
+  STRING: "string",
+  INTEGER: "integer",
+  FLOAT: "float",
+  BOOLEAN: "boolean",
+  HTML: "html",
+  URL: "url",
+}
 
-// Type checkers.
-const isString = x => typeof x === "string"
-const isNull = x => x === null
+export const isNull = x => x === null
 export const isUndefined = x => x === undefined
+const isString = x => typeof x === "string"
+const isNumber = x => typeof x === "number"
+const isBoolean = x => typeof x === "boolean"
+const isURL = x => x instanceof URL
 
 // Simple parsing helpers.
 const parseDecInt = s => parseInt(s, 10)
 const parseHexInt = s => parseInt(s, 16)
 
 // Encode/decode a string for inclusion as / from an HTML attribute value.
-export const htmlAttrEncode = s => `${s}`.replace(/"/g, "@quot;")
-export const htmlAttrDecode = s => `${s}`.replace(/@quot;/g, '"')
+const htmlAttrEncode = s => `${s}`.replace(/"/g, "@quot;")
+const htmlAttrDecode = s => `${s}`.replace(/@quot;/g, '"')
 
 // Return a function that applies a specified parser and uses a specified
 // failure test function to determine whether to return the parsed value or a
 // specified default value.
 const safeParser = (parserFn, failureTestFn) => (x, defVal) => {
-  const v = parserFn(x)
+  let v
+  try {
+    v = parserFn(x)
+  } catch (e) {
+    // Return the default value on any exception.
+    return defVal
+  }
   return failureTestFn(v) ? defVal : v
 }
-
-// Type-specific variants.
-const safeParseBool = safeParser(
-  s => (isString(s) ? s === "true" : null),
-  isNull,
-)
-const safeParseString = safeParser(s => (isString(s) ? s : null), isNull)
-const safeParseInt = safeParser(s => parseInt(s, 10), Number.isNaN)
-const safeParseFloat = safeParser(s => parseFloat(s), Number.isNaN)
-const safeParseHTML = (x, defVal) => htmlAttrDecode(safeParseString(x, defVal))
 
 //
 // String parsing and conversion helpers.
 //
-
 const UPPERCASE = /[A-Z]/
 const isUpper = UPPERCASE.test.bind(UPPERCASE)
-const toString = x => (isNull(x) || isUndefined(x) ? "" : `${x}`)
 
 export function camelToKebab(x) {
   // Convert a camelCase string to kebab-case.
@@ -54,26 +58,49 @@ export function camelToKebab(x) {
   )
 }
 
-export const STRING = "string"
-export const INTEGER = "integer"
-export const FLOAT = "float"
-export const BOOLEAN = "boolean"
-export const HTML = "html"
+const safeParseBool = safeParser(
+  s => (isString(s) && (s === "true" || s === "false") ? s === "true" : null),
+  isNull,
+)
+const safeParseString = safeParser(s => (isString(s) ? s : null), isNull)
+const safeParseInt = safeParser(s => parseInt(s, 10), Number.isNaN)
+const safeParseFloat = safeParser(s => parseFloat(s), Number.isNaN)
+const safeParseHTML = safeParser(
+  s => (isString(s) ? htmlAttrDecode(s) : null),
+  isNull,
+)
+const safeParseURL = safeParser(s => new URL(s), isNull)
 
 export const STRING_TYPE_PARSER_MAP = {
-  [STRING]: safeParseString,
-  [INTEGER]: safeParseInt,
-  [FLOAT]: safeParseFloat,
-  [BOOLEAN]: safeParseBool,
-  [HTML]: safeParseHTML,
+  [TYPES.STRING]: safeParseString,
+  [TYPES.INTEGER]: safeParseInt,
+  [TYPES.FLOAT]: safeParseFloat,
+  [TYPES.BOOLEAN]: safeParseBool,
+  [TYPES.HTML]: safeParseHTML,
+  [TYPES.URL]: safeParseURL,
 }
 
+const assertTrue = x => {
+  if (!x) {
+    throw new TypeError()
+  }
+  return true
+}
+
+const toString = x => (isNull(x) || isUndefined(x) ? "" : `${x}`)
+const safeEncodeString = x => assertTrue(isString(x)) && toString(x)
+const safeEncodeNumber = x => assertTrue(isNumber(x)) && toString(x)
+const safeEncodeBoolean = x => assertTrue(isBoolean(x)) && toString(x)
+const safeEncodeHTML = x => assertTrue(isString(x)) && htmlAttrEncode(x)
+const safeEncodeURL = x => assertTrue(isURL(x)) && x.href
+
 export const STRING_TYPE_ENCODER_MAP = {
-  [STRING]: identity,
-  [INTEGER]: toString,
-  [FLOAT]: toString,
-  [BOOLEAN]: toString,
-  [HTML]: x => `${htmlAttrEncode(toString(x))}`,
+  [TYPES.STRING]: safeEncodeString,
+  [TYPES.INTEGER]: safeEncodeNumber,
+  [TYPES.FLOAT]: safeEncodeNumber,
+  [TYPES.BOOLEAN]: safeEncodeBoolean,
+  [TYPES.HTML]: safeEncodeHTML,
+  [TYPES.URL]: safeEncodeURL,
 }
 
 //
@@ -82,14 +109,6 @@ export const STRING_TYPE_ENCODER_MAP = {
 
 // Return the specified element attribute, or a defaultValue if the attribute
 // is unspecified.
-export const getAttr = (el, attr, defVal) =>
-  el.hasAttribute(attr) ? el.getAttribute(attr) : defVal
-
-// Type-specific variants.
-export const getStrAttr = getAttr
-export const getBoolAttr = (...args) => getStrAttr(...args) === "true"
-export const getIntAttr = (...args) => safeParseInt(getStrAttr(...args))
-export const getFloatAttr = (...args) => safeParseFloat(getStrAttr(...args))
 
 export function hexToRgb(hex) {
   // Adapted from: https://stackoverflow.com/a/5624139/2327940
@@ -150,38 +169,4 @@ export function getPixelScaleFactor() {
     return 1
   }
   return window.devicePixelRatio || 1
-}
-
-export function insertElementAtLocation(element, selector, method) {
-  // Relocate an element to the location specified by selector and method.
-  const target = document.querySelector(selector)
-  if (target === null) {
-    throw new Error(`No location found for selector: ${selector}`)
-  }
-  const children = target.childNodes
-  const hasChildren = children.length > 0
-  const { nextSibling } = target
-  switch (method) {
-    case "before":
-      target.parentNode.insertBefore(element, target)
-      break
-    case "after":
-      if (nextSibling === null) {
-        target.parentNode.appendChild(element)
-      } else {
-        target.parentNode.insertBefore(element, nextSibling)
-      }
-      break
-    case "prepend":
-      target.insertBefore(element, hasChildren ? children[0] : null)
-      break
-    case "append":
-      target.appendChild(element)
-      break
-    case "replace":
-      target.replaceWith(element)
-      break
-    default:
-      throw new Error(`method "${method}" not implemented`)
-  }
 }

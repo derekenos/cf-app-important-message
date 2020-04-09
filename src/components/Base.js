@@ -3,13 +3,36 @@ import {
   STRING_TYPE_PARSER_MAP,
   STRING_TYPE_ENCODER_MAP,
   camelToKebab,
-  getAttr,
   getMaxZIndex,
   getPixelScaleFactor,
+  isUndefined,
 } from "./utils.js"
 
+function flattenPropNameTypeDefaults(propNameTypeDefaultsArr) {
+  // Flatten propNameTypeDefaultsArr into a single object, asserting
+  // that no name is specified multiple times with different types.
+  const seenNameTypeMap = {}
+  const flattenedPropNameTypeDefaults = []
+  propNameTypeDefaultsArr.forEach(propNameTypeDefaults =>
+    propNameTypeDefaults.forEach(([name, type, defVal]) => {
+      const seenType = seenNameTypeMap[name]
+      if (!seenType || seenType === type) {
+        // Name hasn't been seen or has and type is the same.
+        flattenedPropNameTypeDefaults.push([name, type, defVal])
+        seenNameTypeMap[name] = type
+      } else {
+        // Name has been seen before as a different type.
+        throw new Error(
+          `Prop name (${name}) specified as both types (${seenType}) and (${type})`,
+        )
+      }
+    }),
+  )
+  return flattenedPropNameTypeDefaults
+}
+
 class Base extends HTMLElement {
-  constructor({ attributeNameTypeDefaults, styleFactory }) {
+  constructor(propNameTypeDefaultsArr, options) {
     super()
 
     // Create an array to collect event listener remover functions.
@@ -19,8 +42,10 @@ class Base extends HTMLElement {
     this.shadow = this.attachShadow({ mode: "open" })
 
     // Save some things for later.
-    this.attributeNameTypeDefaults = attributeNameTypeDefaults
-    this.styleFactory = styleFactory
+    this.propNameTypeDefaults = flattenPropNameTypeDefaults(
+      propNameTypeDefaultsArr,
+    )
+    this.styleFactory = options.styleFactory
   }
 
   connectedCallback() {
@@ -44,16 +69,33 @@ class Base extends HTMLElement {
     this.removeEventListeners()
   }
 
+  getAttribute(name, defVal) {
+    // Override getAttribute() to allow the specification of a default value.
+    return this.hasAttribute(name) ? super.getAttribute(name) : defVal
+  }
+
   getParsedAttributes() {
     // Use the attribute configuration to parse and return the specified element
     // attribute values.
-    return Object.fromEntries(
-      this.attributeNameTypeDefaults.map(([attr, type, defVal]) => {
+    const undefinedAttrNames = []
+    const props = Object.fromEntries(
+      this.propNameTypeDefaults.map(([name, type, defVal]) => {
         const parser = STRING_TYPE_PARSER_MAP[type]
-        const value = parser(getAttr(this, camelToKebab(attr)), defVal)
-        return [attr, value]
+        const attrName = camelToKebab(name)
+        const value = parser(this.getAttribute(attrName), defVal)
+        if (isUndefined(value)) {
+          undefinedAttrNames.push(attrName)
+        }
+        return [name, value]
       }),
     )
+    // Check for undefined values.
+    if (undefinedAttrNames.length) {
+      throw new Error(
+        `Undefined required attributes: ${undefinedAttrNames.join(", ")}`,
+      )
+    }
+    return props
   }
 
   addEventListener(el, event, fn) {
@@ -80,11 +122,7 @@ class Base extends HTMLElement {
 
 export default Base
 
-export function ComponentCreator(
-  tagName,
-  component,
-  attributeNameTypeDefaults,
-) {
+export function ComponentCreator(tagName, component, propNameTypeDefaultsArr) {
   // Return a function that will create and optionally mount a component.
   // Register the element if necessary.
   try {
@@ -93,10 +131,14 @@ export function ComponentCreator(
     console.info(e)
   }
 
+  const propNameTypeDefaults = flattenPropNameTypeDefaults(
+    propNameTypeDefaultsArr,
+  )
+
   return (attributes, autoMount = true) => {
     // Generate an array for formatted element name/value pairs.
     const nameValuePairs = []
-    attributeNameTypeDefaults.forEach(([attr, type, defVal]) => {
+    propNameTypeDefaults.forEach(([attr, type, defVal]) => {
       const name = camelToKebab(attr)
       const attrsValue = attributes[attr]
       const value =

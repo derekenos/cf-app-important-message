@@ -122,9 +122,10 @@ function updateElement() {
   // Create the component.
   const componentOptions = {
     borderRadius,
+    dismissalContentProp: "message",
     dismissalMinutes: getDismissedUntilMinutes(),
     dismissible: !notDismissible,
-    fontSize: fontSize * 16,
+    fontSize,
     gradientLevel: options.customBackgroundGradientLevel,
     horizontalMargin,
     horizontalPadding,

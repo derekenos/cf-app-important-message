@@ -1,15 +1,14 @@
 import Base, { ComponentCreator } from "./Base.js"
-import Dismissible from "./Dismissible.js"
 
-import {
-  BOOLEAN,
-  FLOAT,
-  HTML,
-  INTEGER,
-  STRING,
-  Element,
-  hexToRgb,
-} from "./utils.js"
+import Dismissible, {
+  propNameTypeDefaults as dismissiblePropNameTypeDefaults,
+} from "./Dismissible.js"
+
+import RemotelyConfigurable, {
+  propNameTypeDefaults as remotelyConfigurablePropNameTypeDefaults,
+} from "./RemotelyConfigurable.js"
+
+import { TYPES, Element, hexToRgb } from "./utils.js"
 
 const SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085,#007bff,#ffffff",
@@ -20,13 +19,6 @@ const SCHEME_NAME_COLORS_MAP = {
   info: "#d1ecf1,#0c5460,#17a2b8,#ffffff",
   light: "#fefefe,#818182,#f8f9fa,#212529",
   dark: "#d6d8d9,#1b1e21,#343a40,#ffffff",
-}
-
-function getColors(colorScheme) {
-  /* Return the colors for the specified scheme as the array:
-     [<mainBgColor>, <mainColor>, <buttonBgColor>, <buttonColor>]
-   */
-  return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",")
 }
 
 const styleFactory = vars => `
@@ -54,9 +46,10 @@ const styleFactory = vars => `
     overflow: auto;
     cursor: default;
     text-align: right;
-    padding: 1em;
+    padding: ${16 * vars.PX_SCALE_FACTOR}px;
     background-color: #fff;
-    margin: ${vars.verticalMargin}em ${vars.horizontalMargin}em;
+    margin: ${vars.verticalMargin * vars.PX_SCALE_FACTOR}px
+            ${vars.horizontalMargin * vars.PX_SCALE_FACTOR}px;
     font-size: ${vars.fontSize * vars.PX_SCALE_FACTOR}px;
     border-radius: ${vars.borderRadius}px;
   }
@@ -65,7 +58,8 @@ const styleFactory = vars => `
     text-align: left;
     display: block;
     cursor: text;
-    padding: ${vars.verticalPadding}em ${vars.horizontalPadding}em;
+    padding: ${vars.verticalPadding * vars.PX_SCALE_FACTOR}px
+             ${vars.horizontalPadding * vars.PX_SCALE_FACTOR}px;
   }
 
   .message img {
@@ -74,11 +68,11 @@ const styleFactory = vars => `
 
   button {
     display: inline;
-    padding: .4em .75em;
+    padding: ${8 * vars.PX_SCALE_FACTOR}px ${12 * vars.PX_SCALE_FACTOR}px;
     cursor: pointer;
     border: none;
-    border-radius: .25em;
-    margin-top: 1.5em;
+    border-radius: 4px;
+    margin-top: ${24 * vars.PX_SCALE_FACTOR}px;
     font-size: ${16 * vars.PX_SCALE_FACTOR}px;
   }
 
@@ -87,30 +81,26 @@ const styleFactory = vars => `
   }
 `
 
-const attributeNameTypeDefaults = [
-  ["borderRadius", INTEGER, 16],
-  ["buttonText", STRING, "OK"],
-  ["colorScheme", STRING, "primary"],
-  ["dismissible", BOOLEAN, true],
-  ["fontSize", INTEGER, 16],
-  ["gradientLevel", FLOAT, 1.0],
-  ["horizontalMargin", FLOAT, 0],
-  ["horizontalPadding", FLOAT, 0],
-  ["id", STRING, ""],
-  ["maxImageWidth", INTEGER, 20],
-  ["message", HTML, "A default message"],
-  ["stealFocus", BOOLEAN, true],
-  ["verticalMargin", FLOAT, 0],
-  ["verticalPadding", FLOAT, 1],
+const propNameTypeDefaults = [
+  ["borderRadius", TYPES.INTEGER, 16],
+  ["buttonText", TYPES.STRING, "OK"],
+  ["colorScheme", TYPES.STRING, "primary"],
+  ["dismissible", TYPES.BOOLEAN, true],
+  ["fontSize", TYPES.INTEGER, 16],
+  ["gradientLevel", TYPES.FLOAT, 1.0],
+  ["horizontalMargin", TYPES.FLOAT, 0],
+  ["horizontalPadding", TYPES.FLOAT, 0],
+  ["id", TYPES.STRING, ""],
+  ["maxImageWidth", TYPES.INTEGER, 20],
+  ["message", TYPES.HTML, "A default message"],
+  ["stealFocus", TYPES.BOOLEAN, true],
+  ["verticalMargin", TYPES.FLOAT, 0],
+  ["verticalPadding", TYPES.FLOAT, 1],
 ]
 
-export class ModalComponent extends Dismissible(Base) {
+export class ModalComponent extends Dismissible(RemotelyConfigurable(Base)) {
   constructor() {
-    super({
-      contentAttrName: "message",
-      styleFactory,
-      attributeNameTypeDefaults,
-    })
+    super([propNameTypeDefaults], { styleFactory })
 
     // Define the accessibility attributes.
     this.setAttribute("role", "dialog")
@@ -127,7 +117,7 @@ export class ModalComponent extends Dismissible(Base) {
       return
     }
 
-    // Get the configuration attributes.
+    // Get the configuration properties.
     const {
       buttonText,
       colorScheme,
@@ -138,7 +128,9 @@ export class ModalComponent extends Dismissible(Base) {
     } = this.props
 
     // Define the main wrapper element.
-    const [bgColor, color, buttonBgColor, buttonColor] = getColors(colorScheme)
+    const [bgColor, color, buttonBgColor, buttonColor] = (
+      SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme
+    ).split(",")
     const bgRGB = hexToRgb(bgColor)
 
     this.shadow.appendChild(
@@ -214,7 +206,11 @@ export class ModalComponent extends Dismissible(Base) {
 export const Modal = ComponentCreator(
   "important-message-modal",
   ModalComponent,
-  attributeNameTypeDefaults,
+  [
+    propNameTypeDefaults,
+    dismissiblePropNameTypeDefaults,
+    remotelyConfigurablePropNameTypeDefaults,
+  ],
 )
 
 // Define a variable into which an external process can inject configuration
@@ -228,7 +224,7 @@ INJECTED_OPTIONS = (() => INJECTED_OPTIONS)()
 
 if (typeof INJECTED_OPTIONS === "object") {
   const defaultOptions = Object.fromEntries(
-    attributeNameTypeDefaults.map(([attr, , defVal]) => [attr, defVal]),
+    propNameTypeDefaults.map(([attr, , defVal]) => [attr, defVal]),
   )
   Modal(Object.assign(defaultOptions, INJECTED_OPTIONS))
 }

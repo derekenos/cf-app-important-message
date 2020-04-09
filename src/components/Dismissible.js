@@ -1,39 +1,31 @@
-import { getIntAttr, getStrAttr } from "./utils.js"
-
-// Define the default required HTML element attribute names.
-const MINUTES_ATTR_NAME = "dismissal-minutes"
-const CONTENT_ATTR_NAME = "content"
+import { TYPES } from "./utils.js"
 
 const nowMs = Date.now
 
+export const propNameTypeDefaults = [
+  ["dismissalMinutes", TYPES.INTEGER, 0],
+  ["dismissalContentProp", TYPES.STRING, undefined],
+  ["id", TYPES.STRING, ""],
+]
+
 const Dismissible = C =>
   class extends C {
-    constructor({ minutesAttrName, contentAttrName, ...rest }) {
-      super(rest)
-      // Allow subclass to override the attribute names.
-      this.minutesAttrName = minutesAttrName || MINUTES_ATTR_NAME
-      this.contentAttrName = contentAttrName || CONTENT_ATTR_NAME
+    constructor(propNameTypeDefaultsArr, options) {
+      // Add this class's props to the array.
+      propNameTypeDefaultsArr.push(propNameTypeDefaults)
+      super(propNameTypeDefaultsArr, options)
     }
 
     connectedCallback() {
       super.connectedCallback()
+
       // Generate the local storage keys using the element tagName and id
       // attribute value to allow for multiple unique intances of the same
       // component.
       const tagName = this.tagName.toLowerCase()
-      const id = this.getAttribute("id") || ""
+      const { id } = this.props
       this.dismissedUntilKey = `${tagName}-${id}-dismissedUntil`
       this.dismissedContentKey = `${tagName}-${id}-dismissedContent`
-    }
-
-    getDismissalContent() {
-      // Return the component's content attribute value.
-      return getStrAttr(this, this.contentAttrName, "")
-    }
-
-    getDismissalMinutes() {
-      // Return the component's dismissal minutes value.
-      return getIntAttr(this, this.minutesAttrName, 0)
     }
 
     setDismissedUntil(value) {
@@ -63,8 +55,17 @@ const Dismissible = C =>
       localStorage.removeItem(this.dismissedContentKey)
     }
 
+    getDismissalContent() {
+      // Return the value of the property indicated by dismissalContentProp.
+      // Note that this expects dismissalContentProp to be specified in
+      // property-style camelCase format, which is easy to remember when
+      // instantiating the component via JS, but less so when hand-crafting
+      // the component via HTML, e.g. <... dismissal-content-prop="messageText">
+      return this.props[this.props.dismissalContentProp]
+    }
+
     dismiss() {
-      const numMinutes = this.getDismissalMinutes()
+      const numMinutes = this.props.dismissalMinutes
       if (numMinutes > 0) {
         // Update local storage with dismissal period expiration time and
         // dismissed content values.
@@ -79,7 +80,7 @@ const Dismissible = C =>
     isDismissed() {
       // Return a Boolean indicating whether user dismissal is active.
       // Check whether the configured period is greater than 0.
-      if (!(this.getDismissalMinutes() > 0)) {
+      if (!(this.props.dismissalMinutes > 0)) {
         this.clearDismissalStorage()
         return false
       }

@@ -1,16 +1,18 @@
 import Base, { ComponentCreator } from "./Base.js"
-import Dismissible from "./Dismissible.js"
-import Insertable from "./Insertable.js"
 
-import {
-  BOOLEAN,
-  FLOAT,
-  HTML,
-  INTEGER,
-  STRING,
-  Element,
-  hexToRgb,
-} from "./utils.js"
+import Dismissible, {
+  propNameTypeDefaults as dismissiblePropNameTypeDefaults,
+} from "./Dismissible.js"
+
+import Insertable, {
+  propNameTypeDefaults as insertablePropNameTypeDefaults,
+} from "./Insertable.js"
+
+import RemotelyConfigurable, {
+  propNameTypeDefaults as remotelyConfigurablePropNameTypeDefaults,
+} from "./RemotelyConfigurable.js"
+
+import { TYPES, Element, hexToRgb } from "./utils.js"
 
 const SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085",
@@ -23,27 +25,16 @@ const SCHEME_NAME_COLORS_MAP = {
   dark: "#d6d8d9,#1b1e21",
 }
 
-function getColors(colorScheme) {
-  /* Return the colors for the specified scheme as the array:
-     [<mainBackgroundColor>, <mainColor>]
-   */
-  return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",")
-}
-
-//
-// CSS
-//
-
 const styleFactory = vars => `
   .wrapper {
     display: flex;
-    font-size: 16px;
+    font-size: ${vars.fontSize * vars.PX_SCALE_FACTOR}px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
     text-align: left;
     color: #000;
     background-color: #fff;
-    margin: ${vars.verticalMargin}em ${vars.horizontalMargin}em;
-    font-size: ${vars.fontSize * vars.PX_SCALE_FACTOR}px;
+    margin: ${vars.verticalMargin * vars.PX_SCALE_FACTOR}px
+            ${vars.horizontalMargin * vars.PX_SCALE_FACTOR}px;
     border-radius: ${vars.borderRadius * vars.PX_SCALE_FACTOR}px;
     z-index: ${vars.MAX_Z_INDEX + 1};
   }
@@ -54,7 +45,7 @@ const styleFactory = vars => `
     top: 0;
     right: 0;
     cursor: pointer;
-    box-shadow: 0 0 1em .2em #444;
+    box-shadow: 0 0 16px 4px #444;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
@@ -75,7 +66,8 @@ const styleFactory = vars => `
   .message {
     display: inline;
     flex-grow: 1;
-    padding: ${vars.verticalPadding + 0.25}em ${vars.horizontalPadding + 1}em;"
+    padding: ${(vars.verticalPadding + 4) * vars.PX_SCALE_FACTOR}px
+             ${(vars.horizontalPadding + 16) * vars.PX_SCALE_FACTOR}px;"
   }
 
   .message img {
@@ -83,7 +75,7 @@ const styleFactory = vars => `
   }
 
   .button-wrapper {
-    padding: .25em 2em;
+    padding: ${4 * vars.PX_SCALE_FACTOR}px ${32 * vars.PX_SCALE_FACTOR}px;
     font-weight: normal;
     position: relative;
   }
@@ -91,7 +83,7 @@ const styleFactory = vars => `
   .button-wrapper.highlight {
     background-color: rgba(255, 255, 255, .25);
     box-shadow: -1px 0px 8px #888;
-    border-radius: ${vars.borderRadius * vars.PX_SCALE_FACTOR}px;
+    border-radius: ${vars.borderRadius}px;
     border-top-right-radius: 0;
   }
 
@@ -133,32 +125,27 @@ const styleFactory = vars => `
   }
 `
 
-const attributeNameTypeDefaults = [
-  ["bannerUrl", STRING, ""],
-  ["borderRadius", INTEGER, 16],
-  ["colorScheme", STRING, "primary"],
-  ["dismissible", BOOLEAN, true],
-  ["fontSize", INTEGER, 16],
-  ["gradientLevel", FLOAT, 1.0],
-  ["horizontalMargin", FLOAT, 0],
-  ["horizontalPadding", FLOAT, 0],
-  ["id", STRING, ""],
-  ["maxImageWidth", INTEGER, 20],
-  ["message", HTML, "A default message"],
-  ["verticalMargin", FLOAT, 0],
-  ["verticalPadding", FLOAT, 1],
-  ["location-selector", STRING, undefined],
-  ["location-method", STRING, undefined],
+const propNameTypeDefaults = [
+  ["bannerUrl", TYPES.STRING, ""],
+  ["borderRadius", TYPES.INTEGER, 16],
+  ["colorScheme", TYPES.STRING, "primary"],
+  ["dismissible", TYPES.BOOLEAN, true],
+  ["fontSize", TYPES.INTEGER, 16],
+  ["gradientLevel", TYPES.FLOAT, 1.0],
+  ["horizontalMargin", TYPES.FLOAT, 0],
+  ["horizontalPadding", TYPES.FLOAT, 0],
+  ["id", TYPES.STRING, ""],
+  ["maxImageWidth", TYPES.INTEGER, 20],
+  ["message", TYPES.HTML, "A default message"],
+  ["verticalMargin", TYPES.FLOAT, 0],
+  ["verticalPadding", TYPES.FLOAT, 16],
 ]
 
-export class BannerComponent extends Insertable(Dismissible(Base)) {
+export class BannerComponent extends Insertable(
+  Dismissible(RemotelyConfigurable(Base)),
+) {
   constructor() {
-    super({
-      tagName: "important-message-banner",
-      contentAttrName: "message",
-      styleFactory,
-      attributeNameTypeDefaults,
-    })
+    super([propNameTypeDefaults], { styleFactory })
 
     // Define the accessibility attributes.
     this.setAttribute("role", "banner")
@@ -174,7 +161,7 @@ export class BannerComponent extends Insertable(Dismissible(Base)) {
       return
     }
 
-    // Get the configuration attributes.
+    // Get the configuration properties.
     const {
       bannerUrl,
       colorScheme,
@@ -184,7 +171,9 @@ export class BannerComponent extends Insertable(Dismissible(Base)) {
     } = this.props
 
     // Define the main wrapper element.
-    const [bgColor, color] = getColors(colorScheme)
+    const [bgColor, color] = (
+      SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme
+    ).split(",")
     const bgRGB = hexToRgb(bgColor)
     this.shadow.appendChild(
       Element(`
@@ -271,7 +260,12 @@ export class BannerComponent extends Insertable(Dismissible(Base)) {
 export const Banner = ComponentCreator(
   "important-message-banner",
   BannerComponent,
-  attributeNameTypeDefaults,
+  [
+    propNameTypeDefaults,
+    dismissiblePropNameTypeDefaults,
+    insertablePropNameTypeDefaults,
+    remotelyConfigurablePropNameTypeDefaults,
+  ],
 )
 
 // Define a variable into which an external process can inject configuration
@@ -285,7 +279,7 @@ INJECTED_OPTIONS = (() => INJECTED_OPTIONS)()
 
 if (typeof INJECTED_OPTIONS === "object") {
   const defaultOptions = Object.fromEntries(
-    attributeNameTypeDefaults.map(([attr, , defVal]) => [attr, defVal]),
+    propNameTypeDefaults.map(([attr, , defVal]) => [attr, defVal]),
   )
   Banner(Object.assign(defaultOptions, INJECTED_OPTIONS))
 }
