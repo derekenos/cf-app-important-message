@@ -1,37 +1,15 @@
-import DismissibleComponent from "./DismissibleComponent.js"
+import Base, { ComponentCreator } from "./Base.js"
+import Dismissible from "./Dismissible.js"
 
 import {
+  BOOLEAN,
+  FLOAT,
+  HTML,
+  INTEGER,
+  STRING,
   Element,
-  getBoolAttr,
-  getFloatAttr,
-  getIntAttr,
-  getMaxZIndex,
-  getPixelScaleFactor,
-  getStrAttr,
   hexToRgb,
-  htmlAttrEncode,
-  htmlAttrDecode,
-  insertElementAtLocation,
 } from "./utils.js"
-
-const TAG_NAME = "important-message-modal"
-
-const DEFAULTS = {
-  BORDER_RADIUS: 16,
-  BUTTON_TEXT: "OK",
-  COLOR_SCHEME: "primary",
-  DISMISSAL_MINUTES: 0,
-  DISMISSIBLE: true,
-  FONT_SIZE: 16,
-  GRADIENT_LEVEL: 1,
-  HORIZONTAL_MARGIN: 0,
-  HORIZONTAL_PADDING: 0,
-  LOCATION: { selector: "body", method: "prepend" },
-  MAX_IMAGE_WIDTH: 20,
-  STEAL_FOCUS: true,
-  VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 0,
-}
 
 const SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085,#007bff,#ffffff",
@@ -51,8 +29,7 @@ function getColors(colorScheme) {
   return (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(",")
 }
 
-const STYLE = document.createElement("style")
-STYLE.textContent = `
+const styleFactory = vars => `
   .wrapper {
     position: fixed;
     left: 0;
@@ -61,6 +38,7 @@ STYLE.textContent = `
     bottom: 0;
     background-color: rgba(0, 0, 0, .6);
     cursor: pointer;
+    z-index: ${vars.MAX_Z_INDEX + 1};
   }
 
   .content {
@@ -78,23 +56,30 @@ STYLE.textContent = `
     text-align: right;
     padding: 1em;
     background-color: #fff;
+    margin: ${vars.verticalMargin}em ${vars.horizontalMargin}em;
+    font-size: ${vars.fontSize * vars.PX_SCALE_FACTOR}px;
+    border-radius: ${vars.borderRadius}px;
   }
 
   .message {
     text-align: left;
     display: block;
     cursor: text;
-    padding: 0;
+    padding: ${vars.verticalPadding}em ${vars.horizontalPadding}em;
+  }
+
+  .message img {
+    max-width: ${vars.maxImageWidth * vars.PX_SCALE_FACTOR}px;
   }
 
   button {
     display: inline;
     padding: .4em .75em;
     cursor: pointer;
-    font-size: 1em;
     border: none;
     border-radius: .25em;
     margin-top: 1.5em;
+    font-size: ${16 * vars.PX_SCALE_FACTOR}px;
   }
 
   p {
@@ -102,14 +87,30 @@ STYLE.textContent = `
   }
 `
 
-export class ModalComponent extends DismissibleComponent {
-  constructor() {
-    super({ contentAttrName: "message" })
-    this.eventListenerRemovers = []
+const attributeNameTypeDefaults = [
+  ["borderRadius", INTEGER, 16],
+  ["buttonText", STRING, "OK"],
+  ["colorScheme", STRING, "primary"],
+  ["dismissible", BOOLEAN, true],
+  ["fontSize", INTEGER, 16],
+  ["gradientLevel", FLOAT, 1.0],
+  ["horizontalMargin", FLOAT, 0],
+  ["horizontalPadding", FLOAT, 0],
+  ["id", STRING, ""],
+  ["maxImageWidth", INTEGER, 20],
+  ["message", HTML, "A default message"],
+  ["stealFocus", BOOLEAN, true],
+  ["verticalMargin", FLOAT, 0],
+  ["verticalPadding", FLOAT, 1],
+]
 
-    // Define the shadow DOM and attach the <style> element.
-    this.shadow = this.attachShadow({ mode: "open" })
-    this.shadow.appendChild(STYLE)
+export class ModalComponent extends Dismissible(Base) {
+  constructor() {
+    super({
+      contentAttrName: "message",
+      styleFactory,
+      attributeNameTypeDefaults,
+    })
 
     // Define the accessibility attributes.
     this.setAttribute("role", "dialog")
@@ -119,33 +120,6 @@ export class ModalComponent extends DismissibleComponent {
 
   connectedCallback() {
     super.connectedCallback()
-    // Get the configuration attributes.
-    // String-type
-    const getStr = (...args) => getStrAttr(this, ...args)
-    const id = getStr("id", "")
-    // Unescape the double-quotes in the message, e.g. HTML attr values.
-    const message = htmlAttrDecode(getStr("message"))
-    const colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME)
-    const buttonText = getStr("button-text", DEFAULTS.BUTTON_TEXT)
-
-    // Bool-type
-    const getBool = (...args) => getBoolAttr(this, ...args)
-    const dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE)
-    const stealFocus = getBool("steal-focus", DEFAULTS.STEAL_FOCUS)
-
-    // Int-type
-    const getInt = (...args) => getIntAttr(this, ...args)
-    let borderRadius = getInt("border-radius", DEFAULTS.BORDER_RADIUS)
-    let maxImageWidth = getInt("max-image-width", DEFAULTS.MAX_IMAGE_WIDTH)
-
-    // Float-type
-    const getFloat = (...args) => getFloatAttr(this, ...args)
-    let fontSize = getFloat("font-size", DEFAULTS.FONT_SIZE)
-    const xMargin = getFloat("horizontal-margin", DEFAULTS.HORIZONTAL_MARGIN)
-    const yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN)
-    const xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING)
-    const yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING)
-    const gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL)
 
     // If dismissal is active, remove the component.
     if (this.isDismissed()) {
@@ -153,16 +127,15 @@ export class ModalComponent extends DismissibleComponent {
       return
     }
 
-    // Get the pixel scale factor and scale the values expressed in px.
-    const pxScaleFactor = getPixelScaleFactor()
-    borderRadius *= pxScaleFactor
-    fontSize *= pxScaleFactor
-    maxImageWidth *= pxScaleFactor
-
-    // Set the element id if specified.
-    if (id) {
-      this.setAttribute("id", id)
-    }
+    // Get the configuration attributes.
+    const {
+      buttonText,
+      colorScheme,
+      dismissible,
+      gradientLevel,
+      message,
+      stealFocus,
+    } = this.props
 
     // Define the main wrapper element.
     const [bgColor, color, buttonBgColor, buttonColor] = getColors(colorScheme)
@@ -170,12 +143,9 @@ export class ModalComponent extends DismissibleComponent {
 
     this.shadow.appendChild(
       Element(`
-      <div class="wrapper" style="z-index: ${getMaxZIndex() + 1};">
+      <div class="wrapper">
         <div class="content"
-             style="margin: ${yMargin}em ${xMargin}em;
-                    font-size: ${fontSize}px;
-                    color: ${color};
-                    border-radius: ${borderRadius}px;
+             style="color: ${color};
                     background-image:
                       linear-gradient(
                         0deg,
@@ -184,23 +154,13 @@ export class ModalComponent extends DismissibleComponent {
         gradientLevel})
                       );"
         >
-          <div class="message"
-               style="padding: ${yPadding}em ${xPadding}em;">
+          <div class="message">
             ${message}
           </div>
         </div>
       </div>
     `),
     )
-
-    // Apply max-width to any included images.
-    this.shadow
-      .querySelector(".message")
-      .querySelectorAll("img")
-      .forEach(el => {
-        const style = el.getAttribute("style") || ""
-        el.setAttribute("style", `max-width: ${maxImageWidth}px; ${style}`)
-      })
 
     // Skip adding the button, event listeners, etc. if not dismissible.
     if (!dismissible) {
@@ -210,8 +170,7 @@ export class ModalComponent extends DismissibleComponent {
     // Define the dismiss button element.
     const contentEl = this.shadow.querySelector(".content")
     const buttonEl = Element(`
-      <button style="font-size: ${16 * pxScaleFactor}px;
-                     background-color: ${buttonBgColor};
+      <button style="background-color: ${buttonBgColor};
                      color: ${buttonColor};"
       >
         ${buttonText}
@@ -252,63 +211,11 @@ export class ModalComponent extends DismissibleComponent {
   }
 }
 
-export function Modal(options, location) {
-  /* Create and optionally insert a modal element via JS.
-   */
-  // Define helper to get option value if set but otherwise return a default.
-  const getOpt = (k, defVal) => (options[k] === undefined ? defVal : options[k])
-  // Define the element, escaping any double-quotes in the message text, which
-  // will occur for HTML messages that specify element attribute values.
-  const modalEl = Element(`
-     <${TAG_NAME}
-       border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
-       button-text="${getOpt("buttonText", DEFAULTS.BUTTON_TEXT)}"
-       color-scheme="${getOpt("colorScheme", DEFAULTS.COLOR_SCHEME)}"
-       dismissal-minutes="${getOpt(
-         "dismissalMinutes",
-         DEFAULTS.DISMISSAL_MINUTES,
-       )}"
-       dismissible="${getOpt("dismissible", DEFAULTS.DISMISSIBLE)}"
-       font-size="${getOpt("fontSize", DEFAULTS.FONT_SIZE)}"
-       gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
-       horizontal-margin="${getOpt(
-         "horizontalMargin",
-         DEFAULTS.HORIZONTAL_MARGIN,
-       )}"
-       horizontal-padding="${getOpt(
-         "horizontalPadding",
-         DEFAULTS.HORIZONTAL_PADDING,
-       )}"
-       max-image-width="${getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH)}"
-       message="${htmlAttrEncode(getOpt("message", ""))}"
-       steal-focus="${getOpt("stealFocus", DEFAULTS.STEAL_FOCUS)}"
-       vertical-margin="${getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN)}"
-       vertical-padding="${getOpt(
-         "verticalPadding",
-         DEFAULTS.VERTICAL_PADDING,
-       )}"
-     >
-     </${TAG_NAME}>
-   `)
-
-  if (!location) {
-    return modalEl
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      insertElementAtLocation(modalEl, location.selector, location.method)
-    })
-  } else {
-    insertElementAtLocation(modalEl, location.selector, location.method)
-  }
-}
-
-try {
-  customElements.define(TAG_NAME, ModalComponent)
-} catch (e) {
-  console.warn(e)
-}
+export const Modal = ComponentCreator(
+  "important-message-modal",
+  ModalComponent,
+  attributeNameTypeDefaults,
+)
 
 // Define a variable into which an external process can inject configuration
 // options. If we find at runtime that this has been replaced with an options
@@ -320,8 +227,8 @@ let INJECTED_OPTIONS = "<INJECT-OPTIONS-HERE>"
 INJECTED_OPTIONS = (() => INJECTED_OPTIONS)()
 
 if (typeof INJECTED_OPTIONS === "object") {
-  Modal(Object.assign(INJECTED_OPTIONS, DEFAULTS), {
-    selector: "body",
-    method: "prepend",
-  })
+  const defaultOptions = Object.fromEntries(
+    attributeNameTypeDefaults.map(([attr, , defVal]) => [attr, defVal]),
+  )
+  Modal(Object.assign(defaultOptions, INJECTED_OPTIONS))
 }

@@ -137,11 +137,11 @@ function updateElement() {
   if (displayMode === "banner") {
     componentOptions.colorScheme = `${bgColor},${color}`
     componentOptions.bannerUrl = bannerUrl
-    componentEl = Banner(componentOptions)
+    componentEl = Banner(componentOptions, false)
   } else {
     componentOptions.colorScheme = `${bgColor},${color},${buttonBgColor},${buttonColor}`
     componentOptions.stealFocus = INSTALL_ID !== "preview" || notDismissible
-    componentEl = Modal(componentOptions)
+    componentEl = Modal(componentOptions, false)
   }
 
   // Create the appElement.

@@ -2,12 +2,20 @@
 // Generic Utilities
 //
 
-// isNaN is a nightmare and apparently doesn't support Number.isNaN, so...
-const _isNaN = x => typeof x === "number" && `${x}` === "NaN"
+const identity = x => x
+
+// Type checkers.
+const isString = x => typeof x === "string"
+const isNull = x => x === null
+export const isUndefined = x => x === undefined
 
 // Simple parsing helpers.
 const parseDecInt = s => parseInt(s, 10)
 const parseHexInt = s => parseInt(s, 16)
+
+// Encode/decode a string for inclusion as / from an HTML attribute value.
+export const htmlAttrEncode = s => `${s}`.replace(/"/g, "@quot;")
+export const htmlAttrDecode = s => `${s}`.replace(/@quot;/g, '"')
 
 // Return a function that applies a specified parser and uses a specified
 // failure test function to determine whether to return the parsed value or a
@@ -18,18 +26,59 @@ const safeParser = (parserFn, failureTestFn) => (x, defVal) => {
 }
 
 // Type-specific variants.
-const safeParseInt = safeParser(x => parseInt(x, 10), _isNaN)
-const safeParseFloat = safeParser(x => parseFloat(x), _isNaN)
+const safeParseBool = safeParser(
+  s => (isString(s) ? s === "true" : null),
+  isNull,
+)
+const safeParseString = safeParser(s => (isString(s) ? s : null), isNull)
+const safeParseInt = safeParser(s => parseInt(s, 10), Number.isNaN)
+const safeParseFloat = safeParser(s => parseFloat(s), Number.isNaN)
+const safeParseHTML = (x, defVal) => htmlAttrDecode(safeParseString(x, defVal))
+
+//
+// String parsing and conversion helpers.
+//
+
+const UPPERCASE = /[A-Z]/
+const isUpper = UPPERCASE.test.bind(UPPERCASE)
+const toString = x => (isNull(x) || isUndefined(x) ? "" : `${x}`)
+
+export function camelToKebab(x) {
+  // Convert a camelCase string to kebab-case.
+  if (typeof x !== "string") {
+    throw new TypeError(`Expected a string but got: ${x}`)
+  }
+  return Array.from(x).reduce(
+    (acc, c, i) => acc + (isUpper(c) ? `${i ? "-" : ""}${c.toLowerCase()}` : c),
+    "",
+  )
+}
+
+export const STRING = "string"
+export const INTEGER = "integer"
+export const FLOAT = "float"
+export const BOOLEAN = "boolean"
+export const HTML = "html"
+
+export const STRING_TYPE_PARSER_MAP = {
+  [STRING]: safeParseString,
+  [INTEGER]: safeParseInt,
+  [FLOAT]: safeParseFloat,
+  [BOOLEAN]: safeParseBool,
+  [HTML]: safeParseHTML,
+}
+
+export const STRING_TYPE_ENCODER_MAP = {
+  [STRING]: identity,
+  [INTEGER]: toString,
+  [FLOAT]: toString,
+  [BOOLEAN]: toString,
+  [HTML]: x => `${htmlAttrEncode(toString(x))}`,
+}
 
 //
 // HTML / DOM Utilities
 //
-
-// Encode a string for inclusion as an HTML attribute value.
-export const htmlAttrEncode = s => `${s}`.replace(/"/g, "@quot;")
-
-// Decode an HTML attribute value into the original string value.
-export const htmlAttrDecode = s => `${s}`.replace(/@quot;/g, '"')
 
 // Return the specified element attribute, or a defaultValue if the attribute
 // is unspecified.

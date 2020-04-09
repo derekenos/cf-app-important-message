@@ -1,35 +1,16 @@
-import DismissibleComponent from "./DismissibleComponent.js"
+import Base, { ComponentCreator } from "./Base.js"
+import Dismissible from "./Dismissible.js"
+import Insertable from "./Insertable.js"
 
 import {
+  BOOLEAN,
+  FLOAT,
+  HTML,
+  INTEGER,
+  STRING,
   Element,
-  getBoolAttr,
-  getFloatAttr,
-  getIntAttr,
-  getMaxZIndex,
-  getPixelScaleFactor,
-  getStrAttr,
   hexToRgb,
-  htmlAttrEncode,
-  htmlAttrDecode,
-  insertElementAtLocation,
 } from "./utils.js"
-
-const TAG_NAME = "important-message-banner"
-
-const DEFAULTS = {
-  BORDER_RADIUS: 16,
-  COLOR_SCHEME: "primary",
-  DISMISSAL_MINUTES: 0,
-  DISMISSIBLE: true,
-  FONT_SIZE: 16,
-  GRADIENT_LEVEL: 1,
-  HORIZONTAL_MARGIN: 0,
-  HORIZONTAL_PADDING: 0,
-  LOCATION: { selector: "body", method: "prepend" },
-  MAX_IMAGE_WIDTH: 20,
-  VERTICAL_MARGIN: 0,
-  VERTICAL_PADDING: 1,
-}
 
 const SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085",
@@ -53,8 +34,7 @@ function getColors(colorScheme) {
 // CSS
 //
 
-const STYLE = document.createElement("style")
-STYLE.textContent = `
+const styleFactory = vars => `
   .wrapper {
     display: flex;
     font-size: 16px;
@@ -62,6 +42,10 @@ STYLE.textContent = `
     text-align: left;
     color: #000;
     background-color: #fff;
+    margin: ${vars.verticalMargin}em ${vars.horizontalMargin}em;
+    font-size: ${vars.fontSize * vars.PX_SCALE_FACTOR}px;
+    border-radius: ${vars.borderRadius * vars.PX_SCALE_FACTOR}px;
+    z-index: ${vars.MAX_Z_INDEX + 1};
   }
 
   .wrapper.dismissible {
@@ -71,6 +55,8 @@ STYLE.textContent = `
     right: 0;
     cursor: pointer;
     box-shadow: 0 0 1em .2em #444;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
   .wrapper.dismissible.show {
@@ -87,9 +73,13 @@ STYLE.textContent = `
   }
 
   .message {
-    padding: .25em 1em;
     display: inline;
     flex-grow: 1;
+    padding: ${vars.verticalPadding + 0.25}em ${vars.horizontalPadding + 1}em;"
+  }
+
+  .message img {
+    max-width: ${vars.maxImageWidth * vars.PX_SCALE_FACTOR}px;
   }
 
   .button-wrapper {
@@ -101,7 +91,8 @@ STYLE.textContent = `
   .button-wrapper.highlight {
     background-color: rgba(255, 255, 255, .25);
     box-shadow: -1px 0px 8px #888;
-    border-radius: 16px 0 16px 16px;
+    border-radius: ${vars.borderRadius * vars.PX_SCALE_FACTOR}px;
+    border-top-right-radius: 0;
   }
 
   .button-wrapper:hover {
@@ -114,7 +105,7 @@ STYLE.textContent = `
     background-color: transparent;
     border: none;
     font-family: monospace;
-    font-size: 16px;
+    font-size: ${16 * vars.PX_SCALE_FACTOR}px;
     font-weight: inherit;
     position: absolute;
     top: 50%;
@@ -142,14 +133,32 @@ STYLE.textContent = `
   }
 `
 
-export class BannerComponent extends DismissibleComponent {
-  constructor() {
-    super({ contentAttrName: "message" })
-    this.eventListenerRemovers = []
+const attributeNameTypeDefaults = [
+  ["bannerUrl", STRING, ""],
+  ["borderRadius", INTEGER, 16],
+  ["colorScheme", STRING, "primary"],
+  ["dismissible", BOOLEAN, true],
+  ["fontSize", INTEGER, 16],
+  ["gradientLevel", FLOAT, 1.0],
+  ["horizontalMargin", FLOAT, 0],
+  ["horizontalPadding", FLOAT, 0],
+  ["id", STRING, ""],
+  ["maxImageWidth", INTEGER, 20],
+  ["message", HTML, "A default message"],
+  ["verticalMargin", FLOAT, 0],
+  ["verticalPadding", FLOAT, 1],
+  ["location-selector", STRING, undefined],
+  ["location-method", STRING, undefined],
+]
 
-    // Define the shadow DOM and attach the <style> element.
-    this.shadow = this.attachShadow({ mode: "open" })
-    this.shadow.appendChild(STYLE)
+export class BannerComponent extends Insertable(Dismissible(Base)) {
+  constructor() {
+    super({
+      tagName: "important-message-banner",
+      contentAttrName: "message",
+      styleFactory,
+      attributeNameTypeDefaults,
+    })
 
     // Define the accessibility attributes.
     this.setAttribute("role", "banner")
@@ -158,32 +167,6 @@ export class BannerComponent extends DismissibleComponent {
 
   connectedCallback() {
     super.connectedCallback()
-    // Get the configuration attributes.
-    // String-type
-    const getStr = (...args) => getStrAttr(this, ...args)
-    const id = getStr("id", "")
-    // Unescape the double-quotes in the message, e.g. HTML attr values.
-    const message = htmlAttrDecode(getStr("message", ""))
-    const colorScheme = getStr("color-scheme", DEFAULTS.COLOR_SCHEME)
-    const bannerUrl = getStr("banner-url", "")
-
-    // Bool-type
-    const getBool = (...args) => getBoolAttr(this, ...args)
-    const dismissible = getBool("dismissible", DEFAULTS.DISMISSIBLE)
-
-    // Int-type
-    const getInt = (...args) => getIntAttr(this, ...args)
-    let borderRadius = getInt("border-radius", DEFAULTS.BORDER_RADIUS)
-    let maxImageWidth = getInt("max-image-width", DEFAULTS.MAX_IMAGE_WIDTH)
-
-    // Float-type
-    const getFloat = (...args) => getFloatAttr(this, ...args)
-    let fontSize = getFloat("font-size", DEFAULTS.FONT_SIZE)
-    const xMargin = getFloat("horizontal-margin", DEFAULTS.HORIZONTAL_MARGIN)
-    const yMargin = getFloat("vertical-margin", DEFAULTS.VERTICAL_MARGIN)
-    const xPadding = getFloat("horizontal-padding", DEFAULTS.HORIZONTAL_PADDING)
-    const yPadding = getFloat("vertical-padding", DEFAULTS.VERTICAL_PADDING)
-    const gradientLevel = getFloat("gradient-level", DEFAULTS.GRADIENT_LEVEL)
 
     // If dismissal is active, remove the component.
     if (this.isDismissed()) {
@@ -191,16 +174,14 @@ export class BannerComponent extends DismissibleComponent {
       return
     }
 
-    // Get the pixel scale factor and scale the values expressed in px.
-    const pxScaleFactor = getPixelScaleFactor()
-    borderRadius *= pxScaleFactor
-    fontSize *= pxScaleFactor
-    maxImageWidth *= pxScaleFactor
-
-    // Set the element id if specified.
-    if (id) {
-      this.setAttribute("id", id)
-    }
+    // Get the configuration attributes.
+    const {
+      bannerUrl,
+      colorScheme,
+      dismissible,
+      gradientLevel,
+      message,
+    } = this.props
 
     // Define the main wrapper element.
     const [bgColor, color] = getColors(colorScheme)
@@ -209,28 +190,29 @@ export class BannerComponent extends DismissibleComponent {
       Element(`
       ${bannerUrl ? `<a href="${bannerUrl}">` : ""}
       <div class="wrapper show ${dismissible ? "dismissible" : ""}"
-           style="margin: ${yMargin}em ${xMargin}em;
-                  font-size: ${fontSize}px;
-                  color: ${color};
-                  border-radius:
-                    ${dismissible ? "0" : borderRadius}px
-                    ${dismissible ? "0" : borderRadius}px
-                    ${borderRadius}px
-                    ${borderRadius}px;
+           style="color: ${color};
                   background-image:
                     linear-gradient(
                       0deg,
                       rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, 1),
                       rgba(${bgRGB.r}, ${bgRGB.g}, ${bgRGB.b}, ${1 -
         gradientLevel})
-                    );
-                  z-index: ${getMaxZIndex() + 1};"
+                    );"
       >
-        <div class="message"
-             style="padding: ${yPadding + 0.25}em ${xPadding + 1}em;"
-        >
+        <div class="message">
           ${message}
         </div>
+
+        ${
+          dismissible
+            ? `
+        <div class="button-wrapper ${bannerUrl ? "highlight" : ""}">
+          <button>x</button>
+        </div>
+        `
+            : ""
+        }
+
       </div>
       ${bannerUrl ? "</a>" : ""}
     `),
@@ -238,27 +220,13 @@ export class BannerComponent extends DismissibleComponent {
 
     const wrapperEl = this.shadow.querySelector("div.wrapper")
 
-    // Apply max-width to any included images.
-    wrapperEl.querySelectorAll("img").forEach(el => {
-      const style = el.getAttribute("style") || ""
-      el.setAttribute("style", `max-width: ${maxImageWidth}px; ${style}`)
-    })
-
     // Skip adding the button, event listeners, etc. if not dismissible.
     if (!dismissible) {
       return
     }
 
-    // Define the dismiss button element.
-    const buttonWrapperEl = Element(`
-      <div class="button-wrapper ${bannerUrl ? "highlight" : ""}"
-           style="border-radius: ${borderRadius}px 0 ${borderRadius}px ${borderRadius}px">
-        <button style="font-size: ${16 * pxScaleFactor}px;">x</button>
-      </div>
-    `)
-    wrapperEl.appendChild(buttonWrapperEl)
-
     // Add event listeners.
+    const buttonWrapperEl = wrapperEl.querySelector(".button-wrapper")
 
     // If bannerUrl is not defined, bold the X on any mouse hover.
     if (!bannerUrl) {
@@ -300,63 +268,11 @@ export class BannerComponent extends DismissibleComponent {
   }
 }
 
-export function Banner(options, location) {
-  /* Create and optionally insert a banner element via JS.
-   */
-  // Define helper to get option value if set but otherwise return a default.
-  const getOpt = (k, defVal) => (options[k] === undefined ? defVal : options[k])
-  // Define the element, escaping any double-quotes in the message text, which
-  // will occur for HTML messages that specify element attribute values.
-  const bannerEl = Element(`
-     <${TAG_NAME}
-       banner-url="${getOpt("bannerUrl", "")}"
-       border-radius="${getOpt("borderRadius", DEFAULTS.BORDER_RADIUS)}"
-       color-scheme="${getOpt("colorScheme", DEFAULTS.COLOR_SCHEME)}"
-       dismissal-minutes="${getOpt(
-         "dismissalMinutes",
-         DEFAULTS.DISMISSAL_MINUTES,
-       )}"
-       dismissible="${getOpt("dismissible", DEFAULTS.DISMISSIBLE)}"
-       font-size="${getOpt("fontSize", DEFAULTS.FONT_SIZE)}"
-       gradient-level="${getOpt("gradientLevel", DEFAULTS.GRADIENT_LEVEL)}"
-       horizontal-margin="${getOpt(
-         "horizontalMargin",
-         DEFAULTS.HORIZONTAL_MARGIN,
-       )}"
-       horizontal-padding="${getOpt(
-         "horizontalPadding",
-         DEFAULTS.HORIZONTAL_PADDING,
-       )}"
-       id="${getOpt("id", "")}"
-       max-image-width="${getOpt("maxImageWidth", DEFAULTS.MAX_IMGAGE_WIDTH)}"
-       message="${htmlAttrEncode(getOpt("message", ""))}"
-       vertical-margin="${getOpt("verticalMargin", DEFAULTS.VERTICAL_MARGIN)}"
-       vertical-padding="${getOpt(
-         "verticalPadding",
-         DEFAULTS.VERTICAL_PADDING,
-       )}"
-     >
-     </${TAG_NAME}>
-   `)
-
-  if (!location) {
-    return bannerEl
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      insertElementAtLocation(bannerEl, location.selector, location.method)
-    })
-  } else {
-    insertElementAtLocation(bannerEl, location.selector, location.method)
-  }
-}
-
-try {
-  customElements.define(TAG_NAME, BannerComponent)
-} catch (e) {
-  console.warn(e)
-}
+export const Banner = ComponentCreator(
+  "important-message-banner",
+  BannerComponent,
+  attributeNameTypeDefaults,
+)
 
 // Define a variable into which an external process can inject configuration
 // options. If we find at runtime that this has been replaced with an options
@@ -368,8 +284,8 @@ let INJECTED_OPTIONS = "<INJECT-OPTIONS-HERE>"
 INJECTED_OPTIONS = (() => INJECTED_OPTIONS)()
 
 if (typeof INJECTED_OPTIONS === "object") {
-  Banner(Object.assign(INJECTED_OPTIONS, DEFAULTS), {
-    selector: "body",
-    method: "prepend",
-  })
+  const defaultOptions = Object.fromEntries(
+    attributeNameTypeDefaults.map(([attr, , defVal]) => [attr, defVal]),
+  )
+  Banner(Object.assign(defaultOptions, INJECTED_OPTIONS))
 }
