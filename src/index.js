@@ -1,5 +1,3 @@
-import css from "./styles.css"
-
 import { Banner } from "./components/Banner"
 import { Modal } from "./components/Modal"
 
