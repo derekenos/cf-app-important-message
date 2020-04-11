@@ -55,8 +55,8 @@
           "modal"
         ],
         "enumNames": {
-          "banner": "Display as a custom horizontal banner",
-          "modal": "Display as a custom modal that overlays the entire screen"
+          "banner": "Display as a horizontal banner",
+          "modal": "Display as a modal that overlays the entire screen"
         },
         "default": "banner"
       },
@@ -82,7 +82,11 @@
           "customRich": "Custom Rich Text",
           "customHTML": "Custom HTML"
         },
-        "default": "minorServiceInterruption"
+        "default": "minorServiceInterruption",
+        "products": {
+          "customRich": ["full"],
+          "customHTML": ["full"]
+        }
       },
 
       "customPlainMessage": {
