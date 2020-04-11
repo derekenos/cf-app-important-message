@@ -99,9 +99,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Banner", function() { return Banner; });
 /* harmony import */ var _Base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Base.js */ "./src/components/Base.js");
 /* harmony import */ var _Dismissible_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dismissible.js */ "./src/components/Dismissible.js");
-/* harmony import */ var _Insertable_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Insertable.js */ "./src/components/Insertable.js");
-/* harmony import */ var _RemotelyConfigurable_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./RemotelyConfigurable.js */ "./src/components/RemotelyConfigurable.js");
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
@@ -143,8 +141,6 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-
-
 var SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085",
   secondary: "#e2e3e5,#383d41",
@@ -157,12 +153,12 @@ var SCHEME_NAME_COLORS_MAP = {
 };
 
 var styleFactory = function styleFactory(vars) {
-  return "\n  .wrapper {\n    display: flex;\n    font-size: ".concat(vars.fontSize * vars.PX_SCALE_FACTOR, "px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n    margin: ").concat(vars.verticalMargin * vars.PX_SCALE_FACTOR, "px\n            ").concat(vars.horizontalMargin * vars.PX_SCALE_FACTOR, "px;\n    border-radius: ").concat(vars.borderRadius * vars.PX_SCALE_FACTOR, "px;\n    z-index: ").concat(vars.MAX_Z_INDEX + 1, ";\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 16px 4px #444;\n    border-top-left-radius: 0;\n    border-top-right-radius: 0;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    display: inline;\n    flex-grow: 1;\n    padding: ").concat((vars.verticalPadding + 4) * vars.PX_SCALE_FACTOR, "px\n             ").concat((vars.horizontalPadding + 16) * vars.PX_SCALE_FACTOR, "px;\"\n  }\n\n  .message img {\n    max-width: ").concat(vars.maxImageWidth * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .button-wrapper {\n    padding: ").concat(4 * vars.PX_SCALE_FACTOR, "px ").concat(32 * vars.PX_SCALE_FACTOR, "px;\n    font-weight: normal;\n    position: relative;\n  }\n\n  .button-wrapper.highlight {\n    background-color: rgba(255, 255, 255, .25);\n    box-shadow: -1px 0px 8px #888;\n    border-radius: ").concat(vars.borderRadius, "px;\n    border-top-right-radius: 0;\n  }\n\n  .button-wrapper:hover {\n    font-weight: bold;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: monospace;\n    font-size: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n    font-weight: inherit;\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    cursor: pointer;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  a {\n    text-decoration: underline;\n  }\n\n  p {\n    margin: 0;\n  }\n");
+  return "\n  .wrapper {\n    display: flex;\n    font-size: ".concat(vars.fontSize * vars.PX_SCALE_FACTOR, "px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n    margin: ").concat(vars.verticalMargin * vars.PX_SCALE_FACTOR, "px\n            ").concat(vars.horizontalMargin * vars.PX_SCALE_FACTOR, "px;\n    border-radius: ").concat(vars.borderRadius * vars.PX_SCALE_FACTOR, "px;\n    z-index: ").concat(vars.MAX_Z_INDEX + 1, ";\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 16px 4px #444;\n    border-top-left-radius: 0;\n    border-top-right-radius: 0;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    display: inline;\n    flex-grow: 1;\n    padding: ").concat(vars.verticalPadding * vars.PX_SCALE_FACTOR, "px\n             ").concat(vars.horizontalPadding * vars.PX_SCALE_FACTOR, "px;\"\n  }\n\n  .wrapper.dismissible .message {\n    padding: ").concat((vars.verticalPadding + 4) * vars.PX_SCALE_FACTOR, "px\n             ").concat((vars.horizontalPadding + 16) * vars.PX_SCALE_FACTOR, "px;\"\n  }\n\n  .message img {\n    max-width: ").concat(vars.maxImageWidth * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .button-wrapper {\n    padding: ").concat(4 * vars.PX_SCALE_FACTOR, "px ").concat(32 * vars.PX_SCALE_FACTOR, "px;\n    font-weight: normal;\n    position: relative;\n  }\n\n  .button-wrapper.highlight {\n    background-color: rgba(255, 255, 255, .25);\n    box-shadow: -1px 0px 8px #888;\n    border-radius: ").concat(vars.borderRadius, "px;\n    border-top-right-radius: 0;\n  }\n\n  .button-wrapper:hover {\n    font-weight: bold;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: monospace;\n    font-size: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n    font-weight: inherit;\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    cursor: pointer;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  a {\n    text-decoration: underline;\n  }\n\n  p {\n    margin: 0;\n  }\n");
 };
 
-var propNameTypeDefaults = [["bannerUrl", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].STRING, ""], ["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].INTEGER, 16], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].STRING, "primary"], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].FLOAT, 1.0], ["horizontalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].FLOAT, 0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].HTML, "A default message"], ["verticalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].FLOAT, 0], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_4__["TYPES"].FLOAT, 16]];
-var BannerComponent = /*#__PURE__*/function (_Insertable) {
-  _inherits(BannerComponent, _Insertable);
+var propNameTypeDefaults = [["bannerUrl", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "primary"], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1.0], ["horizontalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].HTML, "A default message"], ["verticalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 16]];
+var BannerComponent = /*#__PURE__*/function (_Dismissible) {
+  _inherits(BannerComponent, _Dismissible);
 
   var _super = _createSuper(BannerComponent);
 
@@ -208,8 +204,8 @@ var BannerComponent = /*#__PURE__*/function (_Insertable) {
           bgColor = _split2[0],
           color = _split2[1];
 
-      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_4__["hexToRgb"])(bgColor);
-      this.shadow.appendChild(Object(_utils_js__WEBPACK_IMPORTED_MODULE_4__["Element"])("\n      ".concat(bannerUrl ? "<a href=\"".concat(bannerUrl, "\">") : "", "\n      <div class=\"wrapper show ").concat(dismissible ? "dismissible" : "", "\"\n           style=\"color: ").concat(color, ";\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\"\n      >\n        <div class=\"message\">\n          ").concat(message, "\n        </div>\n\n        ").concat(dismissible ? "\n        <div class=\"button-wrapper ".concat(bannerUrl ? "highlight" : "", "\">\n          <button>x</button>\n        </div>\n        ") : "", "\n\n      </div>\n      ").concat(bannerUrl ? "</a>" : "", "\n    ")));
+      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_2__["hexToRgb"])(bgColor);
+      this.shadow.appendChild(Object(_utils_js__WEBPACK_IMPORTED_MODULE_2__["Element"])("\n      ".concat(bannerUrl ? "<a href=\"".concat(bannerUrl, "\">") : "", "\n      <div class=\"wrapper show ").concat(dismissible ? "dismissible" : "", "\"\n           style=\"color: ").concat(color, ";\n                  background-image:\n                    linear-gradient(\n                      0deg,\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                      rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                    );\"\n      >\n        <div class=\"message\">\n          ").concat(message, "\n        </div>\n\n        ").concat(dismissible ? "\n        <div class=\"button-wrapper ".concat(bannerUrl ? "highlight" : "", "\">\n          <button>x</button>\n        </div>\n        ") : "", "\n\n      </div>\n      ").concat(bannerUrl ? "</a>" : "", "\n    ")));
       var wrapperEl = this.shadow.querySelector("div.wrapper"); // Skip adding the button, event listeners, etc. if not dismissible.
 
       if (!dismissible) {
@@ -264,8 +260,8 @@ var BannerComponent = /*#__PURE__*/function (_Insertable) {
   }]);
 
   return BannerComponent;
-}(Object(_Insertable_js__WEBPACK_IMPORTED_MODULE_2__["default"])(Object(_Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["default"])(Object(_RemotelyConfigurable_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Base_js__WEBPACK_IMPORTED_MODULE_0__["default"]))));
-var Banner = Object(_Base_js__WEBPACK_IMPORTED_MODULE_0__["ComponentCreator"])("important-message-banner", BannerComponent, [propNameTypeDefaults, _Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["propNameTypeDefaults"], _Insertable_js__WEBPACK_IMPORTED_MODULE_2__["propNameTypeDefaults"], _RemotelyConfigurable_js__WEBPACK_IMPORTED_MODULE_3__["propNameTypeDefaults"]]); // Define a variable into which an external process can inject configuration
+}(Object(_Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["default"])(_Base_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
+var Banner = Object(_Base_js__WEBPACK_IMPORTED_MODULE_0__["ComponentCreator"])("important-message-banner", BannerComponent, [propNameTypeDefaults, _Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["propNameTypeDefaults"]]); // Define a variable into which an external process can inject configuration
 // options. If we find at runtime that this has been replaced with an options
 // object,use it to extend DEFAULTS, and immediately instantiate a banner.
 // Define the injection placeholder and do a runtime mutation to confuse the
@@ -714,137 +710,6 @@ var Dismissible = function Dismissible(C) {
 
 /***/ }),
 
-/***/ "./src/components/Insertable.js":
-/*!**************************************!*\
-  !*** ./src/components/Insertable.js ***!
-  \**************************************/
-/*! exports provided: propNameTypeDefaults, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "propNameTypeDefaults", function() { return propNameTypeDefaults; });
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-var FINAL_LOCATION_ATTR_NAME = "location-final";
-var propNameTypeDefaults = [["locationSelector", _utils_js__WEBPACK_IMPORTED_MODULE_0__["TYPES"].STRING, null], ["locationMethod", _utils_js__WEBPACK_IMPORTED_MODULE_0__["TYPES"].STRING, null]];
-
-function insertElementAtLocation(element, selector, method) {
-  // Relocate an element to the location specified by selector and method.
-  var target = document.querySelector(selector);
-
-  if (target === null) {
-    throw new Error("No location found for selector: ".concat(selector));
-  }
-
-  var children = target.childNodes;
-  var hasChildren = children.length > 0;
-  var nextSibling = target.nextSibling;
-
-  switch (method) {
-    case "before":
-      target.parentNode.insertBefore(element, target);
-      break;
-
-    case "after":
-      if (nextSibling === null) {
-        target.parentNode.appendChild(element);
-      } else {
-        target.parentNode.insertBefore(element, nextSibling);
-      }
-
-      break;
-
-    case "prepend":
-      target.insertBefore(element, hasChildren ? children[0] : null);
-      break;
-
-    case "append":
-      target.appendChild(element);
-      break;
-
-    case "replace":
-      target.replaceWith(element);
-      break;
-
-    default:
-      throw new Error("method \"".concat(method, "\" not implemented"));
-  }
-}
-
-var Insertable = function Insertable(C) {
-  return /*#__PURE__*/function (_C) {
-    _inherits(_class, _C);
-
-    var _super = _createSuper(_class);
-
-    function _class(propNameTypeDefaultsArr, options) {
-      _classCallCheck(this, _class);
-
-      // Add this class's props to the array.
-      propNameTypeDefaultsArr.push(propNameTypeDefaults);
-      return _super.call(this, propNameTypeDefaultsArr, options);
-    }
-
-    _createClass(_class, [{
-      key: "connectedCallback",
-      value: function connectedCallback() {
-        _get(_getPrototypeOf(_class.prototype), "connectedCallback", this).call(this); // Abort if element is already in its final location.
-
-
-        if (this.hasAttribute(FINAL_LOCATION_ATTR_NAME)) {
-          return;
-        }
-
-        var _this$props = this.props,
-            locationSelector = _this$props.locationSelector,
-            locationMethod = _this$props.locationMethod;
-
-        if (locationSelector && locationMethod) {
-          var newNode = this.cloneNode(true);
-          newNode.setAttribute(FINAL_LOCATION_ATTR_NAME, "");
-          this.remove();
-          insertElementAtLocation(newNode, locationSelector, locationMethod);
-        } else if (!Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["isNull"])(locationSelector) && !Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["isNull"])(locationMethod)) {
-          throw new Error("Unexpected selector (".concat(locationSelector, ") or\n        method (").concat(locationMethod, ") value"));
-        }
-      }
-    }]);
-
-    return _class;
-  }(C);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (Insertable);
-
-/***/ }),
-
 /***/ "./src/components/Modal.js":
 /*!*********************************!*\
   !*** ./src/components/Modal.js ***!
@@ -858,8 +723,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modal", function() { return Modal; });
 /* harmony import */ var _Base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Base.js */ "./src/components/Base.js");
 /* harmony import */ var _Dismissible_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dismissible.js */ "./src/components/Dismissible.js");
-/* harmony import */ var _RemotelyConfigurable_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./RemotelyConfigurable.js */ "./src/components/RemotelyConfigurable.js");
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
@@ -901,7 +765,6 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-
 var SCHEME_NAME_COLORS_MAP = {
   primary: "#cce5ff,#004085,#007bff,#ffffff",
   secondary: "#e2e3e5,#383d41,#6c757d,#ffffff",
@@ -914,10 +777,10 @@ var SCHEME_NAME_COLORS_MAP = {
 };
 
 var styleFactory = function styleFactory(vars) {
-  return "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n    z-index: ".concat(vars.MAX_Z_INDEX + 1, ";\n  }\n\n  .content {\n    display: inline-block;\n    width: fit-content;\n    max-width: min(85%, 700px);\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n    background-color: #fff;\n    margin: ").concat(vars.verticalMargin * vars.PX_SCALE_FACTOR, "px\n            ").concat(vars.horizontalMargin * vars.PX_SCALE_FACTOR, "px;\n    font-size: ").concat(vars.fontSize * vars.PX_SCALE_FACTOR, "px;\n    border-radius: ").concat(vars.borderRadius, "px;\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: ").concat(vars.verticalPadding * vars.PX_SCALE_FACTOR, "px\n             ").concat(vars.horizontalPadding * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .message img {\n    max-width: ").concat(vars.maxImageWidth * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  button {\n    display: inline;\n    padding: ").concat(8 * vars.PX_SCALE_FACTOR, "px ").concat(12 * vars.PX_SCALE_FACTOR, "px;\n    cursor: pointer;\n    border: none;\n    border-radius: 4px;\n    margin-top: ").concat(24 * vars.PX_SCALE_FACTOR, "px;\n    font-size: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  p {\n    margin: 0;\n  }\n");
+  return "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n    z-index: ".concat(vars.MAX_Z_INDEX + 1, ";\n  }\n\n  .content {\n    display: inline-block;\n    width: fit-content;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n    background-color: #fff;\n    margin: ").concat(vars.verticalMargin * vars.PX_SCALE_FACTOR, "px\n            ").concat(vars.horizontalMargin * vars.PX_SCALE_FACTOR, "px;\n    font-size: ").concat(vars.fontSize * vars.PX_SCALE_FACTOR, "px;\n    border-radius: ").concat(vars.borderRadius, "px;\n  }\n\n  @media screen and (min-width: 800px) {\n    .content {\n      max-width: 680px;\n    }\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: ").concat(vars.verticalPadding * vars.PX_SCALE_FACTOR, "px\n             ").concat(vars.horizontalPadding * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .message img {\n    max-width: ").concat(vars.maxImageWidth * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  button {\n    display: inline;\n    padding: ").concat(8 * vars.PX_SCALE_FACTOR, "px ").concat(12 * vars.PX_SCALE_FACTOR, "px;\n    cursor: pointer;\n    border: none;\n    border-radius: 4px;\n    margin-top: ").concat(24 * vars.PX_SCALE_FACTOR, "px;\n    font-size: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  p {\n    margin: 0;\n  }\n");
 };
 
-var propNameTypeDefaults = [["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].INTEGER, 16], ["buttonText", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].STRING, "OK"], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].STRING, "primary"], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].FLOAT, 1.0], ["horizontalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].FLOAT, 0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].HTML, "A default message"], ["stealFocus", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].BOOLEAN, true], ["verticalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].FLOAT, 0], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_3__["TYPES"].FLOAT, 1]];
+var propNameTypeDefaults = [["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["buttonText", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "OK"], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "primary"], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1.0], ["horizontalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].HTML, "A default message"], ["stealFocus", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["verticalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1]];
 var ModalComponent = /*#__PURE__*/function (_Dismissible) {
   _inherits(ModalComponent, _Dismissible);
 
@@ -970,8 +833,8 @@ var ModalComponent = /*#__PURE__*/function (_Dismissible) {
           buttonBgColor = _split2[2],
           buttonColor = _split2[3];
 
-      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["hexToRgb"])(bgColor);
-      this.shadow.appendChild(Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["Element"])("\n      <div class=\"wrapper\">\n        <div class=\"content\"\n             style=\"color: ".concat(color, ";\n                    background-image:\n                      linear-gradient(\n                        0deg,\n                        rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                        rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                      );\"\n        >\n          <div class=\"message\">\n            ").concat(message, "\n          </div>\n        </div>\n      </div>\n    "))); // Skip adding the button, event listeners, etc. if not dismissible.
+      var bgRGB = Object(_utils_js__WEBPACK_IMPORTED_MODULE_2__["hexToRgb"])(bgColor);
+      this.shadow.appendChild(Object(_utils_js__WEBPACK_IMPORTED_MODULE_2__["Element"])("\n      <div class=\"wrapper\">\n        <div class=\"content\"\n             style=\"color: ".concat(color, ";\n                    background-image:\n                      linear-gradient(\n                        0deg,\n                        rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", 1),\n                        rgba(").concat(bgRGB.r, ", ").concat(bgRGB.g, ", ").concat(bgRGB.b, ", ").concat(1 - gradientLevel, ")\n                      );\"\n        >\n          <div class=\"message\">\n            ").concat(message, "\n          </div>\n        </div>\n      </div>\n    "))); // Skip adding the button, event listeners, etc. if not dismissible.
 
       if (!dismissible) {
         return;
@@ -979,7 +842,7 @@ var ModalComponent = /*#__PURE__*/function (_Dismissible) {
 
 
       var contentEl = this.shadow.querySelector(".content");
-      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_3__["Element"])("\n      <button style=\"background-color: ".concat(buttonBgColor, ";\n                     color: ").concat(buttonColor, ";\"\n      >\n        ").concat(buttonText, "\n      </button>\n    "));
+      var buttonEl = Object(_utils_js__WEBPACK_IMPORTED_MODULE_2__["Element"])("\n      <button style=\"background-color: ".concat(buttonBgColor, ";\n                     color: ").concat(buttonColor, ";\"\n      >\n        ").concat(buttonText, "\n      </button>\n    "));
       contentEl.appendChild(buttonEl); // Add event listeners.
       // Dismiss the modal on wrapper or button click.
       // It seems as though it's complicated to determine the original event
@@ -1022,8 +885,8 @@ var ModalComponent = /*#__PURE__*/function (_Dismissible) {
   }]);
 
   return ModalComponent;
-}(Object(_Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["default"])(Object(_RemotelyConfigurable_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Base_js__WEBPACK_IMPORTED_MODULE_0__["default"])));
-var Modal = Object(_Base_js__WEBPACK_IMPORTED_MODULE_0__["ComponentCreator"])("important-message-modal", ModalComponent, [propNameTypeDefaults, _Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["propNameTypeDefaults"], _RemotelyConfigurable_js__WEBPACK_IMPORTED_MODULE_2__["propNameTypeDefaults"]]); // Define a variable into which an external process can inject configuration
+}(Object(_Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["default"])(_Base_js__WEBPACK_IMPORTED_MODULE_0__["default"]));
+var Modal = Object(_Base_js__WEBPACK_IMPORTED_MODULE_0__["ComponentCreator"])("important-message-modal", ModalComponent, [propNameTypeDefaults, _Dismissible_js__WEBPACK_IMPORTED_MODULE_1__["propNameTypeDefaults"]]); // Define a variable into which an external process can inject configuration
 // options. If we find at runtime that this has been replaced with an options
 // object,use it to extend DEFAULTS, and immediately instantiate a modal.
 // Define the injection placeholder and do a runtime mutation to confuse the
@@ -1048,92 +911,11 @@ if (_typeof(INJECTED_OPTIONS) === "object") {
 
 /***/ }),
 
-/***/ "./src/components/RemotelyConfigurable.js":
-/*!************************************************!*\
-  !*** ./src/components/RemotelyConfigurable.js ***!
-  \************************************************/
-/*! exports provided: propNameTypeDefaults, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "propNameTypeDefaults", function() { return propNameTypeDefaults; });
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/components/utils.js");
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-var propNameTypeDefaults = [["remoteConfigurationUrl", _utils_js__WEBPACK_IMPORTED_MODULE_0__["TYPES"].URL, null]];
-
-var RemotelyConfigurable = function RemotelyConfigurable(C) {
-  return /*#__PURE__*/function (_C) {
-    _inherits(_class, _C);
-
-    var _super = _createSuper(_class);
-
-    function _class(propNameTypeDefaultsArr, options) {
-      _classCallCheck(this, _class);
-
-      // Add this class's props to the array.
-      propNameTypeDefaultsArr.push(propNameTypeDefaults);
-      return _super.call(this, propNameTypeDefaultsArr, options);
-    }
-
-    _createClass(_class, [{
-      key: "connectedCallback",
-      value: function connectedCallback() {
-        _get(_getPrototypeOf(_class.prototype), "connectedCallback", this).call(this);
-
-        var remoteConfigurationUrl = this.props.remoteConfigurationUrl;
-
-        if (remoteConfigurationUrl) {
-          fetch(remoteConfigurationUrl, {
-            mode: "cors"
-          }).then(function (res) {
-            return res.json().then(function (props) {
-              console.log(props);
-            });
-          });
-        }
-      }
-    }]);
-
-    return _class;
-  }(C);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (RemotelyConfigurable);
-
-/***/ }),
-
 /***/ "./src/components/utils.js":
 /*!*********************************!*\
   !*** ./src/components/utils.js ***!
   \*********************************/
-/*! exports provided: TYPES, isNull, isUndefined, camelToKebab, STRING_TYPE_PARSER_MAP, STRING_TYPE_ENCODER_MAP, hexToRgb, Element, getMaxZIndex, getPixelScaleFactor */
+/*! exports provided: TYPES, isNull, isUndefined, camelToKebab, safeParseURL, STRING_TYPE_PARSER_MAP, STRING_TYPE_ENCODER_MAP, hexToRgb, Element, getMaxZIndex, getPixelScaleFactor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1142,6 +924,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNull", function() { return isNull; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUndefined", function() { return isUndefined; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "camelToKebab", function() { return camelToKebab; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "safeParseURL", function() { return safeParseURL; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STRING_TYPE_PARSER_MAP", function() { return STRING_TYPE_PARSER_MAP; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STRING_TYPE_ENCODER_MAP", function() { return STRING_TYPE_ENCODER_MAP; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hexToRgb", function() { return hexToRgb; });
@@ -1181,10 +964,6 @@ var isNumber = function isNumber(x) {
 
 var isBoolean = function isBoolean(x) {
   return typeof x === "boolean";
-};
-
-var isURL = function isURL(x) {
-  return x instanceof URL;
 }; // Simple parsing helpers.
 
 
@@ -1203,24 +982,6 @@ var htmlAttrEncode = function htmlAttrEncode(s) {
 
 var htmlAttrDecode = function htmlAttrDecode(s) {
   return "".concat(s).replace(/@quot;/g, '"');
-}; // Return a function that applies a specified parser and uses a specified
-// failure test function to determine whether to return the parsed value or a
-// specified default value.
-
-
-var safeParser = function safeParser(parserFn, failureTestFn) {
-  return function (x, defVal) {
-    var v;
-
-    try {
-      v = parserFn(x);
-    } catch (e) {
-      // Return the default value on any exception.
-      return defVal;
-    }
-
-    return failureTestFn(v) ? defVal : v;
-  };
 }; //
 // String parsing and conversion helpers.
 //
@@ -1237,7 +998,25 @@ function camelToKebab(x) {
   return Array.from(x).reduce(function (acc, c, i) {
     return acc + (isUpper(c) ? "".concat(i ? "-" : "").concat(c.toLowerCase()) : c);
   }, "");
-}
+} // Return a function that applies a specified parser and uses a specified
+// failure test function to determine whether to return the parsed value or a
+// specified default value.
+
+var safeParser = function safeParser(parserFn, failureTestFn) {
+  return function (x, defVal) {
+    var v;
+
+    try {
+      v = parserFn(x);
+    } catch (e) {
+      // Return the default value on any exception.
+      return defVal;
+    }
+
+    return failureTestFn(v) ? defVal : v;
+  };
+};
+
 var safeParseBool = safeParser(function (s) {
   return isString(s) && (s === "true" || s === "false") ? s === "true" : null;
 }, isNull);
@@ -1254,7 +1033,7 @@ var safeParseHTML = safeParser(function (s) {
   return isString(s) ? htmlAttrDecode(s) : null;
 }, isNull);
 var safeParseURL = safeParser(function (s) {
-  return new URL(s);
+  return new URL(s) && s;
 }, isNull);
 var STRING_TYPE_PARSER_MAP = (_STRING_TYPE_PARSER_M = {}, _defineProperty(_STRING_TYPE_PARSER_M, TYPES.STRING, safeParseString), _defineProperty(_STRING_TYPE_PARSER_M, TYPES.INTEGER, safeParseInt), _defineProperty(_STRING_TYPE_PARSER_M, TYPES.FLOAT, safeParseFloat), _defineProperty(_STRING_TYPE_PARSER_M, TYPES.BOOLEAN, safeParseBool), _defineProperty(_STRING_TYPE_PARSER_M, TYPES.HTML, safeParseHTML), _defineProperty(_STRING_TYPE_PARSER_M, TYPES.URL, safeParseURL), _STRING_TYPE_PARSER_M);
 
@@ -1287,7 +1066,7 @@ var safeEncodeHTML = function safeEncodeHTML(x) {
 };
 
 var safeEncodeURL = function safeEncodeURL(x) {
-  return assertTrue(isURL(x)) && x.href;
+  return assertTrue(safeParseURL(x, null) !== null) && x;
 };
 
 var STRING_TYPE_ENCODER_MAP = (_STRING_TYPE_ENCODER_ = {}, _defineProperty(_STRING_TYPE_ENCODER_, TYPES.STRING, safeEncodeString), _defineProperty(_STRING_TYPE_ENCODER_, TYPES.INTEGER, safeEncodeNumber), _defineProperty(_STRING_TYPE_ENCODER_, TYPES.FLOAT, safeEncodeNumber), _defineProperty(_STRING_TYPE_ENCODER_, TYPES.BOOLEAN, safeEncodeBoolean), _defineProperty(_STRING_TYPE_ENCODER_, TYPES.HTML, safeEncodeHTML), _defineProperty(_STRING_TYPE_ENCODER_, TYPES.URL, safeEncodeURL), _STRING_TYPE_ENCODER_); //
@@ -1426,8 +1205,7 @@ function getMessageContent() {
       break;
 
     case "customHTML":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = "<p>".concat(options.customHTMLMessage, "</p>");
+      message = "".concat(options.customHTMLMessage);
       break;
 
     default:

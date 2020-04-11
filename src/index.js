@@ -51,8 +51,7 @@ function getMessageContent() {
       break
 
     case "customHTML":
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = `<p>${options.customHTMLMessage}</p>`
+      message = `${options.customHTMLMessage}`
       break
 
     default:

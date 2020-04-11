@@ -17,7 +17,6 @@ export const isUndefined = x => x === undefined
 const isString = x => typeof x === "string"
 const isNumber = x => typeof x === "number"
 const isBoolean = x => typeof x === "boolean"
-const isURL = x => x instanceof URL
 
 // Simple parsing helpers.
 const parseDecInt = s => parseInt(s, 10)
@@ -26,20 +25,6 @@ const parseHexInt = s => parseInt(s, 16)
 // Encode/decode a string for inclusion as / from an HTML attribute value.
 const htmlAttrEncode = s => `${s}`.replace(/"/g, "@quot;")
 const htmlAttrDecode = s => `${s}`.replace(/@quot;/g, '"')
-
-// Return a function that applies a specified parser and uses a specified
-// failure test function to determine whether to return the parsed value or a
-// specified default value.
-const safeParser = (parserFn, failureTestFn) => (x, defVal) => {
-  let v
-  try {
-    v = parserFn(x)
-  } catch (e) {
-    // Return the default value on any exception.
-    return defVal
-  }
-  return failureTestFn(v) ? defVal : v
-}
 
 //
 // String parsing and conversion helpers.
@@ -58,6 +43,20 @@ export function camelToKebab(x) {
   )
 }
 
+// Return a function that applies a specified parser and uses a specified
+// failure test function to determine whether to return the parsed value or a
+// specified default value.
+const safeParser = (parserFn, failureTestFn) => (x, defVal) => {
+  let v
+  try {
+    v = parserFn(x)
+  } catch (e) {
+    // Return the default value on any exception.
+    return defVal
+  }
+  return failureTestFn(v) ? defVal : v
+}
+
 const safeParseBool = safeParser(
   s => (isString(s) && (s === "true" || s === "false") ? s === "true" : null),
   isNull,
@@ -69,7 +68,7 @@ const safeParseHTML = safeParser(
   s => (isString(s) ? htmlAttrDecode(s) : null),
   isNull,
 )
-const safeParseURL = safeParser(s => new URL(s), isNull)
+export const safeParseURL = safeParser(s => new URL(s) && s, isNull)
 
 export const STRING_TYPE_PARSER_MAP = {
   [TYPES.STRING]: safeParseString,
@@ -92,7 +91,7 @@ const safeEncodeString = x => assertTrue(isString(x)) && toString(x)
 const safeEncodeNumber = x => assertTrue(isNumber(x)) && toString(x)
 const safeEncodeBoolean = x => assertTrue(isBoolean(x)) && toString(x)
 const safeEncodeHTML = x => assertTrue(isString(x)) && htmlAttrEncode(x)
-const safeEncodeURL = x => assertTrue(isURL(x)) && x.href
+const safeEncodeURL = x => assertTrue(safeParseURL(x, null) !== null) && x
 
 export const STRING_TYPE_ENCODER_MAP = {
   [TYPES.STRING]: safeEncodeString,

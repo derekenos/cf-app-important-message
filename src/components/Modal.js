@@ -4,10 +4,6 @@ import Dismissible, {
   propNameTypeDefaults as dismissiblePropNameTypeDefaults,
 } from "./Dismissible.js"
 
-import RemotelyConfigurable, {
-  propNameTypeDefaults as remotelyConfigurablePropNameTypeDefaults,
-} from "./RemotelyConfigurable.js"
-
 import { TYPES, Element, hexToRgb } from "./utils.js"
 
 const SCHEME_NAME_COLORS_MAP = {
@@ -36,7 +32,7 @@ const styleFactory = vars => `
   .content {
     display: inline-block;
     width: fit-content;
-    max-width: min(85%, 700px);
+    max-width: 85%;
     max-height: 85%;
     position: fixed;
     top: 50%;
@@ -52,6 +48,12 @@ const styleFactory = vars => `
             ${vars.horizontalMargin * vars.PX_SCALE_FACTOR}px;
     font-size: ${vars.fontSize * vars.PX_SCALE_FACTOR}px;
     border-radius: ${vars.borderRadius}px;
+  }
+
+  @media screen and (min-width: 800px) {
+    .content {
+      max-width: 680px;
+    }
   }
 
   .message {
@@ -98,7 +100,7 @@ const propNameTypeDefaults = [
   ["verticalPadding", TYPES.FLOAT, 1],
 ]
 
-export class ModalComponent extends Dismissible(RemotelyConfigurable(Base)) {
+export class ModalComponent extends Dismissible(Base) {
   constructor() {
     super([propNameTypeDefaults], { styleFactory })
 
@@ -206,11 +208,7 @@ export class ModalComponent extends Dismissible(RemotelyConfigurable(Base)) {
 export const Modal = ComponentCreator(
   "important-message-modal",
   ModalComponent,
-  [
-    propNameTypeDefaults,
-    dismissiblePropNameTypeDefaults,
-    remotelyConfigurablePropNameTypeDefaults,
-  ],
+  [propNameTypeDefaults, dismissiblePropNameTypeDefaults],
 )
 
 // Define a variable into which an external process can inject configuration

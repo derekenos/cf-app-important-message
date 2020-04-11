@@ -4,14 +4,6 @@ import Dismissible, {
   propNameTypeDefaults as dismissiblePropNameTypeDefaults,
 } from "./Dismissible.js"
 
-import Insertable, {
-  propNameTypeDefaults as insertablePropNameTypeDefaults,
-} from "./Insertable.js"
-
-import RemotelyConfigurable, {
-  propNameTypeDefaults as remotelyConfigurablePropNameTypeDefaults,
-} from "./RemotelyConfigurable.js"
-
 import { TYPES, Element, hexToRgb } from "./utils.js"
 
 const SCHEME_NAME_COLORS_MAP = {
@@ -66,6 +58,11 @@ const styleFactory = vars => `
   .message {
     display: inline;
     flex-grow: 1;
+    padding: ${vars.verticalPadding * vars.PX_SCALE_FACTOR}px
+             ${vars.horizontalPadding * vars.PX_SCALE_FACTOR}px;"
+  }
+
+  .wrapper.dismissible .message {
     padding: ${(vars.verticalPadding + 4) * vars.PX_SCALE_FACTOR}px
              ${(vars.horizontalPadding + 16) * vars.PX_SCALE_FACTOR}px;"
   }
@@ -141,9 +138,7 @@ const propNameTypeDefaults = [
   ["verticalPadding", TYPES.FLOAT, 16],
 ]
 
-export class BannerComponent extends Insertable(
-  Dismissible(RemotelyConfigurable(Base)),
-) {
+export class BannerComponent extends Dismissible(Base) {
   constructor() {
     super([propNameTypeDefaults], { styleFactory })
 
@@ -260,12 +255,7 @@ export class BannerComponent extends Insertable(
 export const Banner = ComponentCreator(
   "important-message-banner",
   BannerComponent,
-  [
-    propNameTypeDefaults,
-    dismissiblePropNameTypeDefaults,
-    insertablePropNameTypeDefaults,
-    remotelyConfigurablePropNameTypeDefaults,
-  ],
+  [propNameTypeDefaults, dismissiblePropNameTypeDefaults],
 )
 
 // Define a variable into which an external process can inject configuration
