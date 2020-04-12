@@ -157,13 +157,17 @@ export class BannerComponent extends Dismissible(Base) {
     }
 
     // Get the configuration properties.
-    const {
-      bannerUrl,
-      colorScheme,
-      dismissible,
-      gradientLevel,
-      message,
-    } = this.props
+    const { colorScheme, dismissible, gradientLevel, message } = this.props
+    let { bannerUrl } = this.props
+
+    // Since <a>'s can't be nested, check for the condition where both
+    // bannerUrl is specified and the message contains an <a> tag. When this
+    // happens, give priority to the message by removing bannerUrl and emit a
+    // warning.
+    if (bannerUrl && message.includes("</a>")) {
+      bannerUrl = ""
+      console.warn("Banner URL disabled because message includes an <a> tag")
+    }
 
     // Define the main wrapper element.
     const [bgColor, color] = (

@@ -41,9 +41,7 @@ function getMessageContent() {
   let message
   switch (options.messageType) {
     case "customPlain":
-      // Wrap in <p> for consistency with custom message richtext format and
-      // escape HTML to enforce plain-text.
-      message = `<p>${escapeHTML(options.customPlainMessage)}</p>`
+      message = `${escapeHTML(options.customPlainMessage)}`
       break
 
     case "customRich":
@@ -55,8 +53,7 @@ function getMessageContent() {
       break
 
     default:
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = `<p>${PREDEFINED_MESSAGES[options.messageType]}</p>`
+      message = `${PREDEFINED_MESSAGES[options.messageType]}`
       break
   }
   return message
@@ -99,6 +96,7 @@ function updateElement() {
 
   const {
     bannerUrl,
+    buttonText,
     displayMode,
     fontSize,
     verticalPadding,
@@ -119,6 +117,7 @@ function updateElement() {
   // Create the component.
   const componentOptions = {
     borderRadius,
+    buttonText,
     dismissalContentProp: "message",
     dismissalMinutes: getDismissedUntilMinutes(),
     dismissible: !notDismissible,

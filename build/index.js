@@ -193,11 +193,20 @@ var BannerComponent = /*#__PURE__*/function (_Dismissible) {
 
 
       var _this$props = this.props,
-          bannerUrl = _this$props.bannerUrl,
           colorScheme = _this$props.colorScheme,
           dismissible = _this$props.dismissible,
           gradientLevel = _this$props.gradientLevel,
-          message = _this$props.message; // Define the main wrapper element.
+          message = _this$props.message;
+      var bannerUrl = this.props.bannerUrl; // Since <a>'s can't be nested, check for the condition where both
+      // bannerUrl is specified and the message contains an <a> tag. When this
+      // happens, give priority to the message by removing bannerUrl and emit a
+      // warning.
+
+      if (bannerUrl && message.includes("</a>")) {
+        bannerUrl = "";
+        console.warn("Banner URL disabled because message includes an <a> tag");
+      } // Define the main wrapper element.
+
 
       var _split = (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(","),
           _split2 = _slicedToArray(_split, 2),
@@ -1194,9 +1203,7 @@ function getMessageContent() {
 
   switch (options.messageType) {
     case "customPlain":
-      // Wrap in <p> for consistency with custom message richtext format and
-      // escape HTML to enforce plain-text.
-      message = "<p>".concat(escapeHTML(options.customPlainMessage), "</p>");
+      message = "".concat(escapeHTML(options.customPlainMessage));
       break;
 
     case "customRich":
@@ -1209,8 +1216,7 @@ function getMessageContent() {
       break;
 
     default:
-      // Wrap in <p> for consistency with custom message richtext format.
-      message = "<p>".concat(PREDEFINED_MESSAGES[options.messageType], "</p>");
+      message = "".concat(PREDEFINED_MESSAGES[options.messageType]);
       break;
   }
 
@@ -1248,6 +1254,7 @@ function updateElement() {
 
   var _options = options,
       bannerUrl = _options.bannerUrl,
+      buttonText = _options.buttonText,
       displayMode = _options.displayMode,
       fontSize = _options.fontSize,
       verticalPadding = _options.verticalPadding,
@@ -1270,6 +1277,7 @@ function updateElement() {
 
   var componentOptions = {
     borderRadius: borderRadius,
+    buttonText: buttonText,
     dismissalContentProp: "message",
     dismissalMinutes: getDismissedUntilMinutes(),
     dismissible: !notDismissible,
