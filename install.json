@@ -172,6 +172,7 @@
           "10",
           "60",
           "1440",
+          "-1",
           "custom"
         ],
         "enumNames": {
@@ -179,6 +180,7 @@
           "10": "in 10 Minutes",
           "60": "in 1 Hour",
           "1440": "in 1 Day",
+          "-1": "never",
           "custom": "~ Custom ~"
         },
         "default": "0",

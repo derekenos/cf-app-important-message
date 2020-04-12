@@ -1,5 +1,6 @@
 import { TYPES } from "./utils.js"
 
+const FOREVER = -1
 const nowMs = Date.now
 
 export const propNameTypeDefaults = [
@@ -66,10 +67,13 @@ const Dismissible = C =>
 
     dismiss() {
       const numMinutes = this.props.dismissalMinutes
-      if (numMinutes > 0) {
+      if (numMinutes === FOREVER || numMinutes > 0) {
         // Update local storage with dismissal period expiration time and
-        // dismissed content values.
-        this.setDismissedUntil(nowMs() + numMinutes * 60 * 1000)
+        // dismissed content values. A numMinutes time of -1 indicates "forever",
+        // which we'll save to local storage to indicate the same.
+        this.setDismissedUntil(
+          numMinutes === FOREVER ? FOREVER : nowMs() + numMinutes * 60 * 1000,
+        )
         this.setDismissedContent(this.getDismissalContent())
       } else {
         // Purge any dismissal-related items from local storage.
@@ -78,27 +82,32 @@ const Dismissible = C =>
     }
 
     isDismissed() {
-      // Return a Boolean indicating whether user dismissal is active.
-      // Check whether the configured period is greater than 0.
-      if (!(this.props.dismissalMinutes > 0)) {
-        this.clearDismissalStorage()
-        return false
-      }
+      // Return a Boolean indicating whether this component is dismissed.
       const dismissedUntil = this.getDismissedUntil()
-      // Check for any saved dismissedUntil value.
+      // If there's no saved dismissal, return false.
       if (dismissedUntil === null) {
         return false
       }
-      // Check whether the dismissal period has expired.
-      if (nowMs() >= dismissedUntil) {
+      // If the currently configured dismissal period = 0, clear any existing
+      // saved dismissal and return false.
+      if (this.props.dismissalMinutes === 0) {
         this.clearDismissalStorage()
         return false
       }
-      // Check whether the content content has changed since dismissal.
+      // If the saved dismissal period != FOREVER and the period has lapsed,
+      // clear the saved dismissal and return false.
+      if (dismissedUntil !== FOREVER && nowMs() >= dismissedUntil) {
+        this.clearDismissalStorage()
+        return false
+      }
+      // The dismissal period is either FOREVER or the period has not yet
+      // lapsed, but if the message has changed, clear the saved dismissal and
+      // return false.
       if (this.getDismissalContent() !== this.getDismissedContent()) {
         this.clearDismissalStorage()
         return false
       }
+      // The component is dismissed.
       return true
     }
   }

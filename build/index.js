@@ -592,6 +592,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
+var FOREVER = -1;
 var nowMs = Date.now;
 var propNameTypeDefaults = [["dismissalMinutes", _utils_js__WEBPACK_IMPORTED_MODULE_0__["TYPES"].INTEGER, 0], ["dismissalContentProp", _utils_js__WEBPACK_IMPORTED_MODULE_0__["TYPES"].STRING, undefined], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_0__["TYPES"].STRING, ""]];
 
@@ -669,10 +670,11 @@ var Dismissible = function Dismissible(C) {
       value: function dismiss() {
         var numMinutes = this.props.dismissalMinutes;
 
-        if (numMinutes > 0) {
+        if (numMinutes === FOREVER || numMinutes > 0) {
           // Update local storage with dismissal period expiration time and
-          // dismissed content values.
-          this.setDismissedUntil(nowMs() + numMinutes * 60 * 1000);
+          // dismissed content values. A numMinutes time of -1 indicates "forever",
+          // which we'll save to local storage to indicate the same.
+          this.setDismissedUntil(numMinutes === FOREVER ? FOREVER : nowMs() + numMinutes * 60 * 1000);
           this.setDismissedContent(this.getDismissalContent());
         } else {
           // Purge any dismissal-related items from local storage.
@@ -682,30 +684,35 @@ var Dismissible = function Dismissible(C) {
     }, {
       key: "isDismissed",
       value: function isDismissed() {
-        // Return a Boolean indicating whether user dismissal is active.
-        // Check whether the configured period is greater than 0.
-        if (!(this.props.dismissalMinutes > 0)) {
-          this.clearDismissalStorage();
-          return false;
-        }
-
-        var dismissedUntil = this.getDismissedUntil(); // Check for any saved dismissedUntil value.
+        // Return a Boolean indicating whether this component is dismissed.
+        var dismissedUntil = this.getDismissedUntil(); // If there's no saved dismissal, return false.
 
         if (dismissedUntil === null) {
           return false;
-        } // Check whether the dismissal period has expired.
+        } // If the currently configured dismissal period = 0, clear any existing
+        // saved dismissal and return false.
 
 
-        if (nowMs() >= dismissedUntil) {
+        if (this.props.dismissalMinutes === 0) {
           this.clearDismissalStorage();
           return false;
-        } // Check whether the content content has changed since dismissal.
+        } // If the saved dismissal period != FOREVER and the period has lapsed,
+        // clear the saved dismissal and return false.
+
+
+        if (dismissedUntil !== FOREVER && nowMs() >= dismissedUntil) {
+          this.clearDismissalStorage();
+          return false;
+        } // The dismissal period is either FOREVER or the period has not yet
+        // lapsed, but if the message has changed, clear the saved dismissal and
+        // return false.
 
 
         if (this.getDismissalContent() !== this.getDismissedContent()) {
           this.clearDismissalStorage();
           return false;
-        }
+        } // The component is dismissed.
+
 
         return true;
       }
