@@ -44,8 +44,6 @@ const styleFactory = vars => `
     text-align: right;
     padding: ${16 * vars.PX_SCALE_FACTOR}px;
     background-color: #fff;
-    margin: ${vars.verticalMargin * vars.PX_SCALE_FACTOR}px
-            ${vars.horizontalMargin * vars.PX_SCALE_FACTOR}px;
     font-size: ${vars.fontSize * vars.PX_SCALE_FACTOR}px;
     border-radius: ${vars.borderRadius}px;
   }
@@ -90,13 +88,11 @@ const propNameTypeDefaults = [
   ["dismissible", TYPES.BOOLEAN, true],
   ["fontSize", TYPES.INTEGER, 16],
   ["gradientLevel", TYPES.FLOAT, 1.0],
-  ["horizontalMargin", TYPES.FLOAT, 0],
   ["horizontalPadding", TYPES.FLOAT, 0],
   ["id", TYPES.STRING, ""],
   ["maxImageWidth", TYPES.INTEGER, 20],
   ["message", TYPES.HTML, "A default message"],
   ["stealFocus", TYPES.BOOLEAN, true],
-  ["verticalMargin", TYPES.FLOAT, 0],
   ["verticalPadding", TYPES.FLOAT, 1],
 ]
 

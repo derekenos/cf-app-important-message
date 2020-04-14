@@ -40,6 +40,7 @@ const styleFactory = vars => `
     box-shadow: 0 0 16px 4px #444;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+    margin: 0;
   }
 
   .wrapper.dismissible.show {
