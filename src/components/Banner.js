@@ -114,7 +114,7 @@ const styleFactory = vars => `
   }
 
   a {
-    text-decoration: underline;
+    text-decoration: none;
   }
 
   p {
