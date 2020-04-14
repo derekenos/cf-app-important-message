@@ -196,7 +196,7 @@ export class BannerComponent extends Dismissible(Base) {
           dismissible
             ? `
         <div class="button-wrapper ${bannerUrl ? "highlight" : ""}">
-          <button>x</button>
+          <button style="color: ${color};">x</button>
         </div>
         `
             : ""
