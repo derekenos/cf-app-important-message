@@ -141,10 +141,6 @@ const propNameTypeDefaults = [
 export class BannerComponent extends Dismissible(Base) {
   constructor() {
     super([propNameTypeDefaults], { styleFactory })
-
-    // Define the accessibility attributes.
-    this.setAttribute("role", "banner")
-    this.setAttribute("aria-label", "Important Message")
   }
 
   connectedCallback() {
@@ -155,6 +151,10 @@ export class BannerComponent extends Dismissible(Base) {
       this.remove()
       return
     }
+
+    // Define the accessibility attributes.
+    this.setAttribute("role", "banner")
+    this.setAttribute("aria-label", "Important Message")
 
     // Get the configuration properties.
     const { colorScheme, dismissible, gradientLevel, message } = this.props

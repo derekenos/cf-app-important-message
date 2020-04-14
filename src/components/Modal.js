@@ -103,11 +103,6 @@ const propNameTypeDefaults = [
 export class ModalComponent extends Dismissible(Base) {
   constructor() {
     super([propNameTypeDefaults], { styleFactory })
-
-    // Define the accessibility attributes.
-    this.setAttribute("role", "dialog")
-    this.setAttribute("aria-label", "Important Message")
-    this.setAttribute("aria-modal", "true")
   }
 
   connectedCallback() {
@@ -118,6 +113,11 @@ export class ModalComponent extends Dismissible(Base) {
       this.remove()
       return
     }
+
+    // Define the accessibility attributes.
+    this.setAttribute("role", "dialog")
+    this.setAttribute("aria-label", "Important Message")
+    this.setAttribute("aria-modal", "true")
 
     // Get the configuration properties.
     const {

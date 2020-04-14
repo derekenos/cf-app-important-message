@@ -105,7 +105,6 @@ function updateElement() {
     verticalMargin,
     horizontalMargin,
     borderRadius,
-    messageType,
   } = options
 
   // Get the message content.

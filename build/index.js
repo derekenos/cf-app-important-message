@@ -163,25 +163,17 @@ var BannerComponent = /*#__PURE__*/function (_Dismissible) {
   var _super = _createSuper(BannerComponent);
 
   function BannerComponent() {
-    var _this;
-
     _classCallCheck(this, BannerComponent);
 
-    _this = _super.call(this, [propNameTypeDefaults], {
+    return _super.call(this, [propNameTypeDefaults], {
       styleFactory: styleFactory
-    }); // Define the accessibility attributes.
-
-    _this.setAttribute("role", "banner");
-
-    _this.setAttribute("aria-label", "Important Message");
-
-    return _this;
+    });
   }
 
   _createClass(BannerComponent, [{
     key: "connectedCallback",
     value: function connectedCallback() {
-      var _this2 = this;
+      var _this = this;
 
       _get(_getPrototypeOf(BannerComponent.prototype), "connectedCallback", this).call(this); // If dismissal is active, remove the component.
 
@@ -189,8 +181,11 @@ var BannerComponent = /*#__PURE__*/function (_Dismissible) {
       if (this.isDismissed()) {
         this.remove();
         return;
-      } // Get the configuration properties.
+      } // Define the accessibility attributes.
 
+
+      this.setAttribute("role", "banner");
+      this.setAttribute("aria-label", "Important Message"); // Get the configuration properties.
 
       var _this$props = this.props,
           colorScheme = _this$props.colorScheme,
@@ -237,7 +232,7 @@ var BannerComponent = /*#__PURE__*/function (_Dismissible) {
 
 
       this.addEventListener(bannerUrl ? buttonWrapperEl : this, "click", function (e) {
-        _this2.dismiss();
+        _this.dismiss();
 
         e.preventDefault();
         e.stopPropagation();
@@ -245,20 +240,20 @@ var BannerComponent = /*#__PURE__*/function (_Dismissible) {
 
       this.addEventListener(window, "keydown", function (e) {
         if (e.key === "Escape") {
-          _this2.dismiss();
+          _this.dismiss();
         }
       });
     }
   }, {
     key: "dismiss",
     value: function dismiss() {
-      var _this3 = this;
+      var _this2 = this;
 
       _get(_getPrototypeOf(BannerComponent.prototype), "dismiss", this).call(this);
 
       var el = this.shadow.querySelector("div.wrapper");
       this.addEventListener(el, "animationend", function () {
-        return _this3.remove();
+        return _this2.remove();
       });
       el.classList.remove("show"); // See here for why I'm reading the offsetWidth:
       // https://stackoverflow.com/a/30072037/2327940
@@ -522,15 +517,25 @@ function ComponentCreator(tagName, component, propNameTypeDefaultsArr) {
       if (value) {
         nameValuePairs.push([name, value]);
       }
-    }); // Create the element.
+    }); // Create the element and use setAttribute() instead of setting innerHTML
+    // to ensure that attribute values containing HTML entities are properly
+    // escaped.
+    // E.g. if you set innerHTML to something like:
+    //   `<div a="&lt;br&gt;"></div>`
+    // When you then read back innerHTML, you get:
+    //   `<div a="<br>"></div>`
+    // The properly escaped attribute value is:
+    //   `<div a="&amp;lt;br&amp;gt;"></div>`
+    // which setAttribute() will take care of for you.
 
-    var el = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["Element"])("\n      <".concat(tagName, " ").concat(nameValuePairs.map(function (_ref7) {
+    var el = document.createElement("".concat(tagName));
+    nameValuePairs.forEach(function (_ref7) {
       var _ref8 = _slicedToArray(_ref7, 2),
           k = _ref8[0],
           v = _ref8[1];
 
-      return "".concat(k, "=\"").concat(v, "\"");
-    }).join(" "), ">\n      </").concat(tagName, ">\n      ")); // If autoMount is specified, append the newly-created element to the body.
+      return el.setAttribute(k, v);
+    }); // If autoMount is specified, append the newly-created element to the body.
     // A reasonable assumption is that either:
     //   - The element is absolutely positioned and thus it's placement in
     //     the DOM doesn't matter
@@ -803,27 +808,17 @@ var ModalComponent = /*#__PURE__*/function (_Dismissible) {
   var _super = _createSuper(ModalComponent);
 
   function ModalComponent() {
-    var _this;
-
     _classCallCheck(this, ModalComponent);
 
-    _this = _super.call(this, [propNameTypeDefaults], {
+    return _super.call(this, [propNameTypeDefaults], {
       styleFactory: styleFactory
-    }); // Define the accessibility attributes.
-
-    _this.setAttribute("role", "dialog");
-
-    _this.setAttribute("aria-label", "Important Message");
-
-    _this.setAttribute("aria-modal", "true");
-
-    return _this;
+    });
   }
 
   _createClass(ModalComponent, [{
     key: "connectedCallback",
     value: function connectedCallback() {
-      var _this2 = this;
+      var _this = this;
 
       _get(_getPrototypeOf(ModalComponent.prototype), "connectedCallback", this).call(this); // If dismissal is active, remove the component.
 
@@ -831,8 +826,12 @@ var ModalComponent = /*#__PURE__*/function (_Dismissible) {
       if (this.isDismissed()) {
         this.remove();
         return;
-      } // Get the configuration properties.
+      } // Define the accessibility attributes.
 
+
+      this.setAttribute("role", "dialog");
+      this.setAttribute("aria-label", "Important Message");
+      this.setAttribute("aria-modal", "true"); // Get the configuration properties.
 
       var _this$props = this.props,
           buttonText = _this$props.buttonText,
@@ -866,18 +865,18 @@ var ModalComponent = /*#__PURE__*/function (_Dismissible) {
       // click handlers we need to control what's happening.
 
       this.addEventListener(this.shadow, "click", function () {
-        return _this2.dismiss();
+        return _this.dismiss();
       });
       this.addEventListener(contentEl, "click", function (e) {
         return e.stopPropagation();
       });
       this.addEventListener(buttonEl, "click", function () {
-        return _this2.dismiss();
+        return _this.dismiss();
       }); // Remove the element on Escape.
 
       this.addEventListener(window, "keydown", function (e) {
         if (e.key === "Escape") {
-          _this2.dismiss();
+          _this.dismiss();
         }
       }); // Save the currently focused element and focus the dismiss button.
 
@@ -1269,8 +1268,7 @@ function updateElement() {
       notDismissible = _options.notDismissible,
       verticalMargin = _options.verticalMargin,
       horizontalMargin = _options.horizontalMargin,
-      borderRadius = _options.borderRadius,
-      messageType = _options.messageType; // Get the message content.
+      borderRadius = _options.borderRadius; // Get the message content.
 
   var message = getMessageContent(); // Get the colors.
 

@@ -1,5 +1,4 @@
 import {
-  Element,
   STRING_TYPE_PARSER_MAP,
   STRING_TYPE_ENCODER_MAP,
   camelToKebab,
@@ -151,11 +150,18 @@ export function ComponentCreator(tagName, component, propNameTypeDefaultsArr) {
       }
     })
 
-    // Create the element.
-    const el = Element(`
-      <${tagName} ${nameValuePairs.map(([k, v]) => `${k}="${v}"`).join(" ")}>
-      </${tagName}>
-      `)
+    // Create the element and use setAttribute() instead of setting innerHTML
+    // to ensure that attribute values containing HTML entities are properly
+    // escaped.
+    // E.g. if you set innerHTML to something like:
+    //   `<div a="&lt;br&gt;"></div>`
+    // When you then read back innerHTML, you get:
+    //   `<div a="<br>"></div>`
+    // The properly escaped attribute value is:
+    //   `<div a="&amp;lt;br&amp;gt;"></div>`
+    // which setAttribute() will take care of for you.
+    const el = document.createElement(`${tagName}`)
+    nameValuePairs.forEach(([k, v]) => el.setAttribute(k, v))
 
     // If autoMount is specified, append the newly-created element to the body.
     // A reasonable assumption is that either:
