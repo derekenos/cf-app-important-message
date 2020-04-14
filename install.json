@@ -141,7 +141,11 @@
 
       "bannerUrl": {
         "showIf": {
-          "displayMode": "banner"
+          "displayMode": "banner",
+          "INSTALL_PRODUCT.id": {
+            "op": "!=",
+            "value": "basic"
+          }
         },
         "order": 24,
         "title": "Banner Click URL",
