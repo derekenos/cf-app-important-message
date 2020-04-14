@@ -59,12 +59,12 @@ const styleFactory = vars => `
     display: inline;
     flex-grow: 1;
     padding: ${vars.verticalPadding * vars.PX_SCALE_FACTOR}px
-             ${vars.horizontalPadding * vars.PX_SCALE_FACTOR}px;"
+             ${vars.horizontalPadding * vars.PX_SCALE_FACTOR}px;
   }
 
   .wrapper.dismissible .message {
     padding: ${(vars.verticalPadding + 4) * vars.PX_SCALE_FACTOR}px
-             ${(vars.horizontalPadding + 16) * vars.PX_SCALE_FACTOR}px;"
+             ${(vars.horizontalPadding + 16) * vars.PX_SCALE_FACTOR}px;
   }
 
   .message img {
