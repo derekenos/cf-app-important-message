@@ -1176,12 +1176,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 // Constants
 //
 
-var APP_NAME = "important-message";
-var PREDEFINED_MESSAGES = {
-  minorServiceInterruption: "&#9888; We're experiencing a minor service interruption - some features may not work.",
-  majorServiceInterruption: "&#9888; We're experiencing a major service outage - many features may not work.",
-  scheduledMaintenance: "&#9888; We're currently undergoing scheduled maintenance - some features may not work."
-}; //
+var APP_NAME = "important-message"; //
 // Variables
 //
 
@@ -1222,7 +1217,6 @@ function getMessageContent() {
       break;
 
     default:
-      message = "".concat(PREDEFINED_MESSAGES[options.messageType]);
       break;
   }
 

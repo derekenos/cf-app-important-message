@@ -67,22 +67,16 @@
         "type": "string",
         "format": "radios",
         "enum": [
-          "minorServiceInterruption",
-          "majorServiceInterruption",
-          "scheduledMaintenance",
           "customPlain",
           "customRich",
           "customHTML"
         ],
         "enumNames": {
-          "minorServiceInterruption": "Minor service interruption",
-          "majorServiceInterruption": "Major service interruption",
-          "scheduledMaintenance": "Scheduled maintenance",
-          "customPlain": "Custom Plain Text",
-          "customRich": "Custom Rich Text",
-          "customHTML": "Custom HTML"
+          "customPlain": "Plain Text",
+          "customRich": "Rich Text",
+          "customHTML": "HTML"
         },
-        "default": "minorServiceInterruption",
+        "default": "customPlain",
         "products": {
           "customRich": ["full"],
           "customHTML": ["full"]
@@ -94,10 +88,10 @@
           "messageType": "customPlain"
         },
         "order": 15,
-        "title": "Custom Plain-Text Message",
+        "title": "Plain-Text Message",
         "type": "string",
-        "default": "A Custom Plain-Text Message",
-        "placeholder": "Write your custom message here."
+        "default": "A Plain-Text Message",
+        "placeholder": "Write your message here."
       },
 
       "customRichMessageGroup": {
@@ -105,15 +99,15 @@
           "messageType": "customRich"
         },
         "order": 15,
-        "title": "Custom Rich Text Message",
+        "title": "Rich-Text Message",
         "type": "object",
         "properties": {
           "message": {
             "order": 0,
             "type": "string",
             "format": "richtext",
-            "default": "A Custom <strong>Rich-Text</strong> Message",
-            "placeholder": "Write your custom message here."
+            "default": "A <strong>Rich-Text</strong> Message",
+            "placeholder": "Write your message here."
           },
           "maxImageWidth": {
             "order": 5,
@@ -133,10 +127,10 @@
           "messageType": "customHTML"
         },
         "order": 15,
-        "title": "Custom HTML Message",
+        "title": "HTML Message",
         "description": "Customize the message HTML to include inline styles, images, links, etc.",
         "type": "string",
-        "default": "A <span style=\"color: red;\">Custom</span> <b>HTML</b> <a href=\"#\">Message</a>"
+        "default": "A <span style=\"color: red;\">Fancy</span> <b>HTML</b> <a href=\"#\">Message</a>"
       },
 
       "bannerUrl": {

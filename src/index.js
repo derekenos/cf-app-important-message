@@ -7,12 +7,6 @@ import { Modal } from "./components/Modal"
 
 const APP_NAME = "important-message"
 
-const PREDEFINED_MESSAGES = {
-  minorServiceInterruption: `&#9888; We're experiencing a minor service interruption - some features may not work.`,
-  majorServiceInterruption: `&#9888; We're experiencing a major service outage - many features may not work.`,
-  scheduledMaintenance: `&#9888; We're currently undergoing scheduled maintenance - some features may not work.`,
-}
-
 //
 // Variables
 //
@@ -53,7 +47,6 @@ function getMessageContent() {
       break
 
     default:
-      message = `${PREDEFINED_MESSAGES[options.messageType]}`
       break
   }
   return message

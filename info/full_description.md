@@ -3,37 +3,26 @@
 | **Features** | |
 | --- | --- |
 | Display Modes | Banner or Modal |
-| Message Types | Predefined or custom Plain Text, Rich Text, or HTML |
+| Message Types | Plain Text, Rich Text, or HTML |
 | Banner Options | Dismiss or redirect to URL on click |
 | Dismissal Modes | Dismissible w/ custom period or Non-Dismissible |
 | Color Scheme | Predefined or Custom |
 | Styling Options | Text Size, Padding, Corner Roundness |
 
 # Messages Types
-You can choose from one of several predefined messages, or write your own plain-text, rich-text, or HTML message.
+You can compose your message using plain text, rich text, or HTML.
 
-## Predefined Messages
-
-- Minor Service Interruption
-> ⚠ We're experiencing a minor service interruption - some features may not work.
-
-- Major Service Interruption
-> ⚠ We're experiencing a major service interruption - many features may not work.
-
-- Scheduled Maintenance
-> ⚠ We're currently undergoing scheduled maintenance - some features may not work.
-
-## Custom Plain Text Message
+## Plain-Text Message
 This option allows you to enter a plain text message, with no links, images, or formatting.
 
-## Custom Rich-Text Message *(FULL version only)*
+## Rich-Text Message *(FULL version only)*
 The rich-text input allows you to control text formatting and insert links and images.
 
 ### Example of Rich Text Message
 
 ![rich-text modal screenshot](https://user-images.githubusercontent.com/585182/77550943-0ebb8780-6e88-11ea-82bc-ef8598b1aacb.png)
 
-## Custom HTML Message *(FULL version only)*
+## HTML Message *(FULL version only)*
 The option allows you to enter HTML for complete control over your message styling and embedded links, images, etc.
 
 For example, entering this:
