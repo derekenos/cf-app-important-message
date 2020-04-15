@@ -40,7 +40,7 @@
       "pages": {
         "order": 5,
         "title": "Pages",
-        "description": "On which pages do you want to show this message?",
+        "description": "On which page(s) do you want to show this message?",
         "type": "object",
         "format": "page"
       },

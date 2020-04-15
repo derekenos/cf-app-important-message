@@ -7,7 +7,7 @@
 | Banner Options | Dismiss or redirect to URL on click |
 | Dismissal Modes | Dismissible w/ custom period or Non-Dismissible |
 | Color Scheme | Predefined or Custom |
-| Several Styling Options | Text Size, Padding, Corner Roundness |
+| Styling Options | Text Size, Padding, Corner Roundness |
 
 # Messages Types
 You can choose from one of several predefined messages, or write your own plain-text, rich-text, or HTML message.
@@ -44,38 +44,35 @@ A <span style="color: red;">Custom</span> <b>HTML</b> <a href="#">Message</a>
 
 will display:
 
-![Screenshot from 2020-04-11 16-13-12](https://user-images.githubusercontent.com/585182/79053976-5cb5e680-7c0f-11ea-812f-d31f8ff2ba5f.png)
+![customHTMLMessage](https://user-images.githubusercontent.com/585182/79355563-d568bb80-7f0b-11ea-9cf9-69915eb5f4f7.png)
 
 
 Here's the HTML for a more ambitious example that includes a background image:
 
 ```
-<p style="background-image: url(https://images.unsplash.com/photo-1554921027-b91f0beeb07d?auto=format&fit=crop&w=400&q=20); background-position: center; width: 400px; height: 500px; text-align: center; color: #fff; font-weight: bold;">Whoops!<br><br>The floppy popped out.<br><br>We're working on it!</h1></p>
+<p style="background-image: url(https://images.unsplash.com/photo-1558897979-72a433ed5f8d?auto=format&fit=crop&w=500&q=60); background-position: center; width: 500px; height: 333px; border-radius: 16px; text-align: center; color: #444; font-weight: bold;">We're closed today because our cattle escaped through that fence.<br><br>See you tomorrow!</p>
 ```
 
 ### Example of Custom HTML
 
-![floppy](https://user-images.githubusercontent.com/585182/79075083-7a8e5480-7cbe-11ea-99fe-2c04bb836ee8.png)
+![cattleFence](https://user-images.githubusercontent.com/585182/79357702-60e34c00-7f0e-11ea-9ef3-d6f4d724baff.png)
 
 
 # Display Modes
 
-There are two display modes available: Banner and Modal
+Two display modes are available: Banner and Modal
 
 ## Banner Mode
-In this mode, the message is displayed either across the top of the page or embedded in a location of your choosing depending on the **Not Dismissible** configuration setting.
 
-The **Not Dismissible** option looks like this:
-
-![notDissmisibleUnchecked](https://user-images.githubusercontent.com/585182/79054238-5cb6e600-7c11-11ea-9687-ec9b285b906a.png)
+In this mode, your message is displayed as a banner either across the top of the page or embedded in a location of your choosing. Banners can be dismissible or non-dismissible. Dismissible banners are always at the top of the page.
 
 ### Example of Dismissible Banner
 
-![dismissible banner screenshot](https://user-images.githubusercontent.com/585182/77548024-5dffb900-6e84-11ea-83b2-b3a3bc9b09b3.png)
+![dismissibleBanner](https://user-images.githubusercontent.com/585182/79354046-e0225100-7f09-11ea-9f80-e949f17f97a5.png)
 
 ### Example of Non-Dismissible Banner
 
-![non-dismissible banner screenshot](https://user-images.githubusercontent.com/585182/77548270-b46cf780-6e84-11ea-8ba9-af1a976ffe1c.png)
+![nonDismissibleBanner](https://user-images.githubusercontent.com/585182/79354629-a4d45200-7f0a-11ea-8737-8fa445f672ac.png)
 
 
 ## Modal Mode
@@ -83,22 +80,23 @@ In this mode, the message is displayed in a dialog that overlays the entire scre
 
 ### Example of Dismissible Modal
 
-![dismissible modal screenshot](https://user-images.githubusercontent.com/585182/77548999-aec3e180-6e85-11ea-8653-f99a272ce408.png)
+![dismissibleModal](https://user-images.githubusercontent.com/585182/79355250-67bc8f80-7f0b-11ea-8054-058e26520b57.png)
 
 ### Example of Non-Dismissible Modal
 
-![non-dismissible modal screenshot](https://user-images.githubusercontent.com/585182/77549113-d3b85480-6e85-11ea-91c8-24167cc4402c.png)
+![nonDismissibleModal](https://user-images.githubusercontent.com/585182/79355266-6c814380-7f0b-11ea-8323-258847f797a5.png)
 
-# Banner Click URL
+
+# Banner Click URL *(FULL version only)*
 When this field is set, a click on the banner message will redirect the visitor to the specified URL and the visual style will change to indicate a button on the right-hand-side that can be used to dismiss the banner.
 
 ## Example of Banner with Banner Click URL
 
-![BannerClickURL](https://user-images.githubusercontent.com/585182/79069523-ea8be300-7c9c-11ea-80e1-cbb11fef1656.png)
+![BannerClickURL](https://user-images.githubusercontent.com/585182/79352853-5aea6c80-7f08-11ea-891f-e1cd538e52f0.png)
 
 ## Example of Banner without Banner Click URL
 
-![noBannerClickURL](https://user-images.githubusercontent.com/585182/79069529-fbd4ef80-7c9c-11ea-97fd-484a319b1a9a.png)
+![noBannerClickURL](https://user-images.githubusercontent.com/585182/79353311-e3690d00-7f08-11ea-878f-c805863644b6.png)
 
 # Dismissal Modes
 For dismissible messages, you can configure how long you'd like to hide the message from the visitor before showing it to them again.
