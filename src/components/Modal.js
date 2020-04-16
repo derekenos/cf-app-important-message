@@ -85,6 +85,7 @@ const propNameTypeDefaults = [
   ["borderRadius", TYPES.INTEGER, 16],
   ["buttonText", TYPES.STRING, "OK"],
   ["colorScheme", TYPES.STRING, "primary"],
+  ["customStyles", TYPES.STRING, ""],
   ["dismissible", TYPES.BOOLEAN, true],
   ["fontSize", TYPES.INTEGER, 16],
   ["gradientLevel", TYPES.FLOAT, 1.0],
@@ -119,11 +120,19 @@ export class ModalComponent extends Dismissible(Base) {
     const {
       buttonText,
       colorScheme,
+      customStyles,
       dismissible,
       gradientLevel,
       message,
       stealFocus,
     } = this.props
+
+    // Added any custom styles to the stylesheet.
+    if (customStyles) {
+      this.shadow.querySelector(
+        "style",
+      ).textContent += `\n\n/* Custom Styles Begin */\n${customStyles}`
+    }
 
     // Define the main wrapper element.
     const [bgColor, color, buttonBgColor, buttonColor] = (

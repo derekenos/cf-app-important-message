@@ -156,7 +156,7 @@ var styleFactory = function styleFactory(vars) {
   return "\n  .wrapper {\n    display: flex;\n    font-size: ".concat(vars.fontSize * vars.PX_SCALE_FACTOR, "px;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif;\n    text-align: left;\n    color: #000;\n    background-color: #fff;\n    margin: ").concat(vars.verticalMargin * vars.PX_SCALE_FACTOR, "px\n            ").concat(vars.horizontalMargin * vars.PX_SCALE_FACTOR, "px;\n    border-radius: ").concat(vars.borderRadius * vars.PX_SCALE_FACTOR, "px;\n    z-index: ").concat(vars.MAX_Z_INDEX + 1, ";\n  }\n\n  .wrapper.dismissible {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    cursor: pointer;\n    box-shadow: 0 0 16px 4px #444;\n    border-top-left-radius: 0;\n    border-top-right-radius: 0;\n    margin: 0;\n  }\n\n  .wrapper.dismissible.show {\n    animation-duration: .5s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n  }\n\n  .wrapper.dismissible.hide {\n    animation-duration: .25s;\n    animation-name: slideDown;\n    animation-timing-function: linear;\n    animation-direction: reverse;\n  }\n\n  .message {\n    display: inline;\n    flex-grow: 1;\n    padding: ").concat(vars.verticalPadding * vars.PX_SCALE_FACTOR, "px\n             ").concat(vars.horizontalPadding * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .wrapper.dismissible .message {\n    padding: ").concat((vars.verticalPadding + 4) * vars.PX_SCALE_FACTOR, "px\n             ").concat((vars.horizontalPadding + 16) * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .message img {\n    max-width: ").concat(vars.maxImageWidth * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .button-wrapper {\n    padding: ").concat(4 * vars.PX_SCALE_FACTOR, "px ").concat(32 * vars.PX_SCALE_FACTOR, "px;\n    font-weight: normal;\n    position: relative;\n  }\n\n  .button-wrapper.highlight {\n    background-color: rgba(255, 255, 255, .25);\n    box-shadow: -1px 0px 8px #888;\n    border-radius: ").concat(vars.borderRadius, "px;\n    border-top-right-radius: 0;\n  }\n\n  .button-wrapper:hover {\n    font-weight: bold;\n  }\n\n  button {\n    margin: 0;\n    padding: 0;\n    background-color: transparent;\n    border: none;\n    font-family: monospace;\n    font-size: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n    font-weight: inherit;\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    cursor: pointer;\n  }\n\n  @keyframes slideDown {\n    from {\n      transform: translate(0, -150%);\n    }\n\n    to {\n      transform: translate(0, 0);\n    }\n  }\n\n  a {\n    text-decoration: none;\n  }\n\n  p {\n    margin: 0;\n  }\n");
 };
 
-var propNameTypeDefaults = [["bannerUrl", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "primary"], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1.0], ["horizontalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].HTML, "A default message"], ["verticalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 16]];
+var propNameTypeDefaults = [["bannerUrl", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "primary"], ["customStyles", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1.0], ["horizontalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].HTML, "A default message"], ["verticalMargin", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 16]];
 var BannerComponent = /*#__PURE__*/function (_Dismissible) {
   _inherits(BannerComponent, _Dismissible);
 
@@ -189,6 +189,7 @@ var BannerComponent = /*#__PURE__*/function (_Dismissible) {
 
       var _this$props = this.props,
           colorScheme = _this$props.colorScheme,
+          customStyles = _this$props.customStyles,
           dismissible = _this$props.dismissible,
           gradientLevel = _this$props.gradientLevel,
           message = _this$props.message;
@@ -200,6 +201,11 @@ var BannerComponent = /*#__PURE__*/function (_Dismissible) {
       if (bannerUrl && message.includes("</a>")) {
         bannerUrl = "";
         console.warn("Banner URL disabled because message includes an <a> tag");
+      } // Added any custom styles to the stylesheet.
+
+
+      if (customStyles) {
+        this.shadow.querySelector("style").textContent += "\n\n/* Custom Styles Begin */\n".concat(customStyles);
       } // Define the main wrapper element.
 
 
@@ -801,7 +807,7 @@ var styleFactory = function styleFactory(vars) {
   return "\n  .wrapper {\n    position: fixed;\n    left: 0;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    background-color: rgba(0, 0, 0, .6);\n    cursor: pointer;\n    z-index: ".concat(vars.MAX_Z_INDEX + 1, ";\n  }\n\n  .content {\n    display: inline-block;\n    width: fit-content;\n    max-width: 85%;\n    max-height: 85%;\n    position: fixed;\n    top: 50%;\n    left: 50%;\n    transform: translate(-50%, -50%);\n    border: solid #000 2px;\n    overflow: auto;\n    cursor: default;\n    text-align: right;\n    padding: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n    background-color: #fff;\n    font-size: ").concat(vars.fontSize * vars.PX_SCALE_FACTOR, "px;\n    border-radius: ").concat(vars.borderRadius, "px;\n  }\n\n  @media screen and (min-width: 800px) {\n    .content {\n      max-width: 680px;\n    }\n  }\n\n  .message {\n    text-align: left;\n    display: block;\n    cursor: text;\n    padding: ").concat(vars.verticalPadding * vars.PX_SCALE_FACTOR, "px\n             ").concat(vars.horizontalPadding * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  .message img {\n    max-width: ").concat(vars.maxImageWidth * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  button {\n    display: inline;\n    padding: ").concat(8 * vars.PX_SCALE_FACTOR, "px ").concat(12 * vars.PX_SCALE_FACTOR, "px;\n    cursor: pointer;\n    border: none;\n    border-radius: 4px;\n    margin-top: ").concat(24 * vars.PX_SCALE_FACTOR, "px;\n    font-size: ").concat(16 * vars.PX_SCALE_FACTOR, "px;\n  }\n\n  p {\n    margin: 0;\n  }\n");
 };
 
-var propNameTypeDefaults = [["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["buttonText", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "OK"], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "primary"], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1.0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].HTML, "A default message"], ["stealFocus", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1]];
+var propNameTypeDefaults = [["borderRadius", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["buttonText", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "OK"], ["colorScheme", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, "primary"], ["customStyles", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["dismissible", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["fontSize", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 16], ["gradientLevel", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1.0], ["horizontalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 0], ["id", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].STRING, ""], ["maxImageWidth", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].INTEGER, 20], ["message", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].HTML, "A default message"], ["stealFocus", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].BOOLEAN, true], ["verticalPadding", _utils_js__WEBPACK_IMPORTED_MODULE_2__["TYPES"].FLOAT, 1]];
 var ModalComponent = /*#__PURE__*/function (_Dismissible) {
   _inherits(ModalComponent, _Dismissible);
 
@@ -836,10 +842,16 @@ var ModalComponent = /*#__PURE__*/function (_Dismissible) {
       var _this$props = this.props,
           buttonText = _this$props.buttonText,
           colorScheme = _this$props.colorScheme,
+          customStyles = _this$props.customStyles,
           dismissible = _this$props.dismissible,
           gradientLevel = _this$props.gradientLevel,
           message = _this$props.message,
-          stealFocus = _this$props.stealFocus; // Define the main wrapper element.
+          stealFocus = _this$props.stealFocus; // Added any custom styles to the stylesheet.
+
+      if (customStyles) {
+        this.shadow.querySelector("style").textContent += "\n\n/* Custom Styles Begin */\n".concat(customStyles);
+      } // Define the main wrapper element.
+
 
       var _split = (SCHEME_NAME_COLORS_MAP[colorScheme] || colorScheme).split(","),
           _split2 = _slicedToArray(_split, 4),
@@ -1254,15 +1266,16 @@ function updateElement() {
 
   var _options = options,
       bannerUrl = _options.bannerUrl,
+      borderRadius = _options.borderRadius,
       buttonText = _options.buttonText,
+      customStyles = _options.customStyles,
       displayMode = _options.displayMode,
       fontSize = _options.fontSize,
-      verticalPadding = _options.verticalPadding,
+      horizontalMargin = _options.horizontalMargin,
       horizontalPadding = _options.horizontalPadding,
       notDismissible = _options.notDismissible,
       verticalMargin = _options.verticalMargin,
-      horizontalMargin = _options.horizontalMargin,
-      borderRadius = _options.borderRadius; // Get the message content.
+      verticalPadding = _options.verticalPadding; // Get the message content.
 
   var message = getMessageContent(); // Get the colors.
 
@@ -1277,6 +1290,7 @@ function updateElement() {
   var componentOptions = {
     borderRadius: borderRadius,
     buttonText: buttonText,
+    customStyles: customStyles,
     dismissalContentProp: "message",
     dismissalMinutes: getDismissedUntilMinutes(),
     dismissible: !notDismissible,

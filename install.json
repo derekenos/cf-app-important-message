@@ -418,6 +418,21 @@
         "minimum": 0,
         "maximum": 32,
         "step": 1
+      },
+
+      "customStyles": {
+        "showIf": {
+          "INSTALL_PRODUCT.id": {
+            "op": "!=",
+            "value": "basic"
+          }
+        },
+        "order": 85,
+        "title": "Custom Styles",
+        "description": "Enter CSS to style your message elements or override the default component styles. Note that you may have to use <b>!imporant</b> to override any of the styles controlled above (e.g. Text Size / font-size). Both the Banner and Modal have .wrapper and .message class elements. Right-click -&gt; Inspect Element in your browser to see the full structure.",
+        "type": "string",
+        "default": "",
+        "placeholder": ".message { font-family: monospace; }"
       }
     }
   }

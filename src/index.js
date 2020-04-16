@@ -89,15 +89,16 @@ function updateElement() {
 
   const {
     bannerUrl,
+    borderRadius,
     buttonText,
+    customStyles,
     displayMode,
     fontSize,
-    verticalPadding,
+    horizontalMargin,
     horizontalPadding,
     notDismissible,
     verticalMargin,
-    horizontalMargin,
-    borderRadius,
+    verticalPadding,
   } = options
 
   // Get the message content.
@@ -110,6 +111,7 @@ function updateElement() {
   const componentOptions = {
     borderRadius,
     buttonText,
+    customStyles,
     dismissalContentProp: "message",
     dismissalMinutes: getDismissedUntilMinutes(),
     dismissible: !notDismissible,

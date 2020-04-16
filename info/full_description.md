@@ -7,7 +7,7 @@
 | Banner Options | Dismiss or redirect to URL on click |
 | Dismissal Modes | Dismissible w/ custom period or Non-Dismissible |
 | Color Scheme | Predefined or Custom |
-| Styling Options | Text Size, Padding, Corner Roundness |
+| Styling Options | Text Size, Padding, Corner Roundness, Custom CSS |
 
 # Messages Types
 You can compose your message using plain text, rich text, or HTML.
@@ -23,7 +23,7 @@ The rich-text input allows you to control text formatting and insert links and i
 ![rich-text modal screenshot](https://user-images.githubusercontent.com/585182/77550943-0ebb8780-6e88-11ea-82bc-ef8598b1aacb.png)
 
 ## HTML Message *(FULL version only)*
-The option allows you to enter HTML for complete control over your message styling and embedded links, images, etc.
+This option allows you to enter HTML for complete control over your message styling and embedded links, images, etc.
 
 For example, entering this:
 
@@ -36,16 +36,34 @@ will display:
 ![customHTMLMessage](https://user-images.githubusercontent.com/585182/79355563-d568bb80-7f0b-11ea-9cf9-69915eb5f4f7.png)
 
 
-Here's the HTML for a more ambitious example that includes a background image:
+Here's the HTML for a fancier example that includes a background image:
 
 ```
-<p style="background-image: url(https://images.unsplash.com/photo-1558897979-72a433ed5f8d?auto=format&fit=crop&w=500&q=60); background-position: center; width: 500px; height: 333px; border-radius: 16px; text-align: center; color: #444; font-weight: bold;">We're closed today because our cattle escaped through that fence.<br><br>See you tomorrow!</p>
+<div style="background-image: url(https://images.unsplash.com/photo-1558897979-72a433ed5f8d?auto=format&fit=crop&w=500&q=60); background-position: center; width: 500px; height: 333px; border-radius: 16px;"><p style="color: #444; font-size: 32px; font-weight: bold; text-align: center; padding: .5em;">We're closed today because our cattle escaped through that fence.<br><br>See you tomorrow!</p></div>
 ```
 
 ### Example of Custom HTML
 
-![cattleFence](https://user-images.githubusercontent.com/585182/79357702-60e34c00-7f0e-11ea-9ef3-d6f4d724baff.png)
+![cattleFence](https://user-images.githubusercontent.com/585182/79467422-c34e5200-7fcb-11ea-8a41-721c2c9c525f.png)
 
+Note the white border around the above image. That's baked into the component, but you can modify that with custom styles as described below.
+
+# Custom Styles  *(FULL version only)*
+This option allows you to add custom CSS to style your HTML message elements or override the existing component styles.
+
+For example, to eliminate the white padding around the snowy image in **Example of Custom HTML**, you can set Custom Styles as follows:
+
+```
+.content { padding: 0; }
+```
+
+which will result in:
+
+![cattleFenceWithCustomStyles](https://user-images.githubusercontent.com/585182/79482613-1251b280-7fdf-11ea-97d9-60cbc637ef01.png)
+
+Some things to note:
+- Both the Banner and Modal components have .wrapper and .message class elements but you should right-click -> Inspect Element in your browser to see them in all their structural glory.
+- You may have to use **!important** to override styles that are exposed via controls in the UI (e.g. Text Size / font-size).
 
 # Display Modes
 

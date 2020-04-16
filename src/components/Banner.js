@@ -127,6 +127,7 @@ const propNameTypeDefaults = [
   ["bannerUrl", TYPES.STRING, ""],
   ["borderRadius", TYPES.INTEGER, 16],
   ["colorScheme", TYPES.STRING, "primary"],
+  ["customStyles", TYPES.STRING, ""],
   ["dismissible", TYPES.BOOLEAN, true],
   ["fontSize", TYPES.INTEGER, 16],
   ["gradientLevel", TYPES.FLOAT, 1.0],
@@ -158,7 +159,13 @@ export class BannerComponent extends Dismissible(Base) {
     this.setAttribute("aria-label", "Important Message")
 
     // Get the configuration properties.
-    const { colorScheme, dismissible, gradientLevel, message } = this.props
+    const {
+      colorScheme,
+      customStyles,
+      dismissible,
+      gradientLevel,
+      message,
+    } = this.props
     let { bannerUrl } = this.props
 
     // Since <a>'s can't be nested, check for the condition where both
@@ -168,6 +175,13 @@ export class BannerComponent extends Dismissible(Base) {
     if (bannerUrl && message.includes("</a>")) {
       bannerUrl = ""
       console.warn("Banner URL disabled because message includes an <a> tag")
+    }
+
+    // Added any custom styles to the stylesheet.
+    if (customStyles) {
+      this.shadow.querySelector(
+        "style",
+      ).textContent += `\n\n/* Custom Styles Begin */\n${customStyles}`
     }
 
     // Define the main wrapper element.
