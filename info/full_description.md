@@ -65,6 +65,11 @@ Some things to note:
 - Both the Banner and Modal components have .wrapper and .message class elements but you should right-click -> Inspect Element in your browser to see them in all their structural glory.
 - You may have to use **!important** to override styles that are exposed via controls in the UI (e.g. Text Size / font-size).
 
+## Predefined Custom Styles
+
+[Click here to view a growing list of predefined custom styles that demonstrate what's possible!](https://gist.github.com/derekenos/d42134d8c358715b793303d2a782eb7c)
+
+
 # Display Modes
 
 Two display modes are available: Banner and Modal
