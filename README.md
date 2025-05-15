@@ -1,6 +1,4 @@
-This is an a banner/modal web component with configurable message, DOM location, style, and dismissal period that I created to test drive the (now defunct) Cloudflare Apps platform. The following content is the original app documentation.
-
-
+This is an a banner/modal web component with configurable message, DOM location, style, and dismissal period that I created to test drive the now defunct ([archived dev docs](https://web.archive.org/web/20220801194041/https://www.cloudflare.com/apps/developer/docs/getting-started)) Cloudflare Apps platform. Below is the original app description.
 
 **Important Message** provides a simple and configurable way to display a message to your visitors.
 
